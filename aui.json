@@ -1,7 +1,7 @@
 {
-  "name": "Aui",
+  "name": "Advanced User Interface",
   "author": "Dynamic Suite Team",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Additional components and styling for DynamicSuite",
   "license": "GPLv3",
   "depends": [
