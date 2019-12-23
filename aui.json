@@ -11,6 +11,7 @@
   "global": {
     "autoload": "lib",
     "init": "scripts/init.php",
-    "css": "css/aui.min.css"
+    "css": "css/aui.min.css",
+    "js": "js/pell.min.js"
   }
 }

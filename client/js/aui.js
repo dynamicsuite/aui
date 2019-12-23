@@ -640,4 +640,36 @@ Vue.component('aui-list-group', {
         }
     }
 });
+Vue.component('aui-wysiwyg', {
+    template: `
+    <div :id="id">
+    </div>`,
+    props: {
+        id: {
+            type: String,
+            required: true
+        }
+    },
+    data: function() {
+        return {
+            html: ''
+        }
+    },
+    mounted: function() {
+        const comp = this;
 
+        pell.init({
+            element: document.getElementById(comp.id),
+            defaultParagraphSeparator: "p",
+            styleWithCSS: true,
+            onChange: html => comp.html = html,
+            actions: ["bold", "italic", "underline", "heading1", "ulist", "olist"],
+            classes: {
+                actionbar: "pell-actionbar",
+                button: "pell-btn",
+                content: "pell-content",
+                selected: "pell-button-selected",
+            },
+        });
+    }
+});
