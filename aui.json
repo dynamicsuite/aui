@@ -1,0 +1,15 @@
+{
+  "name": "Aui",
+  "author": "Dynamic Suite Team",
+  "version": "2.0.0",
+  "description": "Additional components and styling for DynamicSuite",
+  "license": "GPLv3",
+  "depends": [
+    "dynamicsuite >= 3.0.0"
+  ],
+  "global": {
+    "autoload": "lib",
+    "init": "scripts/init.php",
+    "css": "css/aui.min.css"
+  }
+}
