@@ -602,7 +602,7 @@ Vue.component('aui-list-item', {
         <li class="list-item" :class="activeClass" @click="runCallback()">
             <span class="text">
                 <div class="title"><slot></slot></div>
-                <div class="subtext">{{subtext}}</div>
+                <div class="subtext" v-if="subtext">{{subtext}}</div>
             </span>
             <span class="icon" v-if="isActive()"></span>
         </li>`,

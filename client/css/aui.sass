@@ -165,6 +165,7 @@ $nav-text: #C7CBD1
   // Dropdown styling
   .btn-dropdown
     position: relative
+
     &:focus
       outline: none
 
@@ -173,7 +174,7 @@ $nav-text: #C7CBD1
       top: 2.35rem
       margin: 0
       padding: .5rem 1rem
-      background: whitesmoke
+      background: white
       border: 1px solid #ced4da
       border-radius: .25rem
       color: black
@@ -456,14 +457,14 @@ $nav-text: #C7CBD1
       margin-bottom: -.5rem
 
     .btn
-      background: whitesmoke
+      background: white
       border-left: 1px solid #ced4da
       border-top: 1px solid #ced4da
       border-right: 1px solid #ced4da
       border-radius: .25rem .25rem 0 0
       margin-left: auto
       z-index: 2
-      border-bottom: 1px solid whitesmoke
+      border-bottom: 1px solid white
       height: 40px
 
       .dropdown-menu
@@ -484,19 +485,22 @@ $nav-text: #C7CBD1
       border-right: 1px solid rgba(255,255,255,0)
 
     .tab.active
-      background: whitesmoke
+      background: white
       border-left: 1px solid #ced4da
       border-top: 1px solid #ced4da
       border-right: 1px solid #ced4da
-      border-bottom: 1px solid whitesmoke
+      border-bottom: 1px solid white
       border-radius: .25rem .25rem 0 0
 
   // Checkboxes
   .check-container, .radio-container
-    display: block
+    display: flex
+    align-items: center
+    justify-content: center
     position: relative
     padding-left: 35px
     margin-bottom: 12px
+    height: 26px
     cursor: pointer
     -webkit-user-select: none
     -moz-user-select: none
@@ -790,7 +794,12 @@ $nav-text: #C7CBD1
 
       .title
         font-weight: bold
-        margin-bottom: .5rem
+        color: lighten(black, 10%)
+
+      .subtext
+        margin-top: .25rem
+        font-size: .9rem
+        color: #777
 
       &.active
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23a2aeb9' d='M6.0848 3.9152l-3.3125 3.3125q-0.0848 0.0848-0.2009 0.0848t-0.2009-0.0848l-0.7411-0.7411q-0.0848-0.0848-0.0848-0.2009t0.0848-0.2009l2.3705-2.3705-2.3705-2.3705q-0.0848-0.0848-0.0848-0.2009t0.0848-0.2009l0.7411-0.7411q0.0848-0.0848 0.2009-0.0848t0.2009 0.0848l3.3125 3.3125q0.0848 0.0848 0.0848 0.2009t-0.0848 0.2009z'/%3e%3c/svg%3e")
