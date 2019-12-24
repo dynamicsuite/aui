@@ -286,7 +286,7 @@ Vue.component('aui-select', {
     <div class="select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
-            <select :name="name" :id="id" :class="classes" @change="$emit('input', $event.target.checked)" v-model="selected">
+            <select :name="name" :id="id" :class="classes" @change="$emit('input', $event.target.value)">
                 <option v-for="(element, key) in data" :value="key">{{element}}</option>
             </select>
         </div>
@@ -312,11 +312,9 @@ Vue.component('aui-select', {
         },
         classes: {
             type: String
-        }
-    },
-    data: function() {
-        return {
-            selected: null
+        },
+        selected: {
+            type: String
         }
     },
 });
