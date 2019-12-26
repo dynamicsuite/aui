@@ -192,7 +192,7 @@ Vue.component('aui-table', {
 });
 Vue.component('aui-input', {
     template: `
-    <div class="input-container">
+    <div :id="id + '-container'" class="input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
             <div :id="id" class="leading-element edge-element" v-if="leading_text">{{leading_text}}</div>
@@ -241,7 +241,8 @@ Vue.component('aui-input', {
             type: String
         },
         classes: {
-            type: String
+            type: String,
+            default: ''
         },
         disabled: {
             type: Boolean
@@ -311,7 +312,8 @@ Vue.component('aui-select', {
             type: String
         },
         classes: {
-            type: String
+            type: String,
+            default: ''
         },
         selected: {
             type: String
