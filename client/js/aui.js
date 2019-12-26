@@ -646,7 +646,7 @@ Vue.component('aui-list-group', {
 });
 Vue.component('aui-wysiwyg', {
     template: `
-    <div class="wysiwyg-container">
+    <div :id="id + '-container'" class="wysiwyg-container">
         <title :for="id" class="wysiwyg-title">{{title}}</title>
         <div :id="id"></div>
     </div>`,
