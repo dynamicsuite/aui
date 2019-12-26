@@ -284,7 +284,7 @@ Vue.component('aui-input', {
 });
 Vue.component('aui-select', {
    template: `
-    <div class="select-container">
+    <div :id="id + '-container'" class="select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
             <select :name="name" :id="id" :class="classes" @change="$emit('input', $event.target.value)">
