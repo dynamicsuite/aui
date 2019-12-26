@@ -644,12 +644,17 @@ Vue.component('aui-list-group', {
 });
 Vue.component('aui-wysiwyg', {
     template: `
-    <div :id="id">
+    <div class="wysiwyg-container">
+        <title :for="id" class="wysiwyg-title">{{title}}</title>
+        <div :id="id"></div>
     </div>`,
     props: {
         id: {
             type: String,
             required: true
+        },
+        title: {
+            type: String
         }
     },
     data: function() {
