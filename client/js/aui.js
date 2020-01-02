@@ -195,8 +195,8 @@ Vue.component('aui-input', {
     <div :id="id + '-container'" class="input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
-            <div :id="id" class="leading-element edge-element" v-if="leading_text">{{leading_text}}</div>
-            <input type="text" 
+            <div class="leading-element edge-element" v-if="leading_text">{{leading_text}}</div>
+            <input :id="id" type="text" 
                 :name="name"
                 :type="type"
                 :placeholder="placeholder"
@@ -255,6 +255,9 @@ Vue.component('aui-input', {
         },
         failure: {
             type: Boolean
+        },
+        list: {
+            type: String
         },
         value: {
             type: String | Number
@@ -319,6 +322,124 @@ Vue.component('aui-select', {
             type: String
         }
     },
+});
+Vue.component('aui-datalist', {
+    template: `
+        <div :id="id + '-container'" class="datalist-container">
+            <label :for="id" v-if="title">{{title}}</label>
+            <input 
+                :id="id" 
+                :name="name"
+                :type="type"
+                :placeholder="placeholder"
+                :disabled="disabled"
+                :readonly="readonly"
+                :class="classes + classFailure() + classSuccess()"
+                :list="id + '-datalist'"
+                @keydown="$emit('keydown')"
+                @focus="$emit('focus')"
+                @blur="$emit('blur')"
+                @input="$emit('input', $event.target.value)"
+            >
+            <div class="subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
+            <datalist :id="id + '-datalist'">
+                <option v-for="option in current_options">{{option}}</option> 
+            </datalist>
+        </div>
+    `,
+    props: {
+        id: {
+            type: String,
+            required: true
+        },
+        options: {
+            type: Array | Object,
+            required: true
+        },
+        validate: {
+            type: Boolean,
+            default: true
+        },
+        title: {
+            type: String
+        },
+        classes: {
+            type: String,
+            default: ''
+        },
+        name: {
+            type: String
+        },
+        type: {
+            type: String,
+            default: 'text'
+        },
+        placeholder: {
+            type: String
+        },
+        disabled: {
+            type: Boolean
+        },
+        readonly: {
+            type: Boolean
+        }
+    },
+    data: function() {
+        return {
+            show_menu: false,
+            current_options: this.options,
+            search_term: ''
+        }
+    },
+    watch: {
+        search_term() {
+            let term = this.search_term.toLowerCase();
+
+            if (Array.isArray(this.options)) {
+                this.current_options = this.options.filter((element) => {
+
+                    let val = element.toString().toLowerCase();
+
+                    if (val.includes(term)) {
+                        return true;
+                    }
+
+                });
+
+                if (term === '') this.current_options = this.options;
+
+            } else {
+                this.current_options = Object.keys(this.options)
+                    .filter((element) => {
+                        let val = this.options[element].toString().toLowerCase();
+
+                        if (val.includes(term)) {
+                            return true;
+                        }
+                    })
+                    .reduce((obj, key) => {
+                        obj[key] = this.options[key];
+                        return obj;
+                    }, {})
+                ;
+
+                if (term === '') this.current_options = this.options;
+            }
+        }
+    },
+    methods: {
+        classSuccess() {
+            return (this.success) ? ' border-success' : '' ;
+        },
+        classFailure() {
+            return (this.failure) ? ' border-failure' : '' ;
+        },
+        subtextColorClass() {
+            if (this.success) return 'text-success';
+            if (this.failure) return 'text-failure';
+            return '';
+        }
+    }
 });
 Vue.component('aui-radio', {
     template: `
