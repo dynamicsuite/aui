@@ -382,6 +382,9 @@ Vue.component('aui-datalist', {
         },
         readonly: {
             type: Boolean
+        },
+        subtext: {
+            type: String
         }
     },
     data: function() {
