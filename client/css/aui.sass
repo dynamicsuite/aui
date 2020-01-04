@@ -237,6 +237,16 @@ $nav-text: #C7CBD1
         background-position: right .5rem center
         background-size: 1.5rem
 
+        .leading-element
+          border-left: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
+        .trailing-element
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
       input.caps
         border-radius: 0 !important
 
@@ -255,11 +265,31 @@ $nav-text: #C7CBD1
         margin-right: -.4rem
         border-radius: 0.25rem 0 0 0.25rem
 
+        &.border-success
+          border-left: 1px solid $success
+          border-top: 1px solid $success
+          border-bottom: 1px solid $success
+
+        &.border-failure
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
       .trailing-element
         flex: 0
         justify-self: flex-end
         margin-left: -.4rem
         border-radius: 0 0.25rem  0.25rem 0
+
+        &.border-success
+          border-right: 1px solid $success
+          border-top: 1px solid $success
+          border-bottom: 1px solid $success
+
+        &.border-failure
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
 
     .subtext
       font-size: .8rem
@@ -302,7 +332,7 @@ $nav-text: #C7CBD1
       margin-top: .25rem
       color: #6c757d
 
-
+  // Datalist styling
   .datalist-container
     display: flex
     flex-direction: column
