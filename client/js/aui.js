@@ -195,7 +195,7 @@ Vue.component('aui-input', {
     <div :id="id + '-container'" class="input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
-            <div class="leading-element edge-element" v-if="leading_text">{{leading_text}}</div>
+            <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
             <input :id="id" type="text" 
                 :name="name"
                 :type="type"
@@ -204,12 +204,13 @@ Vue.component('aui-input', {
                 :readonly="readonly"
                 :class="classes + classFailure() + classSuccess()"
                 :value="value"
-                @keydown="$emit('keydown')"
-                @focus="$emit('focus')"
-                @blur="$emit('blur')"
+                @keydown="$emit('keydown', $event.target)"
+                @change="$emit('change', $event.target)"
+                @focus="$emit('focus', $event.target)"
+                @blur="$emit('blur', $event.target)"
                 @input="$emit('input', $event.target.value)"
             >
-            <div class="trailing-element edge-element" v-if="trailing_text">{{trailing_text}}</div>
+            <div class="trailing-element edge-element" :class="classFailure() + classSuccess()" v-if="trailing_text">{{trailing_text}}</div>
         </div>
         <div class="subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
     </div>`,
@@ -342,9 +343,15 @@ Vue.component('aui-datalist', {
                 @input="$emit('input', $event.target.value)"
             >
             <div class="subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
+            
             <datalist :id="id + '-datalist'">
                 <option v-for="option in current_options">{{option}}</option> 
             </datalist>
+            <!--
+            <ul :id="id + '-datalist'">
+                <li class="option" v-for="option in current_options">{{option}}</li>
+            </ul>
+            -->
         </div>
     `,
     props: {
@@ -382,6 +389,9 @@ Vue.component('aui-datalist', {
         },
         readonly: {
             type: Boolean
+        },
+        subtext: {
+            type: String
         }
     },
     data: function() {
@@ -393,6 +403,14 @@ Vue.component('aui-datalist', {
     },
     watch: {
         search_term() {
+            this.searchAndUpdate()
+        },
+        options() {
+            this.searchAndUpdate()
+        }
+    },
+    methods: {
+        searchAndUpdate() {
             let term = this.search_term.toLowerCase();
 
             if (Array.isArray(this.options)) {
@@ -425,9 +443,17 @@ Vue.component('aui-datalist', {
 
                 if (term === '') this.current_options = this.options;
             }
-        }
-    },
-    methods: {
+
+            console.log(typeof this.current_options);
+
+            console.log(this.current_options);
+
+            if (Object.keys(this.current_options).length === 0) this.current_options = ['Test'];
+
+
+            //if (term === '') this.current_options = {0: 'Type a color number or name...'};
+
+        },
         classSuccess() {
             return (this.success) ? ' border-success' : '' ;
         },
@@ -681,6 +707,9 @@ Vue.component('aui-modal', {
             required: true
         },
         title: {
+            type: String
+        },
+        html: {
             type: String
         },
         close: {

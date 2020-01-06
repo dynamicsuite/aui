@@ -237,6 +237,16 @@ $nav-text: #C7CBD1
         background-position: right .5rem center
         background-size: 1.5rem
 
+        .leading-element
+          border-left: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
+        .trailing-element
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
       input.caps
         border-radius: 0 !important
 
@@ -248,6 +258,7 @@ $nav-text: #C7CBD1
         background: #e9ecef
         border: 1px solid #ced4da
         z-index: 2
+        white-space: nowrap
 
       .leading-element
         flex: 0
@@ -255,11 +266,31 @@ $nav-text: #C7CBD1
         margin-right: -.4rem
         border-radius: 0.25rem 0 0 0.25rem
 
+        &.border-success
+          border-left: 1px solid $success
+          border-top: 1px solid $success
+          border-bottom: 1px solid $success
+
+        &.border-failure
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
+
       .trailing-element
         flex: 0
         justify-self: flex-end
         margin-left: -.4rem
         border-radius: 0 0.25rem  0.25rem 0
+
+        &.border-success
+          border-right: 1px solid $success
+          border-top: 1px solid $success
+          border-bottom: 1px solid $success
+
+        &.border-failure
+          border-right: 1px solid $failure
+          border-top: 1px solid $failure
+          border-bottom: 1px solid $failure
 
     .subtext
       font-size: .8rem
@@ -302,7 +333,7 @@ $nav-text: #C7CBD1
       margin-top: .25rem
       color: #6c757d
 
-
+  // Datalist styling
   .datalist-container
     display: flex
     flex-direction: column
@@ -375,7 +406,7 @@ $nav-text: #C7CBD1
 
   /* Default alert theme */
   .alert
-    padding: 0.5rem 1rem
+    padding: 1rem
     border-radius: .25rem
     margin: 1rem 0
 
@@ -390,13 +421,15 @@ $nav-text: #C7CBD1
       justify-content: center
       align-items: center
 
+    h4
+      margin: 0 0 1rem 0
+
     .title-bar
       display: flex
       justify-content: space-between
 
       .alert-title
         font-size: 1.5rem
-        margin: 1rem 0 1rem 0
 
   /* Primary alert theme */
   .alert-primary
