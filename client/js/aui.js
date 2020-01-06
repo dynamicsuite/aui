@@ -199,7 +199,6 @@ Vue.component('aui-input', {
             <input :id="id" 
                 :type="type" 
                 :name="name"
-                :type="type"
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :readonly="readonly"
