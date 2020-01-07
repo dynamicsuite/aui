@@ -458,14 +458,7 @@ Vue.component('aui-datalist', {
                 if (term === '') this.current_options = this.options;
             }
 
-            console.log(typeof this.current_options);
-
-            console.log(this.current_options);
-
             if (Object.keys(this.current_options).length === 0) this.current_options = ['Test'];
-
-
-            //if (term === '') this.current_options = {0: 'Type a color number or name...'};
 
         },
         classSuccess() {
