@@ -196,9 +196,9 @@ Vue.component('aui-input', {
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
             <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
-            <input :id="id" type="text" 
+            <input :id="id" 
+                :type="type" 
                 :name="name"
-                :type="type"
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :readonly="readonly"
@@ -244,6 +244,16 @@ Vue.component('aui-input', {
         classes: {
             type: String,
             default: ''
+        },
+        allowed: {
+            type: String,
+            validator: prop => {
+                if (prop === '' || prop === 'right' || prop === 'top' || prop === 'bottom') return true;
+                else {
+                    console.log('ERROR - AUI-INPUT: Allowed prop can only be \'whole\', \'number\', or \'text\'.');
+                    return false;
+                }
+            }
         },
         disabled: {
             type: Boolean
@@ -291,7 +301,7 @@ Vue.component('aui-select', {
     <div :id="id + '-container'" class="select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
-            <select :name="name" :id="id" :class="classes" @change="$emit('input', $event.target.value)">
+            <select :name="name" :id="id" :class="classes" :disabled="disabled" @change="$emit('input', $event.target.value)">
                 <option v-for="(element, key) in data" :value="key">{{element}}</option>
             </select>
         </div>
@@ -321,6 +331,10 @@ Vue.component('aui-select', {
         },
         selected: {
             type: String
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
 });
@@ -444,14 +458,7 @@ Vue.component('aui-datalist', {
                 if (term === '') this.current_options = this.options;
             }
 
-            console.log(typeof this.current_options);
-
-            console.log(this.current_options);
-
             if (Object.keys(this.current_options).length === 0) this.current_options = ['Test'];
-
-
-            //if (term === '') this.current_options = {0: 'Type a color number or name...'};
 
         },
         classSuccess() {
