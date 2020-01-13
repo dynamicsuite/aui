@@ -301,7 +301,7 @@ Vue.component('aui-select', {
     <div :id="id + '-container'" class="select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
-            <select :name="name" :id="id" :class="classes" :disabled="disabled" @change="$emit('input', $event.target.value)">
+            <select :name="name" :id="id" :class="classes" :value="value" :disabled="disabled" @change="$emit('input', $event.target.value)">
                 <option v-for="(element, key) in data" :value="key">{{element}}</option>
             </select>
         </div>
@@ -315,6 +315,9 @@ Vue.component('aui-select', {
         data: {
             type: Array | Object,
             required: true
+        },
+        value: {
+            type: Array | Object | String | Boolean | Number
         },
         title: {
             type: String
@@ -349,6 +352,7 @@ Vue.component('aui-datalist', {
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :readonly="readonly"
+                :value="value"
                 :class="classes + classFailure() + classSuccess()"
                 :list="id + '-datalist'"
                 @keydown="$emit('keydown')"
@@ -361,11 +365,6 @@ Vue.component('aui-datalist', {
             <datalist :id="id + '-datalist'">
                 <option v-for="option in current_options">{{option}}</option> 
             </datalist>
-            <!--
-            <ul :id="id + '-datalist'">
-                <li class="option" v-for="option in current_options">{{option}}</li>
-            </ul>
-            -->
         </div>
     `,
     props: {
@@ -406,6 +405,9 @@ Vue.component('aui-datalist', {
         },
         subtext: {
             type: String
+        },
+        value: {
+            type: String | Number
         }
     },
     data: function() {
