@@ -17,8 +17,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace DynamicSuite\Package\Aui;
-use DynamicSuite\DSConfig;
+/** @noinspection PhpUnused */
+
+namespace DynamicSuite\Pkg\Aui;
+use DynamicSuite\Base\DSConfig;
 
 /**
  * Class Config.
@@ -32,9 +34,9 @@ class Config extends DSConfig
     /**
      * Use the minified version.
      *
-     * @var string
+     * @var bool
      */
-    protected $use_minified = true;
+    protected bool $use_minified = true;
 
     /**
      * Config constructor.

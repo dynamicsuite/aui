@@ -17,8 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-namespace DynamicSuite\Package\Aui;
-use DynamicSuite\Instance;
+namespace DynamicSuite\Pkg\Aui;
+use DynamicSuite\Core\Instance;
 
 $cfg = new Config('aui');
 $min = '/dynamicsuite/packages/aui/js/aui.min.js';
