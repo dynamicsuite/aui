@@ -460,7 +460,7 @@ Vue.component('aui-datalist', {
                 if (term === '') this.current_options = this.options;
             }
 
-            if (Object.keys(this.current_options).length === 0) this.current_options = ['Test'];
+            if (Object.keys(this.current_options).length === 0) this.current_options = ['No options available'];
 
         },
         classSuccess() {
