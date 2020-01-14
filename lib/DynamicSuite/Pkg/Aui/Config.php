@@ -25,7 +25,7 @@ use DynamicSuite\Base\DSConfig;
 /**
  * Class Config.
  *
- * @package DynamicSuite\Package\Aui
+ * @package DynamicSuite\Pkg\Aui
  * @property bool $use_minified
  */
 class Config extends DSConfig
