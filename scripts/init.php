@@ -18,15 +18,20 @@
  */
 
 namespace DynamicSuite\Pkg\Aui;
-use DynamicSuite\Core\Instance;
+use DynamicSuite\Core\DynamicSuite;
 
-$cfg = new Config('aui');
 $min = '/dynamicsuite/packages/aui/js/aui.min.js';
 $full = '/dynamicsuite/packages/aui/js/aui.js';
+if (!DS_CACHING || (DS_CACHING && !apcu_exists('dspkg-aui-use-minified'))) {
+    $cfg = new Config('aui');
+    apcu_store('dspkg-aui-use-minified', $cfg->use_minified);
+    $use_minified = $cfg->use_minified;
+} else {
+    $use_minified = apcu_fetch('dspkg-aui-use-minified');
+}
 
-/** @var Instance $ds */
-if (!in_array($cfg->use_minified ? $min : $full, $ds->packages->resources->js)) {
-    $ds->packages->resources->addResource('js', $cfg->use_minified ? $min : $full, 'aui');
-    $ds->view->initCoreResources();
+/** @var DynamicSuite $ds */
+if (!in_array($use_minified ? $min : $full, $ds->packages->resources->js)) {
+    $ds->packages->resources->addResource('js', $use_minified ? $min : $full, 'aui');
     $ds->save();
 }
