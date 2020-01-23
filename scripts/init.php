@@ -22,12 +22,13 @@ use DynamicSuite\Core\DynamicSuite;
 
 $min = '/dynamicsuite/packages/aui/js/aui.min.js';
 $full = '/dynamicsuite/packages/aui/js/aui.js';
-if (!DS_CACHING || (DS_CACHING && !apcu_exists('dspkg-aui-use-minified'))) {
+$hash = DynamicSuite::getHash('dspkg-aui-use-minified');
+if (!DS_CACHING || (DS_CACHING && !apcu_exists($hash))) {
     $cfg = new Config('aui');
-    apcu_store('dspkg-aui-use-minified', $cfg->use_minified);
+    apcu_store($hash, $cfg->use_minified);
     $use_minified = $cfg->use_minified;
 } else {
-    $use_minified = apcu_fetch('dspkg-aui-use-minified');
+    $use_minified = apcu_fetch($hash);
 }
 
 /** @var DynamicSuite $ds */
