@@ -818,11 +818,6 @@ Vue.component('aui-wysiwyg', {
             type: String
         }
     },
-    data: function() {
-        return {
-            html: ''
-        }
-    },
     mounted: function() {
         const comp = this;
 
@@ -830,7 +825,10 @@ Vue.component('aui-wysiwyg', {
             element: document.getElementById(comp.id),
             defaultParagraphSeparator: "p",
             styleWithCSS: true,
-            onChange: html => comp.html = html,
+            onChange: html => {
+                comp.$emit('input', html);
+                console.log(html)
+            },
             actions: ["bold", "italic", "underline", "heading1", "ulist", "olist"],
             classes: {
                 actionbar: "pell-actionbar",
