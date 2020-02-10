@@ -827,7 +827,6 @@ Vue.component('aui-wysiwyg', {
             styleWithCSS: true,
             onChange: html => {
                 comp.$emit('input', html);
-                console.log(html)
             },
             actions: ["bold", "italic", "underline", "heading1", "ulist", "olist"],
             classes: {
