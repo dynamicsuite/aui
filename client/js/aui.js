@@ -302,7 +302,7 @@ Vue.component('aui-select', {
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
             <select :name="name" :id="id" :class="classes" :value="value" :disabled="disabled" @change="$emit('input', $event.target.value)">
-                <option v-for="(element, key) in data" :value="key">{{element}}</option>
+                <option v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
             </select>
         </div>
         <div class="subtext" v-if="subtext" >{{subtext}}</div>
@@ -333,13 +333,18 @@ Vue.component('aui-select', {
             default: ''
         },
         selected: {
-            type: String
+            type: String | Number
         },
         disabled: {
             type: Boolean,
             default: false
         }
     },
+    methods: {
+       isSelected(key) {
+           return this.selected === key;
+       }
+    }
 });
 Vue.component('aui-datalist', {
     template: `
