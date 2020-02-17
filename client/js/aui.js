@@ -663,7 +663,6 @@ Vue.component('aui-alert', {
             default: true
         },
         visible: {
-            type: Boolean,
             default: true
         }
     }
