@@ -204,6 +204,8 @@ Vue.component('aui-input', {
                 :readonly="readonly"
                 :class="classes + classFailure() + classSuccess()"
                 :value="value"
+                :min="dateMinimum()"
+                :max="dateMaximum()"
                 @keydown="$emit('keydown', $event.target)"
                 @change="$emit('change', $event.target)"
                 @focus="$emit('focus', $event.target)"
@@ -272,6 +274,12 @@ Vue.component('aui-input', {
         },
         value: {
             type: String | Number
+        },
+        min: {
+            type: String | Number
+        },
+        max: {
+            type: String | Number
         }
 
     },
@@ -293,6 +301,24 @@ Vue.component('aui-input', {
         },
         capsClass() {
             if (this.leading_text || this.trailing_text) return ' caps';
+        },
+        dateMinimum() {
+            if (this.min === 'today') {
+                let today = new Date().toISOString().slice(0, 10);
+                console.log(today);
+                return today;
+            } else {
+                return this.min;
+            }
+        },
+        dateMaximum() {
+            if (this.max === 'today') {
+                let today = new Date().toISOString().slice(0, 10);
+                console.log(today);
+                return today;
+            } else {
+                return this.max;
+            }
         }
     }
 });
