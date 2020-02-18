@@ -267,7 +267,7 @@ Vue.component('aui-input', {
             type: Boolean
         },
         failure: {
-            type: Boolean
+            default: false
         },
         list: {
             type: String
