@@ -17,7 +17,7 @@
  */
 Vue.component('aui-button', {
     template: `
-        <button class="btn" :class="classes" :disabled="loading" @click="$emit('click')">
+        <button class="btn aui" :class="classes" :disabled="loading" @click="$emit('click')">
             <span v-if="loading">
                 <i class="fa fa-spin fa-circle-notch loading-icon"></i>
                 <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
@@ -40,7 +40,7 @@ Vue.component('aui-button', {
 });
 Vue.component('aui-button-drop', {
     template: `
-        <button class="btn btn-dropdown" :class="classes" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
+        <button class="aui btn btn-dropdown" :class="classes" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
             <slot></slot>
             <i :class="icon_classes"></i>
             <ul class="dropdown-menu" :class="menu_align" v-if="menu_active">
@@ -103,7 +103,7 @@ Vue.component('aui-button-drop', {
 });
 Vue.component('aui-table', {
     template: ` 
-    <div class="table-container">
+    <div class="aui table-container">
         <div class="input-aligner" :class="search_align">
             <aui-input v-if="search" id="table-search" v-model="search_term" :value="search_term" placeholder="Search..."></aui-input>
         </div>
@@ -192,7 +192,7 @@ Vue.component('aui-table', {
 });
 Vue.component('aui-input', {
     template: `
-    <div :id="id + '-container'" class="input-container">
+    <div :id="id + '-container'" class="aui input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
             <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
@@ -324,7 +324,7 @@ Vue.component('aui-input', {
 });
 Vue.component('aui-select', {
    template: `
-    <div :id="id + '-container'" class="select-container">
+    <div :id="id + '-container'" class="aui select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
             <select :name="name" :id="id" :class="classes" :value="value" :disabled="disabled" @change="$emit('input', $event.target.value)">
@@ -374,7 +374,7 @@ Vue.component('aui-select', {
 });
 Vue.component('aui-datalist', {
     template: `
-        <div :id="id + '-container'" class="datalist-container">
+        <div :id="id + '-container'" class="aui datalist-container">
             <label :for="id" v-if="title">{{title}}</label>
             <input 
                 :id="id" 
@@ -509,7 +509,7 @@ Vue.component('aui-datalist', {
 });
 Vue.component('aui-radio', {
     template: `
-    <div>
+    <div class="aui">
         <label class="radio-container">
             <slot></slot>
             <input type="radio" :name="name" :checked="checked"  @change="$emit('input', $event.target.checked)">
@@ -528,7 +528,7 @@ Vue.component('aui-radio', {
 });
 Vue.component('aui-checkbox', {
     template: `
-        <label class="check-container">
+        <label class="aui check-container">
             <slot></slot>
             <input type="checkbox" :checked="checked" @change="$emit('input', $event.target.checked)">
             <span class="checkmark"></span>
@@ -542,7 +542,7 @@ Vue.component('aui-checkbox', {
 });
 Vue.component('aui-toggle', {
     template: `
-    <div class="flex">
+    <div class="aui flex">
         <span class="switch-container" :class="label_location">
             <label>{{label}}</label>
             <label class="switch">
@@ -573,7 +573,7 @@ Vue.component('aui-toggle', {
 });
 Vue.component('aui-tab', {
     template: `
-    <span class="tab" :class="getActiveClass()" @click="$emit('click'); doAction(action)">
+    <span class="aui tab" :class="getActiveClass()" @click="$emit('click'); doAction(action)">
         {{label}}
     </span>`,
     props: {
@@ -606,7 +606,7 @@ Vue.component('aui-tab', {
 });
 Vue.component('aui-tabs', {
     template: `
-    <div class="tabs">
+    <div class="aui tabs">
         <aui-tab v-for="option in options" :active="option.active" :label="option.label" :action="option.action" @click="setActive(option)" v-if="showTabs"></aui-tab>
         <aui-button-drop :options="options" v-if="!showTabs" menu_align="right">{{getActive()}}</aui-button-drop>
     </div>`,
@@ -664,7 +664,7 @@ Vue.component('aui-tabs', {
 });
 Vue.component('aui-alert', {
     template: `
-    <div class="alert" :class="classes" v-if="visible">
+    <div class="aui alert" :class="classes" v-if="visible">
         <span class="title-bar" v-if="title" >
             <h4 class="alert-title">{{title}}</h4>
             <i class="fa fa-times" v-if="close" @click="$emit('click')"></i>
@@ -694,7 +694,7 @@ Vue.component('aui-alert', {
     }
 });
 Vue.component('aui-badge', {
-    template: `<span class="badge" :class="classes"><slot></slot></span>`,
+    template: `<span class="aui badge" :class="classes"><slot></slot></span>`,
     props: {
         classes: {
             type: String,
@@ -704,7 +704,7 @@ Vue.component('aui-badge', {
 });
 Vue.component('aui-card', {
     template: `
-    <div class="card" :class="classes">
+    <div class="aui card" :class="classes">
         <div class="card-header">{{header}}</div>
         <div class="card-body">
             <h4>{{title}}</h4>
@@ -729,13 +729,13 @@ Vue.component('aui-card', {
 });
 Vue.component('aui-modal', {
     template: `
-    <div class="aui-modal-container" v-if="state" @click.self="toggleEmit()">
-        <div class="aui-modal">
-            <div v-if="title" class="aui-modal-header" :class="title_classes">
+    <div class="aui modal-container" v-if="state" @click.self="toggleEmit()">
+        <div class="modal">
+            <div v-if="title" class="modal-header" :class="title_classes">
                 <h4>{{title}}</h4>
                 <i class="fa fa-times" @click.self="toggleEmit()" v-if="close"></i>
             </div>
-            <div class="aui-modal-body">
+            <div class="modal-body">
                 <slot></slot>
             </div>
         </div>
@@ -792,7 +792,7 @@ Vue.component('aui-modal', {
 });
 Vue.component('aui-list-item', {
     template: `
-        <li class="list-item" :class="activeClass" @click="runCallback()">
+        <li class="aui list-item" :class="activeClass" @click="runCallback()">
             <span class="text">
                 <div class="title"><slot></slot></div>
                 <div class="subtext" v-if="subtext">{{subtext}}</div>
@@ -823,7 +823,7 @@ Vue.component('aui-list-item', {
 });
 Vue.component('aui-list-group', {
     template: `
-    <ul class="aui-list-group">
+    <ul class="aui list-group">
         <aui-list-item v-for="item in data" :callback="item.callback" :subtext="item.subtext">{{item.content}}</aui-list-item>
     </ul>`,
     props: {
@@ -835,7 +835,7 @@ Vue.component('aui-list-group', {
 });
 Vue.component('aui-wysiwyg', {
     template: `
-    <div :id="id + '-container'" class="wysiwyg-container">
+    <div :id="id + '-container'" class="aui wysiwyg-container">
         <title :for="id" class="wysiwyg-title">{{title}}</title>
         <div :id="id"></div>
     </div>`,

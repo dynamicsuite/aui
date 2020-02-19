@@ -38,7 +38,7 @@ $nav-text: #C7CBD1
     -webkit-appearance: none
 
   /** Action area for button groups and messages */
-  .action-area
+  &.action-area
     display: flex
     margin: 1rem 0 1rem 0
     flex-direction: column
@@ -78,7 +78,7 @@ $nav-text: #C7CBD1
         justify-content: center
 
   /* Default button styling */
-  .btn
+  &.btn
     padding: 0.5rem 1rem
     border: 0
     border-radius: .25rem
@@ -98,7 +98,7 @@ $nav-text: #C7CBD1
       margin: 0
 
   /* Primary button theme */
-  .btn-primary
+  &.btn-primary
     background: $primary
     color: white
 
@@ -109,7 +109,7 @@ $nav-text: #C7CBD1
       background: lighten($primary, 30%)
 
   /* Secondary button theme */
-  .btn-secondary
+  &.btn-secondary
     background: $secondary
     color: white
 
@@ -120,12 +120,12 @@ $nav-text: #C7CBD1
       background: lighten($secondary, 30%)
 
   /* Warning button theme */
-  .btn-warning
+  &.btn-warning
     background: $warning
     border: 1px solid lighten($warning, 30%)
 
   /* Success button theme */
-  .btn-success
+  &.btn-success
     background: $success
     color: white
 
@@ -136,7 +136,7 @@ $nav-text: #C7CBD1
       background: lighten($success, 20%)
 
   /* Failure button theme */
-  .btn-failure, .btn-danger
+  &.btn-failure, &.btn-danger
     background: $failure
     color: white
 
@@ -147,7 +147,7 @@ $nav-text: #C7CBD1
       background: lighten($failure, 20%)
 
   // Button groups
-  .btn-group
+  &.btn-group
     .btn
       border-radius: 0
       border-left: 1px solid rgba(0,0,0,.15)
@@ -163,7 +163,7 @@ $nav-text: #C7CBD1
       margin: 0 0 0 -.25rem
 
   // Dropdown styling
-  .btn-dropdown
+  &.btn-dropdown
     position: relative
 
     &:focus
@@ -193,7 +193,7 @@ $nav-text: #C7CBD1
         text-align: left
 
   // Input styling
-  .input-container
+  &.input-container
     display: flex
     flex-direction: column
     border-radius: .25rem
@@ -308,7 +308,7 @@ $nav-text: #C7CBD1
       color: #6c757d
 
   // Select styling
-  .select-container
+  &.select-container
     display: flex
     flex-direction: column
 
@@ -347,7 +347,7 @@ $nav-text: #C7CBD1
       color: #6c757d
 
   // Datalist styling
-  .datalist-container
+  &.datalist-container
     display: flex
     flex-direction: column
 
@@ -389,39 +389,39 @@ $nav-text: #C7CBD1
       width: 100%
 
   // Badge Styling
-  .badge
+  &.badge
     font-size: .75rem
     font-weight: bold
     padding: .1375rem .4rem
     border-radius: 1rem
 
   // Primary Badge Styling
-  .badge-primary
+  &.badge-primary
     background: $primary
     color: white
 
   // Secondary Badge Styling
-  .badge-secondary
+  &.badge-secondary
     background: $secondary
     color: white
 
   // Warning Badge Styling
-  .badge-warning
+  &.badge-warning
     background: $warning
     border: 1px solid lighten($warning, 30%)
 
   // Success Badge Styling
-  .badge-success
+  &.badge-success
     background: $success
     color: white
 
   // Failure/Danger Badge Styling
-  .badge-failure, .badge-danger
+  &.badge-failure, &.badge-danger
     background: $failure
     color: white
 
   /* Default alert theme */
-  .alert
+  &.alert
     padding: 1rem
     border-radius: .25rem
     margin: 1rem 0
@@ -448,65 +448,65 @@ $nav-text: #C7CBD1
         font-size: 1.5rem
 
   /* Primary alert theme */
-  .alert-primary
+  &.alert-primary
     background: lighten($primary, 55%)
     color: $primary
     border: 1px solid lighten($primary, 45%)
 
   /* Secondary alert theme */
-  .alert-secondary
+  &.alert-secondary
     background: lighten($secondary, 55%)
     color: $secondary
     border: 1px solid lighten($secondary, 45%)
 
   /* Warning alert theme */
-  .alert-warning
+  &.alert-warning
     background: lighten($warning, 35%)
     color: darken($warning, 25%)
     border: 1px solid lighten($warning, 30%)
 
   /* Failure alert theme */
-  .alert-failure
+  &.alert-failure
     background: lighten($failure, 35%)
     color: darken($failure, 15%)
     border: 1px solid lighten($failure, 30%)
 
   /* Success alert theme */
-  .alert-success
+  &.alert-success
     background: lighten($success, 50%)
     color: darken($success, 15%)
     border: 1px solid lighten($success, 40%)
 
   // Primary border theming
-  .border-primary
+  &.border-primary
     border: 1px solid $primary !important
 
   // Secondary border theming
-  .border-secondary
+  &.border-secondary
     border: 1px solid $secondary !important
 
   // Warning border theming
-  .border-warning
+  &.border-warning
     border: 1px solid $warning !important
 
   // Failure border theming
-  .border-failure
+  &.border-failure
     border: 1px solid $failure !important
 
   // Success border theming
-  .border-success
+  &.border-success
     border: 1px solid $success !important
 
   // Text success styling
-  .text-success
+  &.text-success
     color: $success !important
 
   // Text failure styling
-  .text-failure
+  &.text-failure
     color: $failure !important
 
   // Table theming
-  .table-container
+  &.table-container
     display: flex
     flex-direction: column
 
@@ -545,7 +545,7 @@ $nav-text: #C7CBD1
             background-color: lighten($primary, 55%)
 
   // Tab styling
-  .tabs
+  &.tabs
     border-bottom: 1px solid #ced4da
     padding: calc(.5rem - 1px) 1rem
     display: flex
@@ -590,7 +590,7 @@ $nav-text: #C7CBD1
       border-radius: .25rem .25rem 0 0
 
   // Checkboxes
-  .check-container, .radio-container
+  &.check-container, .radio-container
     display: flex
     align-items: center
     justify-content: center
@@ -604,14 +604,14 @@ $nav-text: #C7CBD1
     -ms-user-select: none
     user-select: none
 
-  .check-container input
+  &.check-container input
     position: absolute
     opacity: 0
     cursor: pointer
     height: 0
     width: 0
 
-  .checkmark 
+  .checkmark
     position: absolute
     top: 0
     left: 0
@@ -619,18 +619,18 @@ $nav-text: #C7CBD1
     width: 25px
     background-color: darken(#eee, 10%)
 
-  .check-container:hover input ~ .checkmark
+  &.check-container:hover input ~ .checkmark
     background-color: #ccc
-  .check-container input:checked ~ .checkmark
+  &.check-container input:checked ~ .checkmark
     background-color: $primary
-  .checkmark:after 
+  .checkmark:after
     content: ""
     position: absolute
     display: none
 
-  .check-container input:checked ~ .checkmark:after
+  &.check-container input:checked ~ .checkmark:after
     display: block
-  .check-container .checkmark:after
+  &.check-container .checkmark:after
     left: 9px
     top: 5px
     width: 5px
@@ -747,20 +747,20 @@ $nav-text: #C7CBD1
         grid-column: 1
 
   /* The switch - the box around the slider */
-  .switch 
+  .switch
     position: relative
     display: inline-block
     width: 60px
     height: 28px
   
   /* Hide default HTML checkbox */
-  .switch input 
+  .switch input
     opacity: 0
     width: 0
     height: 0
   
   /* The slider */
-  .slider 
+  .slider
     position: absolute
     cursor: pointer
     top: 0
@@ -771,7 +771,7 @@ $nav-text: #C7CBD1
     -webkit-transition: .4s
     transition: .4s
   
-  .slider:before 
+  .slider:before
     position: absolute
     content: ""
     height: 20px
@@ -782,26 +782,26 @@ $nav-text: #C7CBD1
     -webkit-transition: .4s
     transition: .4s
   
-  input:checked + .slider 
+  input:checked + .slider
     background-color: $primary
   
-  input:focus + .slider 
+  input:focus + .slider
     box-shadow: 0 0 1px $primary
 
-  input:checked + .slider:before 
+  input:checked + .slider:before
     -webkit-transform: translateX(32px)
     -ms-transform: translateX(32px)
     transform: translateX(32px)
   
   /* Rounded sliders */
-  .slider.round 
+  .slider.round
     border-radius: 34px
   
-  .slider.round:before 
+  .slider.round:before
     border-radius: 50%
 
   // Card styling
-  .card
+  &.card
     margin: 1rem 0
 
     h4
@@ -818,7 +818,7 @@ $nav-text: #C7CBD1
       border-bottom: 1px solid #ced4da
       border-right: 1px solid #ced4da
 
-  .card-neutral
+  &.card-neutral
 
     .card-header
       background: lighten(#ced4da, 10%)
@@ -827,7 +827,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .card-primary
+  &.card-primary
 
     .card-header
       color: white
@@ -837,7 +837,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .card-secondary
+  &.card-secondary
 
     .card-header
       color: white
@@ -847,7 +847,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .card-warning
+  &.card-warning
 
     .card-header
       background: $warning
@@ -856,7 +856,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .card-success
+  &.card-success
 
     .card-header
       color: white
@@ -866,7 +866,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .card-failure
+  &.card-failure
 
     .card-header
       color: white
@@ -876,7 +876,7 @@ $nav-text: #C7CBD1
     .card-body
       background: white
 
-  .aui-list-group
+  &.list-group
     margin: 1rem 0
     padding: 0
     border: 1px solid #ced4da
@@ -913,7 +913,7 @@ $nav-text: #C7CBD1
       &:not(:last-child)
         border-bottom: 1px solid #ced4da
 
-  .aui-modal-container
+  &.modal-container
     position: absolute
     top: 0
     left: 0
@@ -925,7 +925,7 @@ $nav-text: #C7CBD1
     justify-content: center
     align-items: center
 
-    .aui-modal
+    .modal
       display: flex
       flex-direction: column
       z-index: 100
@@ -934,7 +934,7 @@ $nav-text: #C7CBD1
       &>*
         padding: 1.5rem
 
-      .aui-modal-header
+      .modal-header
         display: flex
         padding: 1.25rem 1.5rem
         justify-content: space-between
@@ -959,17 +959,17 @@ $nav-text: #C7CBD1
         h4
           margin: 0
 
-      .aui-modal-body
+      .modal-body
         background: #fff
         border-radius: 0 0 .25rem .25rem
 
-  .flex
+  &.flex
     display: flex
 
-  .right
+  &.right
     margin-left: auto
 
-  .wysiwyg-container
+  &.wysiwyg-container
 
     .wysiwyg-title
       display: block
