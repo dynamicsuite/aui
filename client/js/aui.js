@@ -305,7 +305,6 @@ Vue.component('aui-input', {
         dateMinimum() {
             if (this.min === 'today') {
                 let today = new Date().toISOString().slice(0, 10);
-                console.log(today);
                 return today;
             } else {
                 return this.min;
@@ -327,7 +326,7 @@ Vue.component('aui-select', {
     <div :id="id + '-container'" class="aui select-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="select-block">
-            <select :name="name" :id="id" :class="classes" :value="value" :disabled="disabled" v-model="value" @change="$emit('input', $event.target.value)">
+            <select :name="name" :id="id" :class="classes" :value="value" :disabled="disabled" @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)">
                 <option v-for="(element, key) in data" :value="key">{{element}}</option>
             </select>
         </div>
