@@ -211,6 +211,7 @@ $nav-text: #C7CBD1
         box-shadow: 0 0 0 1px rgba(0, 123, 255, .8)
         border-radius: .25rem
 
+
       input
         flex: 1
         font-size: 1rem
@@ -219,6 +220,13 @@ $nav-text: #C7CBD1
         border: 1px solid #ced4da
         align-self: flex-start
         height: calc(100% - 1rem)
+
+        &[type=date]
+          height: calc(1rem + 2px)
+          min-height: calc(1rem + 2px)
+
+          &:not(:disabled)
+            background: #fff
 
         &:focus
           outline: none
