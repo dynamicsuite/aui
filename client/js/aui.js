@@ -214,7 +214,7 @@ Vue.component('aui-input', {
             >
             <div class="trailing-element edge-element" :class="classFailure() + classSuccess()" v-if="trailing_text">{{trailing_text}}</div>
         </div>
-        <div class="subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
+        <div class="aui subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
     </div>`,
     props: {
         id: {
@@ -330,7 +330,7 @@ Vue.component('aui-select', {
                 <option v-for="(element, key) in data" :value="key">{{element}}</option>
             </select>
         </div>
-        <div class="subtext" v-if="subtext" >{{subtext}}</div>
+        <div class="aui subtext" v-if="subtext" >{{subtext}}</div>
     </div>`,
     props: {
         id: {
@@ -382,7 +382,7 @@ Vue.component('aui-datalist', {
                 @blur="$emit('blur')"
                 @input="$emit('input', $event.target.value)"
             >
-            <div class="subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
+            <div class="aui subtext" :class="subtextColorClass()" v-if="subtext">{{subtext}}</div>
             
             <datalist :id="id + '-datalist'">
                 <option v-for="option in current_options">{{option}}</option> 
@@ -786,7 +786,7 @@ Vue.component('aui-list-item', {
         <li class="aui list-item" :class="activeClass" @click="runCallback()">
             <span class="text">
                 <div class="title"><slot></slot></div>
-                <div class="subtext" v-if="subtext">{{subtext}}</div>
+                <div class="aui subtext" v-if="subtext">{{subtext}}</div>
             </span>
             <span class="icon" v-if="isActive()"></span>
         </li>`,
