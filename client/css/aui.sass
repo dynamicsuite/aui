@@ -221,9 +221,30 @@ $nav-text: #C7CBD1
         align-self: flex-start
         height: calc(100% - 1rem)
 
-        &[type=date]
+        &[type="date"]
           height: calc(1rem + 2px)
           min-height: calc(1rem + 2px)
+          position: relative
+
+          /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+          &::-webkit-calendar-picker-indicator
+            position: absolute
+            top: 0
+            left: 0
+            right: 0
+            bottom: 0
+            width: auto
+            height: auto
+            color: transparent
+            background: transparent
+
+          /* adjust increase/decrease button */
+          &::-webkit-inner-spin-button
+            z-index: 1
+
+          /* adjust clear button */
+          &::-webkit-clear-button
+            z-index: 1
 
           &:not(:disabled)
             background: #fff
@@ -1027,6 +1048,7 @@ $nav-text: #C7CBD1
       border-bottom: 1px solid #ced4da
       border-radius: 0 0 .25rem .25rem
       background: white
+      overflow-y: scroll
 
       &:focus
         outline: none
