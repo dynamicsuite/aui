@@ -42,7 +42,7 @@ Vue.component('aui-button', {
             if (this.loading) {
                 setTimeout(() => {
                     if (this.loading) this.show_spinner = true;
-                }, 200);
+                }, 100);
             }
             else {
                 this.show_spinner = false;
