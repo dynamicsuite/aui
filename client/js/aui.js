@@ -396,6 +396,8 @@ Vue.component('aui-datalist', {
                 :value="value"
                 :class="classes + classFailure() + classSuccess()"
                 :list="id + '-datalist'"
+                :failure="failure"
+                :success="success"
                 @keydown="$emit('keydown')"
                 @focus="$emit('focus')"
                 @blur="$emit('blur')"
@@ -443,6 +445,12 @@ Vue.component('aui-datalist', {
         },
         readonly: {
             type: Boolean
+        },
+        success: {
+            default: false
+        },
+        failure: {
+            default: false
         },
         subtext: {
             type: String
