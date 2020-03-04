@@ -28,6 +28,37 @@ $checkbox-hov: #CCC
 $header-text: #fff
 $nav-text: #C7CBD1
 
+@keyframes pulse-primary
+  from
+    background: $primary
+  to
+    background: none
+
+@keyframes pulse-secondary
+  from
+    background: $secondary
+  to
+    background: none
+
+@keyframes pulse-warning
+  from
+    background: $warning
+  to
+    background: none
+
+@keyframes pulse-success
+  from
+    background: $success
+  to
+    background: none
+
+@keyframes pulse-failure
+  from
+    background: $failure
+  to
+    background: none
+
+
 [v-cloak]
   display: none !important
 
@@ -977,7 +1008,9 @@ $nav-text: #C7CBD1
       flex-direction: column
       z-index: 100
       max-width: 600px
+      max-height: 80%
       margin: 0 .5rem
+
       &>*
         padding: 1.5rem
 
@@ -1009,6 +1042,7 @@ $nav-text: #C7CBD1
       .modal-body
         background: #fff
         border-radius: 0 0 .25rem .25rem
+        overflow-y: scroll
 
   &.flex
     display: flex
@@ -1064,3 +1098,14 @@ $nav-text: #C7CBD1
         margin: 0
         padding: 0
         overflow-wrap: break-spaces
+
+  .pulse-primary
+    animation: pulse-primary .75s linear
+  .pulse-secondary
+    animation: pulse-secondary .75s linear
+  .pulse-warning
+    animation: pulse-warning .75s linear
+  .pulse-success
+    animation: pulse-success .75s linear
+  .pulse-failure
+    animation: pulse-failure .75s linear

@@ -725,13 +725,7 @@ Vue.component('aui-alert', {
     }
 });
 Vue.component('aui-badge', {
-    template: `<span class="aui badge" :class="classes"><slot></slot></span>`,
-    props: {
-        classes: {
-            type: String,
-            required: true
-        }
-    }
+    template: `<span class="aui badge"><slot></slot></span>`
 });
 Vue.component('aui-card', {
     template: `
