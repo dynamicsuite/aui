@@ -332,7 +332,6 @@ Vue.component('aui-input', {
         dateMaximum() {
             if (this.max === 'today') {
                 let today = new Date().toISOString().slice(0, 10);
-                console.log(today);
                 return today;
             } else {
                 return this.max;
@@ -871,12 +870,20 @@ Vue.component('aui-wysiwyg', {
         },
         title: {
             type: String
+        },
+        text: {
+            required: true
+        }
+    },
+    data() {
+        return {
+            editor: null
         }
     },
     mounted: function() {
         const comp = this;
 
-        pell.init({
+        comp.editor = pell.init({
             element: document.getElementById(comp.id),
             defaultParagraphSeparator: "p",
             styleWithCSS: true,
@@ -891,5 +898,14 @@ Vue.component('aui-wysiwyg', {
                 selected: "pell-button-selected",
             },
         });
+
+        comp.editor.content.innerHTML = comp.text;
+    },
+    watch: {
+        text() {
+            if (this.editor.content.innerHTML === '') {
+                this.editor.content.innerHTML = this.text;
+            }
+        }
     }
 });
