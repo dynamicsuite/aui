@@ -1016,7 +1016,7 @@ $nav-text: #C7CBD1
 
       .modal-header
         display: flex
-        padding: 1.25rem 1.5rem
+        padding: .75rem 1.5rem
         justify-content: space-between
         border-bottom: 1px solid #ced4da
         border-radius: .25rem .25rem 0 0
@@ -1038,6 +1038,18 @@ $nav-text: #C7CBD1
 
         h4
           margin: 0
+          display: flex
+          justify-content: center
+          align-items: center
+
+        .fa.fa-times
+          padding: .5rem .7rem
+          cursor: pointer
+          border-radius: 50%
+
+          &:hover
+            background: rgba(0,0,0,.2)
+
 
       .modal-body
         background: #fff
