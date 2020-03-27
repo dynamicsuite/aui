@@ -17,7 +17,7 @@
  */
 Vue.component('aui-button', {
     template: `
-        <button class="btn aui" :class="classes" :disabled="loading" @click="$emit('click')">
+        <button class="btn aui" :disabled="loading" @click="$emit('click')">
             <span v-if="isDelayed()">
                 <i class="fa fa-spin fa-circle-notch loading-icon"></i>
                 <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
@@ -26,7 +26,7 @@ Vue.component('aui-button', {
             <slot v-else></slot>
         </button>`,
     props: {
-        classes: {
+        e534: {
             type: String
         },
         loading: {
@@ -59,7 +59,7 @@ Vue.component('aui-button', {
 });
 Vue.component('aui-button-drop', {
     template: `
-        <button class="aui btn btn-dropdown" :class="classes" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
+        <button class="aui btn btn-dropdown" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
             <slot></slot>
             <i :class="icon_classes"></i>
             <ul class="dropdown-menu" :class="menu_align" v-if="menu_active">
@@ -694,7 +694,7 @@ Vue.component('aui-tabs', {
 });
 Vue.component('aui-alert', {
     template: `
-    <div class="aui alert" :class="classes" v-if="visible">
+    <div class="aui alert" v-if="visible">
         <span class="title-bar" v-if="title" >
             <h4 class="alert-title">{{title}}</h4>
             <i class="fa fa-times" v-if="close" @click="$emit('click')"></i>
@@ -711,9 +711,6 @@ Vue.component('aui-alert', {
         title: {
             type: String
         },
-        classes: {
-            type: String
-        },
         close: {
             type: Boolean,
             default: true
@@ -728,7 +725,7 @@ Vue.component('aui-badge', {
 });
 Vue.component('aui-card', {
     template: `
-    <div class="aui card" :class="classes">
+    <div class="aui card">
         <div class="card-header">{{header}}</div>
         <div class="card-body">
             <h4>{{title}}</h4>
@@ -744,10 +741,6 @@ Vue.component('aui-card', {
         },
         title: {
             type: String
-        },
-        classes: {
-            type: String,
-            required: true
         }
     }
 });
@@ -872,7 +865,7 @@ Vue.component('aui-wysiwyg', {
             type: String
         },
         text: {
-            required: true
+            default: ''
         }
     },
     data() {
