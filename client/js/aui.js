@@ -60,7 +60,7 @@ Vue.component('aui-button', {
 Vue.component('aui-button-drop', {
     template: `
         <button class="aui btn btn-dropdown" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
-            <slot></slot>
+            <span v-if="$slots.default"><slot></slot></span>
             <i :class="icon_classes"></i>
             <ul class="dropdown-menu" :class="menu_align" v-if="menu_active">
                 <li v-for="option in options" @click="doAction(option.action)">{{option.label}}</li>
@@ -225,6 +225,7 @@ Vue.component('aui-input', {
                 :value="value"
                 :min="dateMinimum()"
                 :max="dateMaximum()"
+                :autocomplete="autocomplete"
                 @keydown="$emit('keydown', $event.target)"
                 @change="$emit('change', $event.target)"
                 @focus="$emit('focus', $event.target)"
@@ -299,6 +300,10 @@ Vue.component('aui-input', {
         },
         max: {
             type: String | Number
+        },
+        autocomplete: {
+            type: String,
+            default: 'on'
         }
 
     },
@@ -637,7 +642,15 @@ Vue.component('aui-tab', {
 Vue.component('aui-tabs', {
     template: `
     <div class="aui tabs">
-        <aui-tab v-for="option in options" :active="option.active" :label="option.label" :action="option.action" @click="setActive(option)" v-if="showTabs"></aui-tab>
+        <aui-tab 
+            v-for="(option, index) in options" 
+            :key="index" :active="option.active" 
+            :label="option.label" 
+            :action="option.action" 
+            @click="setActive(option)" 
+            v-if="showTabs"
+        >
+        </aui-tab>
         <aui-button-drop :options="options" v-if="!showTabs" menu_align="right">{{getActive()}}</aui-button-drop>
     </div>`,
     props: {
@@ -841,7 +854,7 @@ Vue.component('aui-list-item', {
 Vue.component('aui-list-group', {
     template: `
     <ul class="aui list-group">
-        <aui-list-item v-for="item in data" :callback="item.callback" :subtext="item.subtext">{{item.content}}</aui-list-item>
+        <aui-list-item v-for="(item, index) in data" :key="index" :callback="item.callback" :subtext="item.subtext">{{item.content}}</aui-list-item>
     </ul>`,
     props: {
         data: {
