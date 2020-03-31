@@ -134,14 +134,19 @@ Vue.component('aui-table', {
                     </th>
                 </tr>
                 <tr v-else>
-                    <th v-for="(value, key) in current_data[0]">
+                    <th v-for="(value, key) in current_data[0].values" v-if="subsetAllowed(key)">
                         {{key}}
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="element in current_data">
-                    <td v-for="value in element">
+                <tr v-for="element in current_data" v-if="element.action" @click="element.action">
+                    <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
+                        {{value}}
+                    </td>
+                </tr>
+                <tr v-for="element in current_data" v-if="!element.action">
+                    <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
                         {{value}}
                     </td>
                 </tr>
@@ -154,9 +159,12 @@ Vue.component('aui-table', {
             type: Array,
             required: true
         },
-        headers: {
+        subset: {
             type: Array,
-            required: true
+            default: null
+        },
+        headers: {
+            type: Array
         },
         search: {
             type: Boolean
@@ -207,6 +215,13 @@ Vue.component('aui-table', {
         }
     },
     methods: {
+        subsetAllowed(key) {
+            if (this.subset === null) {
+                return true;
+            } else {
+                return this.subset.includes(key);
+            }
+        }
     }
 });
 Vue.component('aui-input', {
@@ -215,7 +230,7 @@ Vue.component('aui-input', {
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
             <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
-            <input :id="id" 
+            <input :id="id"
                 :type="type" 
                 :name="name"
                 :placeholder="placeholder"
