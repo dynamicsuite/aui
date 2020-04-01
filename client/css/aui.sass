@@ -28,6 +28,12 @@ $checkbox-hov: #CCC
 $header-text: #fff
 $nav-text: #C7CBD1
 
+@mixin som-container
+  background: darken(#e9ecef, 3%)
+  padding: 1rem
+  margin-bottom: 1rem
+  border-radius: .25rem
+
 @keyframes pulse-primary
   from
     background: $primary
@@ -590,6 +596,7 @@ $nav-text: #C7CBD1
 
   // Table theming
   &.table-container
+    @include som-container
     display: flex
     flex-direction: column
 
