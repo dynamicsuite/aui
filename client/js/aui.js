@@ -592,7 +592,7 @@ Vue.component('aui-checkbox', {
 });
 Vue.component('aui-toggle', {
     template: `
-    <div class="aui flex">
+    <div class="aui aui-toggle flex">
         <span class="switch-container" :class="label_location">
             <label>{{label}}</label>
             <label class="switch">
