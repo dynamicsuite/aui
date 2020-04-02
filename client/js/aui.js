@@ -932,27 +932,15 @@ Vue.component('aui-wysiwyg', {
 });
 Vue.component('aui-pagination', {
     template: `<div class="aui aui-pagination">
-        Showing {{from}} to {{to}} of {{total}} {{name}}
-        <aui-button class="btn-secondary"><i class="fa fa-arrow-left"></i></aui-button>
-        <aui-button class="btn-secondary"><i class="fa fa-chevron-left"></i></aui-button>
+        <span v-if="total">Showing {{from}} to {{to}} of {{total}} {{name}}</span>
+        <aui-button class="btn-secondary" @click="first()"><i class="fa fa-arrow-left"></i></aui-button>
+        <aui-button class="btn-secondary" @click="previous()"><i class="fa fa-chevron-left"></i></aui-button>
         {{page}}
-        <aui-button class="btn-secondary"><i class="fa fa-chevron-right"></i></aui-button>
-        <aui-button class="btn-secondary"><i class="fa fa-arrow-right"></i></aui-button>
+        <aui-button class="btn-secondary" @click="next()"><i class="fa fa-chevron-right"></i></aui-button>
+        <aui-button class="btn-secondary" @click="last()"><i class="fa fa-arrow-right"></i></aui-button>
     </div>`,
     props: {
-        page: {
-            type: Number,
-            required: true
-        },
         pages: {
-            type: Number,
-            required: true
-        },
-        from: {
-            type: Number,
-            required: true
-        },
-        to: {
             type: Number,
             required: true
         },
@@ -960,24 +948,49 @@ Vue.component('aui-pagination', {
             type: Number,
             required: true
         },
-        name: {
-            type: String
-        }
+        limit: Number,
+        name: String
     },
     data() {
         return {
-
+            page: 1,
+            to: 0,
+            from: 0
         }
     },
     methods: {
-        emitPage(increment) {
-            this.$emit('page-change', increment)
+        first() {
+            this.page = 1;
+            this.emitPage();
         },
-        emitToFirst() {
-            this.emitPage(1);
+        previous() {
+            const previous = this.page - 1;
+            if (previous > 0) {
+                this.page = previous;
+                this.emitPage();
+            }
         },
-        emitToLast() {
-            this.emitPage(this.pages);
+        next() {
+            const next = this.page + 1;
+            if (next <= this.pages) {
+                this.page = next;
+                this.emitPage();
+            }
+        },
+        last() {
+            this.page = this.pages;
+            this.emitPage();
+        },
+        updateRange() {
+            this.from = ((this.page - 1) * this.limit) + 1;
+            this.to = this.from + this.limit - 1;
+            if (this.to > this.total) {
+                this.to = this.total;
+            }
+        },
+        emitPage() {
+            this.updateRange();
+            this.$emit('change', this.page);
         }
     }
 });
