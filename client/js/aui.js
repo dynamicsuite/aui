@@ -930,3 +930,54 @@ Vue.component('aui-wysiwyg', {
         }
     }
 });
+Vue.component('aui-pagination', {
+    template: `<div class="aui aui-pagination">
+        Showing {{from}} to {{to}} of {{total}} {{name}}
+        <aui-button class="btn-secondary"><i class="fa fa-arrow-left"></i></aui-button>
+        <aui-button class="btn-secondary"><i class="fa fa-chevron-left"></i></aui-button>
+        {{page}}
+        <aui-button class="btn-secondary"><i class="fa fa-chevron-right"></i></aui-button>
+        <aui-button class="btn-secondary"><i class="fa fa-arrow-right"></i></aui-button>
+    </div>`,
+    props: {
+        page: {
+            type: Number,
+            required: true
+        },
+        pages: {
+            type: Number,
+            required: true
+        },
+        from: {
+            type: Number,
+            required: true
+        },
+        to: {
+            type: Number,
+            required: true
+        },
+        total: {
+            type: Number,
+            required: true
+        },
+        name: {
+            type: String
+        }
+    },
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+        emitPage(increment) {
+            this.$emit('page-change', increment)
+        },
+        emitToFirst() {
+            this.emitPage(1);
+        },
+        emitToLast() {
+            this.emitPage(this.pages);
+        }
+    }
+});
