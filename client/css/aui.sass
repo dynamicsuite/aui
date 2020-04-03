@@ -1125,16 +1125,14 @@ $nav-text: #C7CBD1
   &.aui-pagination
     display: flex
     align-items: center
+    justify-content: flex-end
 
-    .btn
-      font-size: .6rem
+    .btn-group
       margin: 0 .5rem
+      display: block
 
-      &:first-of-type
-        margin: 0 0 0 .75rem
-
-      &:last-of-type
-        margin: 0
+      *
+        font-size: .6rem
 
   .pulse-primary
     animation: pulse-primary .75s linear
