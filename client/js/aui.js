@@ -152,6 +152,7 @@ Vue.component('aui-table', {
                 </tr>
             </tbody>
         </table>
+        <div class="no-data" if="current_data.length === 0">No Data</div>
     </div>
     `,
     props: {
