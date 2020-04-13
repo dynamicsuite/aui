@@ -188,7 +188,7 @@ $nav-text: #C7CBD1
     .btn
       border-radius: 0
       border-left: 1px solid rgba(0,0,0,.15)
-      margin: 0 -.25rem
+      margin: 0 -1px
 
       &:not(.btn-dropdown)
         flex: 1
@@ -196,11 +196,11 @@ $nav-text: #C7CBD1
     .btn:first-of-type
       border-radius: .25rem 0 0 .25rem
       border: 0
-      margin: 0 -.25rem 0 0
+      margin: 0
 
     .btn:last-of-type
       border-radius: 0 .25rem .25rem 0
-      margin: 0 0 0 -.25rem
+      margin: 0
 
   // Dropdown styling
   &.btn-dropdown
@@ -612,6 +612,12 @@ $nav-text: #C7CBD1
 
     .input-container
       align-self: flex-start
+
+    .no-data
+      text-align: center
+      margin: .5rem 0 0 0
+      background-color: rgba(255,255,255,.6)
+      padding: .5rem 0
 
     .table
       border-collapse: collapse
@@ -1126,16 +1132,23 @@ $nav-text: #C7CBD1
   &.aui-pagination
     display: flex
     align-items: center
+    justify-content: flex-end
 
-    .btn
-      font-size: .6rem
+    .btn-group
       margin: 0 .5rem
+      display: block
 
-      &:first-of-type
-        margin: 0 0 0 .75rem
+      .btn
+        font-size: .6rem
 
-      &:last-of-type
-        margin: 0
+        &:not(:first-of-type), &:not(:last-of-type)
+          margin: 0 -2px
+
+        &:first-of-type
+          margin: 0 -3px 0 0
+
+        &:last-of-type
+          margin: 0 0 0 -3px
 
   .pulse-primary
     animation: pulse-primary .75s linear

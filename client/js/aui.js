@@ -152,6 +152,7 @@ Vue.component('aui-table', {
                 </tr>
             </tbody>
         </table>
+        <div class="no-data" if="current_data.length === 0">No Data</div>
     </div>
     `,
     props: {
@@ -933,11 +934,13 @@ Vue.component('aui-wysiwyg', {
 Vue.component('aui-pagination', {
     template: `<div class="aui aui-pagination">
         <span v-if="total">Showing {{from}} to {{to}} of {{total}} {{name}}</span>
-        <aui-button class="btn-secondary" @click="first()"><i class="fa fa-arrow-left"></i></aui-button>
-        <aui-button class="btn-secondary" @click="previous()"><i class="fa fa-chevron-left"></i></aui-button>
-        {{page}}
-        <aui-button class="btn-secondary" @click="next()"><i class="fa fa-chevron-right"></i></aui-button>
-        <aui-button class="btn-secondary" @click="last()"><i class="fa fa-arrow-right"></i></aui-button>
+        <div class="aui btn-group">
+            <aui-button class="btn-secondary" @click="first()" v-if="page > 1"><i class="fa fa-arrow-left"></i></aui-button>
+            <aui-button class="btn-secondary" @click="previous()" v-if="page > 1">{{page - 1}}</aui-button>
+            <aui-button class="btn-secondary">{{page}}</aui-button>
+            <aui-button class="btn-secondary" @click="next()" v-if="page !== pages">{{page + 1}}</aui-button>
+            <aui-button class="btn-secondary" @click="last()" v-if="page !== pages"><i class="fa fa-arrow-right"></i></aui-button>
+        </div>
     </div>`,
     props: {
         pages: {
