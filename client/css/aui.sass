@@ -531,7 +531,7 @@ $nav-text: #C7CBD1
 
     .title-bar
       display: flex
-      justify-content: space-between
+      justify-content: center
 
       .alert-title
         font-size: 1.5rem
@@ -669,18 +669,24 @@ $nav-text: #C7CBD1
       -webkit-touch-callout: none
       -webkit-user-select: none
 
-    .tab:not(.active)
-      border-left: 1px solid rgba(255,255,255,0)
-      border-top: 1px solid rgba(255,255,255,0)
-      border-right: 1px solid rgba(255,255,255,0)
+      &:not(.active)
+        border-left: 1px solid rgba(255,255,255,0)
+        border-top: 1px solid rgba(255,255,255,0)
+        border-right: 1px solid rgba(255,255,255,0)
 
-    .tab.active
-      background: whitesmoke
-      border-bottom: 1px solid whitesmoke
-      border-left: 1px solid #ced4da
-      border-top: 1px solid #ced4da
-      border-right: 1px solid #ced4da
-      border-radius: .25rem .25rem 0 0
+      &.active
+        background: whitesmoke
+        border-bottom: 1px solid whitesmoke
+        border-left: 1px solid #ced4da
+        border-top: 1px solid #ced4da
+        border-right: 1px solid #ced4da
+        border-radius: .25rem .25rem 0 0
+
+      &.disabled
+        color: #777
+
+        &:hover
+          cursor: not-allowed
 
   // Checkboxes
   &.check-container, .radio-container

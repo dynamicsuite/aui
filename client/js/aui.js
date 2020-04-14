@@ -638,13 +638,24 @@ Vue.component('aui-tab', {
         },
         action: {
             type: String | Function
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
     methods: {
         getActiveClass() {
-            return (this.active) ? 'active' : '';
+            let classes = this.active ? 'active' : '';
+            if (this.disabled) {
+                classes += ' disabled';
+            }
+            return classes;
         },
         doAction() {
+            if (this.disabled) {
+                return;
+            }
             if (typeof(this.action) === 'string') {
                 window.open(this.action);
             } else if (typeof(this.action) === 'function') {
@@ -662,7 +673,8 @@ Vue.component('aui-tabs', {
             v-for="(option, index) in options" 
             :key="index" :active="option.active" 
             :label="option.label" 
-            :action="option.action" 
+            :action="option.action"
+            :disabled="option.disabled"
             @click="setActive(option)" 
             v-if="showTabs"
         >
@@ -683,6 +695,9 @@ Vue.component('aui-tabs', {
     },
     methods: {
         setActive(new_active) {
+            if (new_active.disabled) {
+                return;
+            }
             this.options.forEach((option) => {
                 option.active = false;
             });
