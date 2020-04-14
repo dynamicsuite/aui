@@ -20,21 +20,19 @@ Vue.component('aui-button', {
         <button class="btn aui" :disabled="loading" @click="$emit('click')">
             <span v-if="isDelayed()">
                 <i class="fa fa-spin fa-circle-notch loading-icon"></i>
-                <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
+                <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
                 <slot v-else></slot>
             </span>
             <slot v-else></slot>
         </button>`,
     props: {
-        e534: {
-            type: String
-        },
         loading: {
             type: Boolean,
             default: false
         },
         loading_text: {
-            type: String
+            type: String,
+            default: null
         }
     },
     methods: {
@@ -49,6 +47,11 @@ Vue.component('aui-button', {
             }
 
             return this.show_spinner;
+        }
+    },
+    computed: {
+        has_loading_text() {
+            return typeof this.loading_text === 'string';
         }
     },
     data: function() {
