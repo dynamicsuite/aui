@@ -377,7 +377,8 @@ Vue.component('aui-select', {
                 @input="$emit('input', $event.target.value)" 
                 @change="$emit('change', $event.target.value)"
             >
-                <option v-for="(element, key) in options" :value="key" :selected="isSelected(key)">{{element}}</option>
+                <option v-if="us_states" v-for="(element, key) in states" :value="key" :selected="isSelected(key)">{{element}}</option>
+                <option v-if="!us_states" v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
             </select>
         </div>
         <div class="aui subtext" v-if="subtext" >{{subtext}}</div>
@@ -417,7 +418,6 @@ Vue.component('aui-select', {
     },
     data() {
         return {
-            options: {},
             states: {
                 '0': '',
                 'AL': 'Alabama',
@@ -486,9 +486,6 @@ Vue.component('aui-select', {
        isSelected(key) {
            return key == this.value;
        }
-    },
-    mounted() {
-        this.options = this.us_states ? this.states : this.data;
     }
 });
 Vue.component('aui-datalist', {
