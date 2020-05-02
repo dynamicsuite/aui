@@ -262,8 +262,7 @@ Vue.component('aui-input', {
     </div>`,
     props: {
         id: {
-            type: String,
-            required: true
+            type: String
         },
         title: {
             type: String
