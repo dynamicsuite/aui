@@ -233,20 +233,25 @@ Vue.component('aui-input', {
     <div :id="id + '-container'" class="aui input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
-            <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
-            <input :id="id"
+            <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text" v-html="leading_text"></div>
+            <input
+                :id="id"
+                ref="input"
                 :type="type" 
                 :name="name"
                 :placeholder="placeholder"
+                :tabindex="tabindex"
                 :disabled="disabled"
                 :readonly="readonly"
                 :class="classes + classFailure() + classSuccess()"
                 :value="value"
-                :min="dateMinimum()"
-                :max="dateMaximum()"
+                :step="step"
+                :min="min"
+                :max="max"
                 :autocomplete="autocomplete"
-                @keydown="$emit('keydown', $event.target)"
+                @keydown="$emit('keydown', $event)"
                 @change="$emit('change', $event.target)"
+                @select="$emit('select', $event.target)"
                 @focus="$emit('focus', $event.target)"
                 @blur="$emit('blur', $event.target)"
                 @input="$emit('input', $event.target.value)"
@@ -275,6 +280,9 @@ Vue.component('aui-input', {
         },
         placeholder: {
             type: String
+        },
+        tabindex: {
+            type: String | Number
         },
         leading_text: {
             type: String
@@ -314,6 +322,9 @@ Vue.component('aui-input', {
         value: {
             type: String | Number
         },
+        step: {
+            type: String | Number
+        },
         min: {
             type: String | Number
         },
@@ -326,11 +337,13 @@ Vue.component('aui-input', {
         }
 
     },
-    data: function() {
-        return {
-        }
-    },
     methods: {
+        focus() {
+            this.$refs.input.focus();
+        },
+        select() {
+            this.$refs.input.select();
+        },
         classSuccess() {
             return (this.success) ? ' border-success' : '' ;
         },
