@@ -17,7 +17,7 @@
  */
 Vue.component('aui-button', {
     template: `
-        <button class="btn aui" :disabled="is_disabled" @click="$emit('click')">
+        <button :class="classes" :disabled="is_disabled" @click="$emit('click')">
             <span v-if="isDelayed()">
                 <i class="fa fa-spin fa-circle-notch loading-icon"></i>
                 <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
@@ -59,11 +59,29 @@ Vue.component('aui-button', {
         },
         is_disabled() {
             return this.loading || this.disabled;
+        },
+        classes() {
+            return {
+                aui: true,
+                btn: true,
+                'btn-primary': this.default_class
+            }
         }
     },
     data: function() {
         return {
-            show_spinner: false
+            show_spinner: false,
+            default_class: false
+        }
+    },
+    mounted() {
+        if (
+            !this.$el.classList.contains('btn-secondary') &&
+            !this.$el.classList.contains('btn-success') &&
+            !this.$el.classList.contains('btn-warning') &&
+            !this.$el.classList.contains('btn-failure')
+        ) {
+            this.default_class = true;
         }
     }
 });
@@ -390,7 +408,7 @@ Vue.component('aui-select', {
             <select 
                 :name="name" 
                 :id="id" 
-                :class="classes" 
+                :class="classes + classFailure() + classSuccess()"
                 :value="value" 
                 :disabled="disabled" 
                 @input="$emit('input', $event.target.value)" 
@@ -400,7 +418,7 @@ Vue.component('aui-select', {
                 <option v-if="!us_states" v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
             </select>
         </div>
-        <div class="aui subtext" v-if="subtext" >{{subtext}}</div>
+        <div class="aui subtext" :class="subtextColorClass()" v-if="subtext" >{{subtext}}</div>
     </div>`,
     props: {
         id: {
@@ -421,6 +439,12 @@ Vue.component('aui-select', {
         },
         subtext: {
             type: String
+        },
+        success: {
+            type: Boolean
+        },
+        failure: {
+            default: false
         },
         classes: {
             type: String,
@@ -502,9 +526,20 @@ Vue.component('aui-select', {
         }
     },
     methods: {
-       isSelected(key) {
+        isSelected(key) {
            return key == this.value;
-       }
+        },
+        classSuccess() {
+            return (this.success) ? ' border-success' : '' ;
+        },
+        classFailure() {
+            return (this.failure) ? ' border-failure' : '' ;
+        },
+        subtextColorClass() {
+            if (this.success) return 'text-success';
+            if (this.failure) return 'text-failure';
+            return '';
+        },
     }
 });
 Vue.component('aui-datalist', {
@@ -673,13 +708,17 @@ Vue.component('aui-checkbox', {
     template: `
         <label class="aui check-container">
             <slot></slot>
-            <input type="checkbox" :checked="checked" @change="$emit('input', $event.target.checked)">
+            <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
             <span class="checkmark"></span>
         </label>
         `,
     props: {
         checked: {
             type: Boolean
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     }
 });
@@ -849,7 +888,7 @@ Vue.component('aui-alert', {
         },
         close: {
             type: Boolean,
-            default: true
+            default: false
         },
         visible: {
             default: true
