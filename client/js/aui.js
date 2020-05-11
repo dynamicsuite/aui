@@ -965,7 +965,7 @@ Vue.component('aui-modal', {
     },
     watch: {
         state() {
-            if (this.state) {
+            if (this.state && document.getElementById('ds-nav-container') && document.getElementById('ds-view-header')) {
                 document.getElementById('ds-nav-container').style.zIndex = '0';
                 document.getElementById('ds-view-header').style.zIndex = '-1';
                 document.getElementById('ds-nav-container').classList.remove("ds-nav-show-mobile")
