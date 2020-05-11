@@ -28,6 +28,12 @@ $checkbox-hov: #CCC
 $header-text: #fff
 $nav-text: #C7CBD1
 
+@mixin som-container
+  background: darken(#e9ecef, 3%)
+  padding: 1rem
+  margin-bottom: 1rem
+  border-radius: .25rem
+
 @keyframes pulse-primary
   from
     background: $primary
@@ -57,7 +63,6 @@ $nav-text: #C7CBD1
     background: $failure
   to
     background: none
-
 
 [v-cloak]
   display: none !important
@@ -178,12 +183,12 @@ $nav-text: #C7CBD1
       background: lighten($failure, 20%)
 
   // Button groups
-  &.btn-group
+  .btn-group
     display: flex
     .btn
       border-radius: 0
       border-left: 1px solid rgba(0,0,0,.15)
-      margin: 0 -.25rem
+      margin: 0 -1px
 
       &:not(.btn-dropdown)
         flex: 1
@@ -191,18 +196,25 @@ $nav-text: #C7CBD1
     .btn:first-of-type
       border-radius: .25rem 0 0 .25rem
       border: 0
-      margin: 0 -.25rem 0 0
+      margin: 0
 
     .btn:last-of-type
       border-radius: 0 .25rem .25rem 0
-      margin: 0 0 0 -.25rem
+      margin: 0
 
   // Dropdown styling
-  &.btn-dropdown
+  .btn-dropdown
     position: relative
 
     &:focus
       outline: none
+
+    span
+      margin-right: .5rem
+
+    i
+      margin: 0 !important
+      font-size: 0.9rem
 
     .dropdown-menu
       position: absolute
@@ -296,11 +308,6 @@ $nav-text: #C7CBD1
           margin: 0
 
       input.border-success
-        padding-right: 2.5rem !important
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
-        background-repeat: no-repeat
-        background-position: right .5rem center
-        background-size: 1.5rem
         border: 1px solid $success
 
         .leading-element
@@ -313,12 +320,14 @@ $nav-text: #C7CBD1
           border-top: 1px solid $success
           border-bottom: 1px solid $success
 
+        &:not(.no-background-icon)
+          padding-right: 2.5rem !important
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+          background-repeat: no-repeat
+          background-position: right .5rem center
+          background-size: 1.5rem
+
       input.border-failure
-        padding-right: 2.5rem !important
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
-        background-repeat: no-repeat
-        background-position: right .5rem center
-        background-size: 1.5rem
         border: 1px solid $failure
 
         .leading-element
@@ -330,6 +339,13 @@ $nav-text: #C7CBD1
           border-right: 1px solid $failure
           border-top: 1px solid $failure
           border-bottom: 1px solid $failure
+
+        &:not(.no-background-icon)
+          padding-right: 2.5rem !important
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
+          background-repeat: no-repeat
+          background-position: right .5rem center
+          background-size: 1.5rem
 
       input.caps
         border-radius: 0 !important
@@ -409,6 +425,12 @@ $nav-text: #C7CBD1
       -moz-appearance: none
       background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ced4da'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat calc(100% - 10px) 65%
       background-size: 12px
+
+      &.border-success
+        border: 1px solid $success
+
+      &.border-failure
+        border: 1px solid $failure
 
       &:focus
         outline: none
@@ -520,7 +542,7 @@ $nav-text: #C7CBD1
 
     .title-bar
       display: flex
-      justify-content: space-between
+      justify-content: center
 
       .alert-title
         font-size: 1.5rem
@@ -585,6 +607,7 @@ $nav-text: #C7CBD1
 
   // Table theming
   &.table-container
+    @include som-container
     display: flex
     flex-direction: column
 
@@ -601,6 +624,12 @@ $nav-text: #C7CBD1
     .input-container
       align-self: flex-start
 
+    .no-data
+      text-align: center
+      margin: .5rem 0 0 0
+      background-color: rgba(255,255,255,.6)
+      padding: .5rem 0
+
     .table
       border-collapse: collapse
       width: 100%
@@ -610,10 +639,7 @@ $nav-text: #C7CBD1
         padding: .5rem 1rem
 
       tbody tr:nth-child(odd)
-        background-color: lighten($primary, 60%)
-
-      tbody tr:nth-child(even)
-        background-color: #fff
+        background-color: rgba(255,255,255,.6)
 
       &.interactive
         tbody tr
@@ -632,40 +658,46 @@ $nav-text: #C7CBD1
       margin-bottom: -.5rem
 
     .btn
-      background: white
+      background: whitesmoke
+      border-bottom: 1px solid whitesmoke
       border-left: 1px solid #ced4da
       border-top: 1px solid #ced4da
       border-right: 1px solid #ced4da
       border-radius: .25rem .25rem 0 0
-      margin-left: auto
       z-index: 2
-      border-bottom: 1px solid white
       height: 40px
 
       .dropdown-menu
         border-radius: 0 0 .25rem .25rem
 
     .tab
-      padding: .5rem 1rem
+      padding: calc(0.5rem + 2px) 1rem
       margin-right: 1rem
+      font-size: 1rem
       cursor: pointer
       white-space: nowrap
       user-select: none
       -webkit-touch-callout: none
       -webkit-user-select: none
 
-    .tab:not(.active)
-      border-left: 1px solid rgba(255,255,255,0)
-      border-top: 1px solid rgba(255,255,255,0)
-      border-right: 1px solid rgba(255,255,255,0)
+      &:not(.active)
+        border-left: 1px solid rgba(255,255,255,0)
+        border-top: 1px solid rgba(255,255,255,0)
+        border-right: 1px solid rgba(255,255,255,0)
 
-    .tab.active
-      background: white
-      border-left: 1px solid #ced4da
-      border-top: 1px solid #ced4da
-      border-right: 1px solid #ced4da
-      border-bottom: 1px solid white
-      border-radius: .25rem .25rem 0 0
+      &.active
+        background: whitesmoke
+        border-bottom: 1px solid whitesmoke
+        border-left: 1px solid #ced4da
+        border-top: 1px solid #ced4da
+        border-right: 1px solid #ced4da
+        border-radius: .25rem .25rem 0 0
+
+      &.disabled
+        color: #777
+
+        &:hover
+          cursor: not-allowed
 
   // Checkboxes
   &.check-container, .radio-container
@@ -697,10 +729,16 @@ $nav-text: #C7CBD1
     width: 25px
     background-color: darken(#eee, 10%)
 
+  .checkmark:disabled
+    background: $secondary !important
+
   &.check-container:hover input ~ .checkmark
     background-color: #ccc
-  &.check-container input:checked ~ .checkmark
+  &.check-container input:checked:not(disabled) ~ .checkmark
     background-color: $primary
+  &.check-container input:checked:disabled ~ .checkmark
+    background-color: $secondary
+
   .checkmark:after
     content: ""
     position: absolute
@@ -767,12 +805,12 @@ $nav-text: #C7CBD1
   .switch-container
     display: grid
     grid-gap: .5rem
+    width: 100%
 
     label
       display: flex
 
     &.top
-      grid-template-columns: 3.75rem auto
       margin-top: .5rem
 
       label
@@ -783,9 +821,9 @@ $nav-text: #C7CBD1
       .switch
         grid-row: 2
         grid-column: 1
+        justify-self: center
 
     &.bottom
-      grid-template-columns: 3.75rem auto
       margin-bottom: .5rem
 
       label
@@ -1110,6 +1148,27 @@ $nav-text: #C7CBD1
         margin: 0
         padding: 0
         overflow-wrap: break-spaces
+
+  &.aui-pagination
+    display: flex
+    align-items: center
+    justify-content: flex-end
+
+    .btn-group
+      margin: 0 .5rem
+      display: block
+
+      .btn
+        font-size: .6rem
+
+        &:not(:first-of-type), &:not(:last-of-type)
+          margin: 0 -2px
+
+        &:first-of-type
+          margin: 0 -3px 0 0
+
+        &:last-of-type
+          margin: 0 0 0 -3px
 
   .pulse-primary
     animation: pulse-primary .75s linear

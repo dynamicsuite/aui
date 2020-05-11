@@ -17,24 +17,26 @@
  */
 Vue.component('aui-button', {
     template: `
-        <button class="btn aui" :class="classes" :disabled="loading" @click="$emit('click')">
+        <button :class="classes" :disabled="is_disabled" @click="$emit('click')">
             <span v-if="isDelayed()">
                 <i class="fa fa-spin fa-circle-notch loading-icon"></i>
-                <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
+                <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
                 <slot v-else></slot>
             </span>
             <slot v-else></slot>
         </button>`,
     props: {
-        classes: {
-            type: String
-        },
         loading: {
             type: Boolean,
             default: false
         },
+        disabled: {
+            type: Boolean,
+            default: false
+        },
         loading_text: {
-            type: String
+            type: String,
+            default: null
         }
     },
     methods: {
@@ -51,16 +53,37 @@ Vue.component('aui-button', {
             return this.show_spinner;
         }
     },
+    computed: {
+        has_loading_text() {
+            return typeof this.loading_text === 'string';
+        },
+        is_disabled() {
+            return this.loading || this.disabled;
+        },
+        classes() {
+            return {
+                aui: true,
+                btn: true,
+                'btn-primary': this.default_class
+            }
+        }
+    },
     data: function() {
         return {
-            show_spinner: false
+            show_spinner: false,
+            default_class: false
+        }
+    },
+    mounted() {
+        if (this.$el.classList.value === 'aui btn') {
+            this.default_class = true;
         }
     }
 });
 Vue.component('aui-button-drop', {
     template: `
-        <button class="aui btn btn-dropdown" :class="classes" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
-            <slot></slot>
+        <button class="aui btn btn-dropdown" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
+            <span v-if="$slots.default"><slot></slot></span>
             <i :class="icon_classes"></i>
             <ul class="dropdown-menu" :class="menu_align" v-if="menu_active">
                 <li v-for="option in options" @click="doAction(option.action)">{{option.label}}</li>
@@ -134,19 +157,25 @@ Vue.component('aui-table', {
                     </th>
                 </tr>
                 <tr v-else>
-                    <th v-for="(value, key) in current_data[0]">
+                    <th v-for="(value, key) in current_data[0].values" v-if="subsetAllowed(key)">
                         {{key}}
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="element in current_data">
-                    <td v-for="value in element">
+                <tr v-for="element in current_data" v-if="element.action" @click="element.action">
+                    <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
+                        {{value}}
+                    </td>
+                </tr>
+                <tr v-for="element in current_data" v-if="!element.action">
+                    <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
                         {{value}}
                     </td>
                 </tr>
             </tbody>
         </table>
+        <div class="no-data" if="current_data.length === 0">No Data</div>
     </div>
     `,
     props: {
@@ -154,9 +183,12 @@ Vue.component('aui-table', {
             type: Array,
             required: true
         },
-        headers: {
+        subset: {
             type: Array,
-            required: true
+            default: null
+        },
+        headers: {
+            type: Array
         },
         search: {
             type: Boolean
@@ -207,6 +239,13 @@ Vue.component('aui-table', {
         }
     },
     methods: {
+        subsetAllowed(key) {
+            if (this.subset === null) {
+                return true;
+            } else {
+                return this.subset.includes(key);
+            }
+        }
     }
 });
 Vue.component('aui-input', {
@@ -214,19 +253,25 @@ Vue.component('aui-input', {
     <div :id="id + '-container'" class="aui input-container">
         <label :for="id" v-if="title">{{title}}</label>
         <div class="input-block" :class="capsClass()">
-            <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text">{{leading_text}}</div>
-            <input :id="id" 
+            <div class="leading-element edge-element" :class="classFailure() + classSuccess()" v-if="leading_text" v-html="leading_text"></div>
+            <input
+                :id="id"
+                ref="input"
                 :type="type" 
                 :name="name"
                 :placeholder="placeholder"
+                :tabindex="tabindex"
                 :disabled="disabled"
                 :readonly="readonly"
                 :class="classes + classFailure() + classSuccess()"
                 :value="value"
-                :min="dateMinimum()"
-                :max="dateMaximum()"
-                @keydown="$emit('keydown', $event.target)"
+                :step="step"
+                :min="min"
+                :max="max"
+                :autocomplete="autocomplete"
+                @keydown="$emit('keydown', $event)"
                 @change="$emit('change', $event.target)"
+                @select="$emit('select', $event.target)"
                 @focus="$emit('focus', $event.target)"
                 @blur="$emit('blur', $event.target)"
                 @input="$emit('input', $event.target.value)"
@@ -237,8 +282,7 @@ Vue.component('aui-input', {
     </div>`,
     props: {
         id: {
-            type: String,
-            required: true
+            type: String
         },
         title: {
             type: String
@@ -255,6 +299,9 @@ Vue.component('aui-input', {
         },
         placeholder: {
             type: String
+        },
+        tabindex: {
+            type: String | Number
         },
         leading_text: {
             type: String
@@ -294,19 +341,28 @@ Vue.component('aui-input', {
         value: {
             type: String | Number
         },
+        step: {
+            type: String | Number
+        },
         min: {
             type: String | Number
         },
         max: {
             type: String | Number
+        },
+        autocomplete: {
+            type: String,
+            default: 'on'
         }
 
     },
-    data: function() {
-        return {
-        }
-    },
     methods: {
+        focus() {
+            this.$refs.input.focus();
+        },
+        select() {
+            this.$refs.input.select();
+        },
         classSuccess() {
             return (this.success) ? ' border-success' : '' ;
         },
@@ -347,16 +403,17 @@ Vue.component('aui-select', {
             <select 
                 :name="name" 
                 :id="id" 
-                :class="classes" 
+                :class="classes + classFailure() + classSuccess()"
                 :value="value" 
                 :disabled="disabled" 
                 @input="$emit('input', $event.target.value)" 
                 @change="$emit('change', $event.target.value)"
             >
-                <option v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
+                <option v-if="us_states" v-for="(element, key) in states" :value="key" :selected="isSelected(key)">{{element}}</option>
+                <option v-if="!us_states" v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
             </select>
         </div>
-        <div class="aui subtext" v-if="subtext" >{{subtext}}</div>
+        <div class="aui subtext" :class="subtextColorClass()" v-if="subtext" >{{subtext}}</div>
     </div>`,
     props: {
         id: {
@@ -364,8 +421,7 @@ Vue.component('aui-select', {
             required: true
         },
         data: {
-            type: Array | Object,
-            required: true
+            type: Array | Object
         },
         value: {
             type: Array | Object | String | Boolean | Number
@@ -379,6 +435,12 @@ Vue.component('aui-select', {
         subtext: {
             type: String
         },
+        success: {
+            type: Boolean
+        },
+        failure: {
+            default: false
+        },
         classes: {
             type: String,
             default: ''
@@ -386,12 +448,93 @@ Vue.component('aui-select', {
         disabled: {
             type: Boolean,
             default: false
+        },
+        us_states: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data() {
+        return {
+            states: {
+                '0': '',
+                'AL': 'Alabama',
+                'AK': 'Alaska',
+                'AS': 'American Samoa',
+                'AZ': 'Arizona',
+                'AR': 'Arkansas',
+                'CA': 'California',
+                'CO': 'Colorado',
+                'CT': 'Connecticut',
+                'DE': 'Delaware',
+                'DC': 'District Of Columbia',
+                'FM': 'Federated States Of Micronesia',
+                'FL': 'Florida',
+                'GA': 'Georgia',
+                'GU': 'Guam',
+                'HI': 'Hawaii',
+                'ID': 'Idaho',
+                'IL': 'Illinois',
+                'IN': 'Indiana',
+                'IA': 'Iowa',
+                'KS': 'Kansas',
+                'KY': 'Kentucky',
+                'LA': 'Louisiana',
+                'ME': 'Maine',
+                'MH': 'Marshall Islands',
+                'MD': 'Maryland',
+                'MA': 'Massachusetts',
+                'MI': 'Michigan',
+                'MN': 'Minnesota',
+                'MS': 'Mississippi',
+                'MO': 'Missouri',
+                'MT': 'Montana',
+                'NE': 'Nebraska',
+                'NV': 'Nevada',
+                'NH': 'New Hampshire',
+                'NJ': 'New Jersey',
+                'NM': 'New Mexico',
+                'NY': 'New York',
+                'NC': 'North Carolina',
+                'ND': 'North Dakota',
+                'MP': 'Northern Mariana Islands',
+                'OH': 'Ohio',
+                'OK': 'Oklahoma',
+                'OR': 'Oregon',
+                'PW': 'Palau',
+                'PA': 'Pennsylvania',
+                'PR': 'Puerto Rico',
+                'RI': 'Rhode Island',
+                'SC': 'South Carolina',
+                'SD': 'South Dakota',
+                'TN': 'Tennessee',
+                'TX': 'Texas',
+                'UT': 'Utah',
+                'VT': 'Vermont',
+                'VI': 'Virgin Islands',
+                'VA': 'Virginia',
+                'WA': 'Washington',
+                'WV': 'West Virginia',
+                'WI': 'Wisconsin',
+                'WY': 'Wyoming'
+            }
         }
     },
     methods: {
-       isSelected(key) {
+        isSelected(key) {
            return key == this.value;
-       }
+        },
+        classSuccess() {
+            return (this.success) ? ' border-success' : '' ;
+        },
+        classFailure() {
+            return (this.failure) ? ' border-failure' : '' ;
+        },
+        subtextColorClass() {
+            if (this.success) return 'text-success';
+            if (this.failure) return 'text-failure';
+            return '';
+        },
     }
 });
 Vue.component('aui-datalist', {
@@ -560,19 +703,23 @@ Vue.component('aui-checkbox', {
     template: `
         <label class="aui check-container">
             <slot></slot>
-            <input type="checkbox" :checked="checked" @change="$emit('input', $event.target.checked)">
+            <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
             <span class="checkmark"></span>
         </label>
         `,
     props: {
         checked: {
             type: Boolean
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     }
 });
 Vue.component('aui-toggle', {
     template: `
-    <div class="aui flex">
+    <div class="aui aui-toggle flex">
         <span class="switch-container" :class="label_location">
             <label>{{label}}</label>
             <label class="switch">
@@ -617,13 +764,24 @@ Vue.component('aui-tab', {
         },
         action: {
             type: String | Function
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
     methods: {
         getActiveClass() {
-            return (this.active) ? 'active' : '';
+            let classes = this.active ? 'active' : '';
+            if (this.disabled) {
+                classes += ' disabled';
+            }
+            return classes;
         },
         doAction() {
+            if (this.disabled) {
+                return;
+            }
             if (typeof(this.action) === 'string') {
                 window.open(this.action);
             } else if (typeof(this.action) === 'function') {
@@ -637,7 +795,16 @@ Vue.component('aui-tab', {
 Vue.component('aui-tabs', {
     template: `
     <div class="aui tabs">
-        <aui-tab v-for="option in options" :active="option.active" :label="option.label" :action="option.action" @click="setActive(option)" v-if="showTabs"></aui-tab>
+        <aui-tab 
+            v-for="(option, index) in options" 
+            :key="index" :active="option.active" 
+            :label="option.label" 
+            :action="option.action"
+            :disabled="option.disabled"
+            @click="setActive(option)" 
+            v-if="showTabs"
+        >
+        </aui-tab>
         <aui-button-drop :options="options" v-if="!showTabs" menu_align="right">{{getActive()}}</aui-button-drop>
     </div>`,
     props: {
@@ -654,6 +821,9 @@ Vue.component('aui-tabs', {
     },
     methods: {
         setActive(new_active) {
+            if (new_active.disabled) {
+                return;
+            }
             this.options.forEach((option) => {
                 option.active = false;
             });
@@ -694,7 +864,7 @@ Vue.component('aui-tabs', {
 });
 Vue.component('aui-alert', {
     template: `
-    <div class="aui alert" :class="classes" v-if="visible">
+    <div class="aui alert" v-if="visible">
         <span class="title-bar" v-if="title" >
             <h4 class="alert-title">{{title}}</h4>
             <i class="fa fa-times" v-if="close" @click="$emit('click')"></i>
@@ -711,12 +881,9 @@ Vue.component('aui-alert', {
         title: {
             type: String
         },
-        classes: {
-            type: String
-        },
         close: {
             type: Boolean,
-            default: true
+            default: false
         },
         visible: {
             default: true
@@ -728,7 +895,7 @@ Vue.component('aui-badge', {
 });
 Vue.component('aui-card', {
     template: `
-    <div class="aui card" :class="classes">
+    <div class="aui card">
         <div class="card-header">{{header}}</div>
         <div class="card-body">
             <h4>{{title}}</h4>
@@ -744,10 +911,6 @@ Vue.component('aui-card', {
         },
         title: {
             type: String
-        },
-        classes: {
-            type: String,
-            required: true
         }
     }
 });
@@ -797,7 +960,7 @@ Vue.component('aui-modal', {
     },
     watch: {
         state() {
-            if (this.state) {
+            if (this.state && document.getElementById('ds-nav-container') && document.getElementById('ds-view-header')) {
                 document.getElementById('ds-nav-container').style.zIndex = '0';
                 document.getElementById('ds-view-header').style.zIndex = '-1';
                 document.getElementById('ds-nav-container').classList.remove("ds-nav-show-mobile")
@@ -848,7 +1011,7 @@ Vue.component('aui-list-item', {
 Vue.component('aui-list-group', {
     template: `
     <ul class="aui list-group">
-        <aui-list-item v-for="item in data" :callback="item.callback" :subtext="item.subtext">{{item.content}}</aui-list-item>
+        <aui-list-item v-for="(item, index) in data" :key="index" :callback="item.callback" :subtext="item.subtext">{{item.content}}</aui-list-item>
     </ul>`,
     props: {
         data: {
@@ -872,7 +1035,7 @@ Vue.component('aui-wysiwyg', {
             type: String
         },
         text: {
-            required: true
+            default: ''
         }
     },
     data() {
@@ -906,6 +1069,72 @@ Vue.component('aui-wysiwyg', {
             if (this.editor.content.innerHTML === '') {
                 this.editor.content.innerHTML = this.text;
             }
+        }
+    }
+});
+Vue.component('aui-pagination', {
+    template: `<div class="aui aui-pagination">
+        <span v-if="total">Showing {{from}} to {{to}} of {{total}} {{name}}</span>
+        <div class="aui btn-group">
+            <aui-button class="btn-secondary" @click="first()" v-if="page > 1"><i class="fa fa-arrow-left"></i></aui-button>
+            <aui-button class="btn-secondary" @click="previous()" v-if="page > 1">{{page - 1}}</aui-button>
+            <aui-button class="btn-secondary">{{page}}</aui-button>
+            <aui-button class="btn-secondary" @click="next()" v-if="page !== pages">{{page + 1}}</aui-button>
+            <aui-button class="btn-secondary" @click="last()" v-if="page !== pages"><i class="fa fa-arrow-right"></i></aui-button>
+        </div>
+    </div>`,
+    props: {
+        pages: {
+            type: Number,
+            required: true
+        },
+        total: {
+            type: Number,
+            required: true
+        },
+        limit: Number,
+        name: String
+    },
+    data() {
+        return {
+            page: 1,
+            to: 0,
+            from: 0
+        }
+    },
+    methods: {
+        first() {
+            this.page = 1;
+            this.emitPage();
+        },
+        previous() {
+            const previous = this.page - 1;
+            if (previous > 0) {
+                this.page = previous;
+                this.emitPage();
+            }
+        },
+        next() {
+            const next = this.page + 1;
+            if (next <= this.pages) {
+                this.page = next;
+                this.emitPage();
+            }
+        },
+        last() {
+            this.page = this.pages;
+            this.emitPage();
+        },
+        updateRange() {
+            this.from = ((this.page - 1) * this.limit) + 1;
+            this.to = this.from + this.limit - 1;
+            if (this.to > this.total) {
+                this.to = this.total;
+            }
+        },
+        emitPage() {
+            this.updateRange();
+            this.$emit('change', this.page);
         }
     }
 });
