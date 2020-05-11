@@ -75,12 +75,7 @@ Vue.component('aui-button', {
         }
     },
     mounted() {
-        if (
-            !this.$el.classList.contains('btn-secondary') &&
-            !this.$el.classList.contains('btn-success') &&
-            !this.$el.classList.contains('btn-warning') &&
-            !this.$el.classList.contains('btn-failure')
-        ) {
+        if (this.$el.classList.value === 'aui btn') {
             this.default_class = true;
         }
     }
