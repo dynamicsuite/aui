@@ -964,7 +964,7 @@ Vue.component('aui-modal', {
                 document.getElementById('ds-nav-container').style.zIndex = '0';
                 document.getElementById('ds-view-header').style.zIndex = '-1';
                 document.getElementById('ds-nav-container').classList.remove("ds-nav-show-mobile")
-            } else {
+            } else if (!this.state) {
                 document.getElementById('ds-nav-container').style.zIndex = '1';
                 document.getElementById('ds-view-header').style.zIndex = '0';
             }
