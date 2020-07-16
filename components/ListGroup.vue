@@ -34,13 +34,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 </script>
 
 <style lang="sass" scoped>
+
+    @import "../../../client/css/colors"
+
     .aui.list-group
         margin: 1rem 0
         padding: 0
         border: 1px solid #ced4da
         border-radius: .25rem
         background: white
-
-
 
 </style>

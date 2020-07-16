@@ -39,6 +39,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 </script>
 
 <style lang="sass" scoped>
+
+    @import "../../../client/css/colors"
+
     // Checkboxes
     .aui.check-container, .radio-container
         display: flex

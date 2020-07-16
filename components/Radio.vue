@@ -41,6 +41,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 </script>
 
 <style lang="sass" scoped>
+
+    @import "../../../client/css/colors"
+
     /* Create a custom radio button */
     /* Hide the browser's default radio button */
     .radio-container input

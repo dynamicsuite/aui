@@ -35,6 +35,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            visible: {
+                type: Boolean,
+                default: true
+            },
             title: {
                 type: String
             },
@@ -42,17 +46,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: Boolean,
                 default: false
             },
-            visible: {
-                default: true
+            type: {
+                type: String,
+                default: 'primary',
+                validator(value) {
+                    return ['primary', 'secondary', 'warning', 'failure', 'success'].indexOf(value) !== -1;
+                }
             }
         }
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
-    /* Default alert theme */
-    .aui.alert
+@import "../../../client/css/colors"
+.aui
+
+    &.alert
         padding: 1rem
         border-radius: .25rem
         margin: 1rem 0
@@ -78,33 +88,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             .alert-title
                 font-size: 1.5rem
 
-
     /* Primary alert theme */
-    .aui.alert-primary
+    &.alert-primary
         background: lighten($primary, 55%)
         color: $primary
         border: 1px solid lighten($primary, 45%)
 
     /* Secondary alert theme */
-    .aui.alert-secondary
+    &.alert-secondary
         background: lighten($secondary, 55%)
         color: $secondary
         border: 1px solid lighten($secondary, 45%)
 
     /* Warning alert theme */
-    .aui.alert-warning
+    &.alert-warning
         background: lighten($warning, 35%)
         color: darken($warning, 25%)
         border: 1px solid lighten($warning, 30%)
 
     /* Failure alert theme */
-    .aui.alert-failure
+    &.alert-failure
         background: lighten($failure, 35%)
         color: darken($failure, 15%)
         border: 1px solid lighten($failure, 30%)
 
     /* Success alert theme */
-    .aui.alert-success
+    &.alert-success
         background: lighten($success, 50%)
         color: darken($success, 15%)
         border: 1px solid lighten($success, 40%)

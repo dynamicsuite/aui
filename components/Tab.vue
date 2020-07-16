@@ -67,6 +67,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass" scoped>
 
+    @import "../../../client/css/colors"
+
 
     .tab
         padding: calc(0.5rem + 2px) 1rem

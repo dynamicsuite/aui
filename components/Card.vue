@@ -44,6 +44,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass" scoped>
 
+    @import "../../../client/css/colors"
+
     // Card styling
     .aui.card
         margin: 1rem 0

@@ -22,6 +22,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass" scoped>
 
+    @import "../../../client/css/colors"
+
     // Badge Styling
     .aui.badge
         font-size: .75rem
