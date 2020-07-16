@@ -90,3 +90,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+    // Tab styling
+    .aui.tabs
+        border-bottom: 1px solid #ced4da
+        padding: calc(.5rem - 1px) 1rem
+        display: flex
+
+        &>*
+            margin-bottom: -.5rem
+
+        .btn
+            background: whitesmoke
+            border-bottom: 1px solid whitesmoke
+            border-left: 1px solid #ced4da
+            border-top: 1px solid #ced4da
+            border-right: 1px solid #ced4da
+            border-radius: .25rem .25rem 0 0
+            z-index: 2
+            height: 40px
+
+            .dropdown-menu
+                border-radius: 0 0 .25rem .25rem
+</style>

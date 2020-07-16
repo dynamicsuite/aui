@@ -162,3 +162,51 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+
+    // Datalist styling
+    .aui.datalist-container
+        display: flex
+        flex-direction: column
+
+        label
+            margin-bottom: .5rem
+            width: 100%
+
+        input
+            font-size: 1rem
+            padding: .5rem
+            border-radius: 0.25rem
+            border: 1px solid #ced4da
+
+            &:focus
+                outline: none
+                box-shadow: 0 0 0 1px rgba(0, 123, 255, .8)
+
+            &:disabled
+                background: darken(#e9ecef, 15%)
+
+        input.border-success
+            padding-right: 2.5rem !important
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+            background-repeat: no-repeat
+            background-position: right .5rem center
+            background-size: 1.5rem
+            border: 1px solid $success
+
+        input.border-failure
+            padding-right: 2.5rem !important
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
+            background-repeat: no-repeat
+            background-position: right .5rem center
+            background-size: 1.5rem
+            border: 1px solid $failure
+
+        .subtext
+            font-size: .8rem
+            margin-top: .25rem
+            color: #6c757d
+            width: 100%
+
+</style>

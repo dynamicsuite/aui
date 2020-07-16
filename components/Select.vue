@@ -162,3 +162,51 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+    // Select styling
+    .aui.select-container
+        display: flex
+        flex-direction: column
+
+        *
+            width: 100%
+
+        .select-block
+            display: flex
+            flex-direction: column
+
+        label
+            margin-bottom: .5rem
+
+        select
+            flex: 1
+            font-size: 1rem
+            padding: .5rem 2rem .5rem .5rem
+            border-radius: 0.25rem
+            border: 1px solid #ced4da
+            align-self: flex-start
+            -webkit-appearance: none
+            -moz-appearance: none
+            background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ced4da'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat calc(100% - 10px) 65%
+            background-size: 12px
+
+            &.border-success
+                border: 1px solid $success
+
+            &.border-failure
+                border: 1px solid $failure
+
+            &:focus
+                outline: none
+                box-shadow: 0 0 0 1px rgba(0, 123, 255, .8)
+
+            &:disabled
+                background: darken(#e9ecef, 15%)
+
+        .subtext
+            font-size: .8rem
+            margin-top: .25rem
+            color: #6c757d
+
+</style>

@@ -87,3 +87,75 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+    /* Default button styling */
+    .aui.btn
+        padding: 0.5rem 1rem
+        border: 0
+        border-radius: .25rem
+        font-size: 1rem
+        user-select: none
+
+        &:hover
+            cursor: pointer
+
+        &:disabled:hover
+            cursor: not-allowed
+
+        .loading-icon
+            margin-right: .25rem
+
+        .loading-text
+            margin: 0
+
+    /* Primary button theme */
+    .aui.btn-primary
+        background: $primary
+        color: white
+
+        &:hover
+            background: lighten($primary, 10%)
+
+        &:disabled
+            background: lighten($primary, 30%)
+
+    /* Secondary button theme */
+    .aui.btn-secondary
+        background: $secondary
+        color: white
+
+        &:hover
+            background: lighten($secondary, 10%)
+
+        &:disabled
+            background: lighten($secondary, 30%)
+
+    /* Warning button theme */
+    .aui.btn-warning
+        background: $warning
+        border: 1px solid lighten($warning, 30%)
+
+    /* Success button theme */
+    .aui.btn-success
+        background: $success
+        color: white
+
+        &:hover
+            background: lighten($success, 10%)
+
+        &:disabled
+            background: lighten($success, 20%)
+
+    /* Failure button theme */
+    .aui.btn-failure, .aui.btn-danger
+        background: $failure
+        color: white
+
+        &:hover
+            background: lighten($failure, 10%)
+
+        &:disabled
+            background: lighten($failure, 20%)
+
+</style>

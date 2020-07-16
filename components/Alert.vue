@@ -48,3 +48,65 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+
+    /* Default alert theme */
+    .aui.alert
+        padding: 1rem
+        border-radius: .25rem
+        margin: 1rem 0
+
+        i
+            padding: 0
+            cursor: pointer
+            margin-left: auto
+
+        p
+            margin: 0
+            display: flex
+            justify-content: center
+            align-items: center
+
+        h4
+            margin: 0 0 1rem 0
+
+        .title-bar
+            display: flex
+            justify-content: center
+
+            .alert-title
+                font-size: 1.5rem
+
+
+    /* Primary alert theme */
+    .aui.alert-primary
+        background: lighten($primary, 55%)
+        color: $primary
+        border: 1px solid lighten($primary, 45%)
+
+    /* Secondary alert theme */
+    .aui.alert-secondary
+        background: lighten($secondary, 55%)
+        color: $secondary
+        border: 1px solid lighten($secondary, 45%)
+
+    /* Warning alert theme */
+    .aui.alert-warning
+        background: lighten($warning, 35%)
+        color: darken($warning, 25%)
+        border: 1px solid lighten($warning, 30%)
+
+    /* Failure alert theme */
+    .aui.alert-failure
+        background: lighten($failure, 35%)
+        color: darken($failure, 15%)
+        border: 1px solid lighten($failure, 30%)
+
+    /* Success alert theme */
+    .aui.alert-success
+        background: lighten($success, 50%)
+        color: darken($success, 15%)
+        border: 1px solid lighten($success, 40%)
+
+</style>

@@ -83,3 +83,71 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         }
     }
 </script>
+
+<style lang="sass" scoped>
+    .aui.modal-container
+        position: fixed
+        top: 0
+        left: 0
+        height: 100%
+        width: 100%
+        background: rgba(0,0,0,.8)
+        z-index: 99
+        display: flex
+        justify-content: center
+        align-items: center
+
+        .modal
+            display: flex
+            flex-direction: column
+            z-index: 100
+            max-width: 600px
+            max-height: 80%
+            margin: 0 .5rem
+
+            &>*
+                padding: 1.5rem
+
+            .modal-header
+                display: flex
+                padding: .75rem 1.5rem
+                justify-content: space-between
+                border-bottom: 1px solid #ced4da
+                border-radius: .25rem .25rem 0 0
+
+                &.primary
+                    color: white
+                    background: $primary
+                &.secondary
+                    color: white
+                    background: $secondary
+                &.warning
+                    background: $warning
+                &.success
+                    color: white
+                    background: $success
+                &.failure
+                    color: white
+                    background: $failure
+
+                h4
+                    margin: 0
+                    display: flex
+                    justify-content: center
+                    align-items: center
+
+                .fa.fa-times
+                    padding: .5rem .7rem
+                    cursor: pointer
+                    border-radius: 50%
+
+                    &:hover
+                        background: rgba(0,0,0,.2)
+
+
+            .modal-body
+                background: #fff
+                border-radius: 0 0 .25rem .25rem
+                overflow-y: auto
+
+</style>
