@@ -120,9 +120,11 @@ $nav-text: #c7cbd1
 
   /* Buttons and dropdowns within the group */
   > *:not(:first-child)
-    border-left: 1px solid rgba(0, 0, 0, 0.15)
-    border-radius: 0
+    border-left: 1px solid rgba(0, 0, 0, 0.15) !important
     margin: 0 -1px
+
+  > .btn:not(:first-of-type), > .btn:not(:last-of-type)
+    border-radius: 0
 
   /* First button in the group */
   > .btn:first-of-type
