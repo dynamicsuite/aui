@@ -17,10 +17,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui card">
+    <div class="aui card" :class="'card-' + type">
         <h1>{{header}}</h1>
         <div class="body">
-            <h2>{{title}}</h2>
+            <h2 v-if="title">{{title}}</h2>
             <p class="card-text">
                 <slot></slot>
             </p>
@@ -60,23 +60,31 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
     /* Card header text area */
     h1
+        font-size: 1.125rem
         padding: 1rem
-        border-radius: .25rem .25rem 0 0
+        border-radius: 0.25rem 0.25rem 0 0
+        margin: 0
 
     /* Card body area */
-    p
+    .body
         padding: 1rem
-        border-radius: 0 0 .25rem .25rem
+        border-radius: 0 0 0.25rem 0.25rem
         border-left: 1px solid #ced4da
         border-bottom: 1px solid #ced4da
         border-right: 1px solid #ced4da
+
+        h2
+            font-size: 1rem
+
+        p
+            margin-bottom: 0
 
     /* Neutral card style */
     &.card-neutral
         h1
             background: lighten(#ced4da, 10%)
             border: 1px solid darken(#ced4da, 10%)
-        p
+        .body
             background: white
 
     /* Primary card style */
@@ -85,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             color: white
             background: $primary
             border-bottom: 1px solid darken($primary, 10%)
-        p
+        .body
             background: white
 
     /* Secondary card style */
@@ -94,7 +102,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             color: white
             background: $secondary
             border-bottom: 1px solid darken($secondary, 10%)
-        p
+        .body
             background: white
 
     /* Success card style */
@@ -103,7 +111,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             color: white
             background: $success
             border-bottom: 1px solid darken($success, 10%)
-        p
+        .body
             background: white
 
     /* Warning card style */
@@ -111,7 +119,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         h1
             background: $warning
             border-bottom: 1px solid darken($warning, 10%)
-        p
+        .body
             background: white
 
     /* Failure card style */
@@ -120,7 +128,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             color: white
             background: $failure
             border-bottom: 1px solid darken($failure, 10%)
-        p
+        .body
             background: white
 
 </style>
