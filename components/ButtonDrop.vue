@@ -110,6 +110,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 this.show_dropdown = !this.show_dropdown;
 
                 this.menu_align_master = null;
+                this.anchor = '';
 
                 Vue.nextTick(() => {
 
