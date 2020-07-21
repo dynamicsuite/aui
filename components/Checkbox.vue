@@ -28,7 +28,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     export default {
         props: {
             checked: {
-                type: Boolean
+                type: Boolean,
+                default: false
             },
             disabled: {
                 type: Boolean,
@@ -40,31 +41,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Checkboxes
-    .aui.check-container, .radio-container
-        display: flex
-        align-items: center
-        justify-content: center
-        position: relative
-        padding-left: 35px
-        margin-bottom: 12px
-        height: 26px
-        cursor: pointer
-        -webkit-user-select: none
-        -moz-user-select: none
-        -ms-user-select: none
-        user-select: none
+/* Checkbox styling */
+.aui.checkbox
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    position: relative
+    padding-left: 35px
+    margin-bottom: 12px
+    height: 26px
+    cursor: pointer
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
 
-    .aui.check-container input
+    & > input
         position: absolute
         opacity: 0
         cursor: pointer
         height: 0
         width: 0
 
-    .aui.checkmark
+    & > .checkmark
         position: absolute
         top: 0
         left: 0
@@ -72,27 +74,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         width: 25px
         background-color: darken(#eee, 10%)
 
-    .aui.checkmark:disabled
+    &:disabled
         background: $secondary !important
 
-    .aui.check-container:hover input ~ .checkmark
+    &:hover input ~ .checkmark
         background-color: #ccc
-        
-    .aui.check-container input:checked:not(disabled) ~ .checkmark
+
+    & > input:checked:not(disabled) ~ .checkmark
         background-color: $primary
 
-    .aui.check-container input:checked:disabled ~ .checkmark
+    & > input:checked:disabled ~ .checkmark
         background-color: $secondary
 
-    .aui.checkmark:after
+    & > .checkmark:after
         content: ""
         position: absolute
         display: none
 
-    .aui.check-container input:checked ~ .checkmark:after
+    & > input:checked ~ .checkmark:after
         display: block
 
-    .aui.check-container .checkmark:after
+    & > .checkmark:after
         left: 9px
         top: 5px
         width: 5px
