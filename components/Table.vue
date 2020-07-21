@@ -125,10 +125,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
     @import "../../../client/css/colors"
-    @import "../client/css/aui"
+    @import "../client/css/core"
 
     // Table theming
     .aui.table-container

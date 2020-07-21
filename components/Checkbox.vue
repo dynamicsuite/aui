@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <label class="aui check-container">
+    <label class="aui checkbox">
         <slot></slot>
         <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
         <span class="checkmark"></span>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
     @import "../../../client/css/colors"
 

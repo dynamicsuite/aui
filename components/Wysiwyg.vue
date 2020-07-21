@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div :id="id + '-container'" class="aui wysiwyg-container">
-        <title :for="id" class="wysiwyg-title">{{title}}</title>
+        <label :for="id" class="wysiwyg-title">{{title}}</label>
         <div :id="id"></div>
     </div>
 </template>
@@ -74,7 +74,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 </script>
 
 
-<style lang="sass" scoped>
+<style lang="sass">
 
     @import "../../../client/css/colors"
 

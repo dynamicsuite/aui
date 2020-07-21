@@ -18,22 +18,21 @@
 
 /* Color definitions */
 $primary: #15529d
-$secondary: #6A6A6A
+$secondary: #6a6a6a
 $warning: #ffc107
-$failure: #E24848
-$success: #38AF47
+$failure: #e24848
+$success: #38af47
 $border: #ced4da
-$checkbox-bk: #EEE
-$checkbox-hov: #CCC
+$checkbox-bk: #eee
+$checkbox-hov: #ccc
 $header-text: #fff
-$nav-text: #C7CBD1
+$nav-text: #c7cbd1
 
 @mixin som-container
   background: darken(#e9ecef, 3%)
   padding: 1rem
   margin-bottom: 1rem
   border-radius: .25rem
-
 
 @keyframes pulse-primary
   from
@@ -114,30 +113,35 @@ $nav-text: #C7CBD1
         width: 100%
         justify-content: center
 
+/* Button groups */
+.btn-group
+  display: inline-flex
+  align-items: start
 
-  // Button groups
-  .btn-group
-    display: flex
-    .btn
-      border-radius: 0
-      border-left: 1px solid rgba(0,0,0,.15)
-      margin: 0 -1px
+  /* Buttons and dropdowns within the group */
+  > *:not(:first-child)
+    border-left: 1px solid rgba(0, 0, 0, 0.15)
+    border-radius: 0
+    margin: 0 -1px
 
-      &:not(.btn-dropdown)
-        flex: 1
+  /* First button in the group */
+  > .btn:first-of-type
+    border-radius: 0.25rem 0 0 0.25rem
+    border: 0
+    margin: 0
 
-    .btn:first-of-type
-      border-radius: .25rem 0 0 .25rem
-      border: 0
-      margin: 0
+  /* Last button in the group */
+  > .btn:last-of-type:not(:first-of-type)
+    border-radius: 0 0.25rem 0.25rem 0
+    margin: 0
 
-    .btn:last-of-type
-      border-radius: 0 .25rem .25rem 0
-      margin: 0
-
+  /* Button dropdown if attached */
+  > .btn-drop > .btn
+    border-radius: 0 0.25rem 0.25rem 0
+    margin: 0
 
   // Input styling
-  &.input-container
+  .input-container
     display: flex
     flex-direction: column
     border-radius: .25rem
@@ -169,7 +173,10 @@ $nav-text: #C7CBD1
           min-height: calc(1rem + 2px)
           position: relative
 
-          /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+          /*
+           * make the native arrow invisible and stretch it over the whole field so
+           * you can click anywhere in the input field to trigger the native datepicker
+           */
           &::-webkit-calendar-picker-indicator
             position: absolute
             top: 0
@@ -294,7 +301,6 @@ $nav-text: #C7CBD1
       font-size: .8rem
       margin-top: .25rem
       color: #6c757d
-
 
   // Primary border theming
   &.border-primary

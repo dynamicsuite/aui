@@ -17,41 +17,35 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui alert" v-if="visible">
-        <span class="title-bar" v-if="title" >
-            <h4 class="alert-title">{{title}}</h4>
-            <i class="fa fa-times" v-if="close" @click="$emit('click')"></i>
-        </span>
-        <p v-if="title">
-            <slot></slot>
-        </p>
-        <p v-else>
-            <slot></slot>
-            <i class="fa fa-times" v-if="close" @click="$emit('click')"></i>
-        </p>
+    <div v-if="visible" class="aui alert" :class="'alert-' + type">
+        <div>
+            <h3 v-if="title">{{title}}</h3>
+            <p><slot></slot></p>
+        </div>
+        <i v-if="closeable" class="fa fa-times close" @click="$emit('close')"></i>
     </div>
 </template>
 
 <script>
     export default {
         props: {
-            visible: {
-                type: Boolean,
-                default: true
-            },
-            title: {
-                type: String
-            },
-            close: {
-                type: Boolean,
-                default: false
-            },
             type: {
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'warning', 'failure', 'success'].indexOf(value) !== -1;
+                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
+            },
+            title: {
+                type: String,
+            },
+            visible: {
+                type: Boolean,
+                default: true
+            },
+            closeable: {
+                type: Boolean,
+                default: false
             }
         }
     }
@@ -59,34 +53,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
+/* Import the core DS colors */
 @import "../../../client/css/colors"
-.aui
 
-    &.alert
-        padding: 1rem
-        border-radius: .25rem
-        margin: 1rem 0
+/* Alert container */
+.aui.alert
+    display: flex
+    padding: 1rem
+    border-radius: 0.25rem
+    margin: 1rem 0
 
-        i
-            padding: 0
-            cursor: pointer
-            margin-left: auto
+    /* Alert title (if any) */
+    h3
+        display: flex
+        width: 100%
 
-        p
-            margin: 0
-            display: flex
-            justify-content: center
-            align-items: center
+    /* Alert body */
+    p
+        margin: 0
+        flex-grow: 1
 
-        h4
-            margin: 0 0 1rem 0
-
-        .title-bar
-            display: flex
-            justify-content: center
-
-            .alert-title
-                font-size: 1.5rem
+    /* Alert close button */
+    .close
+        outline: none !important
+        margin-left: auto
+        font-size: 1rem
+        cursor: pointer
 
     /* Primary alert theme */
     &.alert-primary
@@ -100,6 +92,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         color: $secondary
         border: 1px solid lighten($secondary, 45%)
 
+    /* Success alert theme */
+    &.alert-success
+        background: lighten($success, 50%)
+        color: darken($success, 15%)
+        border: 1px solid lighten($success, 40%)
+
     /* Warning alert theme */
     &.alert-warning
         background: lighten($warning, 35%)
@@ -111,11 +109,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         background: lighten($failure, 35%)
         color: darken($failure, 15%)
         border: 1px solid lighten($failure, 30%)
-
-    /* Success alert theme */
-    &.alert-success
-        background: lighten($success, 50%)
-        color: darken($success, 15%)
-        border: 1px solid lighten($success, 40%)
 
 </style>

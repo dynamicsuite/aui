@@ -17,113 +17,165 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <button class="aui btn btn-dropdown" @click="menu_active = !menu_active" @focusout="menu_active = false" @touchleave="menu_active = false">
-        <span v-if="$slots.default"><slot></slot></span>
-        <i :class="icon_classes"></i>
-        <ul class="dropdown-menu" :class="menu_align" v-if="menu_active">
-            <li v-for="option in options" @click="doAction(option.action)">{{option.label}}</li>
+    <div class="aui btn-drop" ref="dropdown">
+        <button class="aui btn" :class="button_classes" @click="toggle">
+            <span v-if="$slots.default"><slot></slot></span>
+            <i :class="icon_class"></i>
+        </button>
+        <ul v-if="show_dropdown" class="dropdown" :class="menu_align">
+            <li v-for="entry in dropdown" @click="runAction(entry.action)">{{entry.label}}</li>
         </ul>
-    </button>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
-            classes: {
-                type: String
-            },
-            options: {
-                type: Array,
-                required: true
-            },
-            label: {
-                type: String
-            },
-            icon_classes: {
+            type: {
                 type: String,
-                default: 'fa fa-bars'
+                default: 'primary',
+                validator(value) {
+                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                }
+            },
+            dropdown: {
+                type: Array,
+                required: true,
+                validator(value) {
+                    if (!Array.isArray(value)) {
+                        return false;
+                    }
+                    for (let i = 0; i < value.length; i++) {
+                        if (typeof value[i].label !== 'string') {
+                            return false;
+                        }
+                        if (typeof value[i].action !== 'function' && typeof value[i].action !== 'string') {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            },
+            icon_inactive: {
+                type: String,
+                default: 'fas fa-caret-down'
+            },
+            icon_active: {
+                type: String,
+                default: 'fas fa-caret-up'
             },
             menu_align: {
                 style: String,
                 default: 'left',
-                validator: prop => {
-                    if (prop === 'left' || prop === 'right') return true;
-                    else {
-                        console.log('AUI-BUTTON: Menu alignment can only be left or right.');
-                        return false;
-                    }
+                validator(value) {
+                    return ['left', 'right'].indexOf(value) !== -1;
                 }
             }
         },
-        data: function() {
+        computed: {
+            button_classes() {
+                let classes = {
+                    active: this.show_dropdown
+                };
+                classes['btn-' + this.type] = true;
+                return classes;
+            },
+            icon_class() {
+                return this.show_dropdown ? this.icon_active : this.icon_inactive;
+            }
+        },
+        data() {
             return {
-                menu_active: false
+                show_dropdown: false
             }
         },
         methods: {
-            doAction(action) {
-                if (typeof(action) === 'string') {
-                    window.open(action);
-                } else if (typeof(action) === 'function') {
-                    action();
-                } else {
-                    console.log('AUI-BTN-DROPDOWN: Action passed to button click is not string or function; type: ' + typeof(action));
+            toggle() {
+                this.show_dropdown = !this.show_dropdown;
+            },
+            reset(event) {
+                if (!this.$refs.dropdown.contains(event.target)) {
+                    this.show_dropdown = false;
                 }
             },
-            hide(event) {
-                this.menu_active = false;
-            },
-            setActive(tab) {
-                this.options.forEach((option) => {
-                    option.active = false;
-                });
-
-                tab.active = true;
+            runAction(action) {
+                if (typeof(action) === 'function') {
+                    action();
+                } else {
+                    window.open(action);
+                }
+                this.show_dropdown = false;
             }
+        },
+        created() {
+            window.addEventListener('click', this.reset);
+        },
+        beforeDestroy() {
+            window.addEventListener('click', this.reset);
         }
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Dropdown styling
-    .btn-dropdown
-        position: relative
+// Group container
+.aui.btn-drop
+    display: inline-flex
+    position: relative
+    align-self: flex-start
 
+    /* Disable browser outline */
+    &:focus
+        outline: none !important
+
+    /* Slot text for the dropdown*/
+    .btn > span
+        margin-right: .5rem
+
+    /* FontAwesome icon class on the dropdown button */
+    .btn > i
+        margin: 0 !important
+        font-size: 0.9rem
+
+    /* Dropdown menu when the button is pressed */
+    .dropdown
+        position: absolute
+        top: 2.35rem
+        margin: 0
+        padding: 0.5rem 1rem
+        background: white
+        border: 1px solid #ced4da
+        border-radius: 0.25rem
+        color: black
+        list-style: none
+        z-index: 1
+
+        /* Disable browser outline */
         &:focus
-            outline: none
+            outline: none !important
 
-        span
-            margin-right: .5rem
+        /* Left attached list */
+        &.left
+            left: 0
 
-        i
-            margin: 0 !important
-            font-size: 0.9rem
+        /* Right attached list */
+        &.right
+            right: 0
 
-        .dropdown-menu
-            position: absolute
-            top: 2.35rem
-            margin: 0
-            padding: .5rem 1rem
-            background: white
-            border: 1px solid #ced4da
-            border-radius: .25rem
-            color: black
-            list-style: none
-            z-index: 1
+        /* Dropdown entries */
+        li
+            padding: 0.25rem 0
+            white-space: nowrap
+            text-align: left
+            word-break: break-all
+            cursor: pointer
 
-            &.left
-                left: 0
-
-            &.right
-                right: 0
-
-            li
-                padding: .25rem 0
-                white-space: nowrap
-                text-align: left
-                word-break: break-all
+            /* List selection styling */
+            &:hover
+                text-decoration: underline
+                color: $primary
 
 </style>

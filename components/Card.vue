@@ -18,9 +18,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui card">
-        <div class="card-header">{{header}}</div>
-        <div class="card-body">
-            <h4>{{title}}</h4>
+        <h1>{{header}}</h1>
+        <div class="body">
+            <h2>{{title}}</h2>
             <p class="card-text">
                 <slot></slot>
             </p>
@@ -31,6 +31,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            type: {
+                type: String,
+                default: 'primary',
+                validator(value) {
+                    return ['neutral', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                }
+            },
             header: {
                 type: String,
                 required: true
@@ -42,84 +49,78 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Card styling
-    .aui.card
-        margin: 1rem 0
+// Card styling
+.aui.card
+    margin: 1rem 0
 
-        h4
-            margin: 0
+    /* Card header text area */
+    h1
+        padding: 1rem
+        border-radius: .25rem .25rem 0 0
 
-        .card-header
-            padding: 1rem
-            border-radius: .25rem .25rem 0 0
+    /* Card body area */
+    p
+        padding: 1rem
+        border-radius: 0 0 .25rem .25rem
+        border-left: 1px solid #ced4da
+        border-bottom: 1px solid #ced4da
+        border-right: 1px solid #ced4da
 
-        .card-body
-            padding: 1rem
-            border-radius: 0 0 .25rem .25rem
-            border-left: 1px solid #ced4da
-            border-bottom: 1px solid #ced4da
-            border-right: 1px solid #ced4da
-
-    .aui.card-neutral
-
-        .card-header
+    /* Neutral card style */
+    &.card-neutral
+        h1
             background: lighten(#ced4da, 10%)
             border: 1px solid darken(#ced4da, 10%)
-
-        .card-body
+        p
             background: white
 
-    .aui.card-primary
-
-        .card-header
+    /* Primary card style */
+    &.card-primary
+        h1
             color: white
             background: $primary
             border-bottom: 1px solid darken($primary, 10%)
-
-        .card-body
+        p
             background: white
 
-    .aui.card-secondary
-
-        .card-header
+    /* Secondary card style */
+    &.card-secondary
+        h1
             color: white
             background: $secondary
             border-bottom: 1px solid darken($secondary, 10%)
-
-        .card-body
+        p
             background: white
 
-    .aui.card-warning
-
-        .card-header
-            background: $warning
-            border-bottom: 1px solid darken($warning, 10%)
-
-        .card-body
-            background: white
-
-    .aui.card-success
-
-        .card-header
+    /* Success card style */
+    &.card-success
+        h1
             color: white
             background: $success
             border-bottom: 1px solid darken($success, 10%)
-
-        .card-body
+        p
             background: white
 
-    .aui.card-failure
+    /* Warning card style */
+    &.card-warning
+        h1
+            background: $warning
+            border-bottom: 1px solid darken($warning, 10%)
+        p
+            background: white
 
-        .card-header
+    /* Failure card style */
+    &.card-failure
+        h1
             color: white
             background: $failure
             border-bottom: 1px solid darken($failure, 10%)
-
-        .card-body
+        p
             background: white
 
 </style>

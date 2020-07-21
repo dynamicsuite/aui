@@ -17,9 +17,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <button :class="classes" :disabled="is_disabled" @click="$emit('click')">
-        <span v-if="isDelayed">
-            <i class="fa fa-spin fa-circle-notch loading-icon"></i>
+    <button class="aui btn" :class="'btn-' + type" :disabled="is_disabled" @click="$emit('click')">
+        <span v-if="isDelayed()">
+            <i class="fa fa-spin fa-circle-notch"></i>
             <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
             <slot v-else></slot>
         </span>
@@ -30,17 +30,38 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
-            loading: {
+            type: {
+                type: String,
+                default: 'primary',
+                validator(value) {
+                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                }
+            },
+            disabled: {
                 type: Boolean,
                 default: false
             },
-            disabled: {
+            loading: {
                 type: Boolean,
                 default: false
             },
             loading_text: {
                 type: String,
                 default: null
+            }
+        },
+        data() {
+            return {
+                show_spinner: false,
+                default_class: false
+            }
+        },
+        computed: {
+            has_loading_text() {
+                return typeof this.loading_text === 'string';
+            },
+            is_disabled() {
+                return this.loading || this.disabled;
             }
         },
         methods: {
@@ -51,111 +72,95 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                             this.show_spinner = true;
                         }
                     }, 100);
-                }
-                else {
+                } else {
                     this.show_spinner = false;
                 }
-
                 return this.show_spinner;
-            }
-        },
-        computed: {
-            has_loading_text() {
-                return typeof this.loading_text === 'string';
-            },
-            is_disabled() {
-                return this.loading || this.disabled;
-            },
-            classes() {
-                return {
-                    aui: true,
-                    btn: true,
-                    'btn-primary': this.default_class
-                }
-            }
-        },
-        data: function() {
-            return {
-                show_spinner: false,
-                default_class: false
-            }
-        },
-        mounted() {
-            if (this.$el.classList.value === 'aui btn') {
-                this.default_class = true;
             }
         }
     }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    /* Default button styling */
-    .aui.btn
-        padding: 0.5rem 1rem
-        border: 0
-        border-radius: .25rem
-        font-size: 1rem
-        user-select: none
+/* Default button styling */
+.aui.btn
+    padding: 0.5rem 1rem
+    border: 0
+    border-radius: 0.25rem
+    font-size: 1rem
+    user-select: none
+    cursor: pointer
 
-        &:hover
-            cursor: pointer
+    /* Remove browser focus */
+    &:focus
+        outline: none !important
 
-        &:disabled:hover
-            cursor: not-allowed
+    &:disabled
+        cursor: not-allowed
 
-        .loading-icon
-            margin-right: .25rem
+    /* Spinner when the button is on a long load */
+    .fa.fa-spin
+        text-align: center
+        margin-right: 0.25rem
 
-        .loading-text
-            margin: 0
+    /* Loading text displayed when a button is in the loading state */
+    .loading-text
+        margin: 0
 
     /* Primary button theme */
-    .aui.btn-primary
+    &.btn-primary
         background: $primary
         color: white
 
-        &:hover
+        &:hover, &.active
             background: lighten($primary, 10%)
 
         &:disabled
             background: lighten($primary, 30%)
 
     /* Secondary button theme */
-    .aui.btn-secondary
+    &.btn-secondary
         background: $secondary
         color: white
 
-        &:hover
+        &:hover, &.active
             background: lighten($secondary, 10%)
 
         &:disabled
             background: lighten($secondary, 30%)
 
-    /* Warning button theme */
-    .aui.btn-warning
-        background: $warning
-        border: 1px solid lighten($warning, 30%)
-
     /* Success button theme */
-    .aui.btn-success
+    &.btn-success
         background: $success
         color: white
 
-        &:hover
+        &:hover, &.active
             background: lighten($success, 10%)
 
         &:disabled
             background: lighten($success, 20%)
 
+    /* Warning button theme */
+    &.btn-warning
+        background: $warning
+        border: 1px solid lighten($warning, 30%)
+
+        &:hover, &.active
+            background: lighten($warning, 10%)
+
+        &:disabled
+            background: lighten($warning, 20%)
+
     /* Failure button theme */
-    .aui.btn-failure, .aui.btn-danger
+    &.btn-failure
         background: $failure
         color: white
 
-        &:hover
+        &:hover, &.active
             background: lighten($failure, 10%)
 
         &:disabled
