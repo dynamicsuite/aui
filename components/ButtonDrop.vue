@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <span v-if="$slots.default"><slot></slot></span>
             <i :class="icon_class"></i>
         </button>
-        <ul v-if="show_dropdown" class="dropdown" :class="menu_align">
+        <ul v-show="show_dropdown" class="dropdown" ref="menu" :class="list_classes">
             <li v-for="entry in dropdown" @click="runAction(entry.action)">{{entry.label}}</li>
         </ul>
     </div>
@@ -74,44 +74,109 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         },
         computed: {
             button_classes() {
+
                 let classes = {
                     active: this.show_dropdown
                 };
+
                 classes['btn-' + this.type] = true;
+
                 return classes;
             },
             icon_class() {
                 return this.show_dropdown ? this.icon_active : this.icon_inactive;
+            },
+            list_classes() {
+                if (this.menu_align_master) {
+                    return this.menu_align_master + ' ' + this.anchor;
+                } else {
+                    return this.menu_align + ' ' + this.anchor;
+                }
+
             }
         },
         data() {
             return {
-                show_dropdown: false
+                show_dropdown: false,
+                anchor: '',
+                menu_align_master: null
             }
         },
         methods: {
+
+            // Toggle visibility state
             toggle() {
+
                 this.show_dropdown = !this.show_dropdown;
+
+                this.menu_align_master = null;
+
+                Vue.nextTick(() => {
+
+                    // Hide the element
+                    this.$refs.menu.style.opacity = '0';
+
+                    // Get element dimensions
+                    const domRect = this.$refs.menu.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - domRect.bottom;
+                    const spaceRight = window.innerWidth - domRect.right;
+
+
+                    // If the element is too close to the right edge
+                    if (spaceRight < 0) {
+
+                        // Assign a left anchor
+                        this.menu_align_master = 'right';
+
+                    }
+
+                    // If the element is too close to the bottom edge
+                    if (spaceBelow < 0) {
+
+                        // Assign it a top anchor
+                        this.anchor = 'top';
+
+                    }
+
+                    // Unide the element
+                    this.$refs.menu.style.opacity = '1';
+
+
+                })
             },
-            reset(event) {
+
+            // Reset the visibility state when clicking outside the element
+            outsideReset(event) {
+
+                // If the element isn't the menu, hide menu; aka a faux clickout/blur event
                 if (!this.$refs.dropdown.contains(event.target)) {
                     this.show_dropdown = false;
                 }
+
             },
+
+            // Run the action for the selected dropdown option
             runAction(action) {
+
+                // Functions get run, otherwise treat as URL
                 if (typeof(action) === 'function') {
                     action();
                 } else {
                     window.open(action);
                 }
+
+                // Hide the dropdown once the action is completed
                 this.show_dropdown = false;
             }
+
         },
         created() {
-            window.addEventListener('click', this.reset);
+            // Add event listener for blur/clickout tracking
+            window.addEventListener('click', this.outsideReset);
         },
         beforeDestroy() {
-            window.addEventListener('click', this.reset);
+            // Remove the blur/clickout event listener
+            window.removeEventListener('click', this.outsideReset);
         }
     }
 </script>
@@ -157,13 +222,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         &:focus
             outline: none !important
 
-        /* Left attached list */
+        /* Left aligned list */
         &.left
             left: 0
 
-        /* Right attached list */
+        /* Right aligned list */
         &.right
             right: 0
+
+        /* Bottom attached list */
+        &.top
+            top: auto
+            bottom: 2.35rem
 
         /* Dropdown entries */
         li
