@@ -116,8 +116,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
-    /* Import the core DS colors */
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
 // Datalist container
 .aui.datalist
