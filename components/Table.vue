@@ -17,109 +17,49 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui table-container">
-        <div class="input-aligner" :class="search_align">
-            <aui-input v-if="search" id="table-search" v-model="search_term" :value="search_term" placeholder="Search..."></aui-input>
-        </div>
-        <table class="table">
-            <thead>
-            <tr v-if="headers">
-                <th v-for="header in headers">
-                    {{header}}
-                </th>
-            </tr>
-            <tr v-else>
-                <th v-for="(value, key) in current_data[0].values" v-if="subsetAllowed(key)">
-                    {{key}}
-                </th>
-            </tr>
+    <div class="aui table">
+        <table>
+            <thead v-if="show_headers">
+                <tr>
+                    <th v-for="header in columns">{{header}}</th>
+                </tr>
             </thead>
             <tbody>
-            <tr v-for="element in current_data" v-if="element.action" @click="element.action">
-                <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
-                    {{value}}
-                </td>
-            </tr>
-            <tr v-for="element in current_data" v-if="!element.action">
-                <td v-for="(value, key) in element.values" v-if="subsetAllowed(key)">
-                    {{value}}
-                </td>
-            </tr>
+                <tr v-for="row in rows">
+                    <td v-if="columns[column]" v-for="(value, column) in row">
+                        {{value}}
+                    </td>
+                </tr>
+                <tr v-if="no_data">
+                    <td class="no-data" :colspan="column_count">No rows in dataset</td>
+                </tr>
             </tbody>
         </table>
-        <div class="no-data" if="current_data.length === 0">No Data</div>
     </div>
 </template>
 
 <script>
     export default {
         props: {
-            data: {
-                type: Array,
+            columns: {
+                type: Object,
                 required: true
             },
-            subset: {
+            show_headers: {
+                type: Boolean,
+                default: true
+            },
+            rows: {
                 type: Array,
-                default: null
-            },
-            headers: {
-                type: Array
-            },
-            search: {
-                type: Boolean
-            },
-            search_value: {
-                type: String
-            },
-            search_align: {
-                type: String,
-                default: 'right',
-                validator: prop => {
-                    if (prop === 'left' || prop === 'right') return true;
-                    else {
-                        console.log('AUI-TOGGLE: Label location can only be left, right, top, or bottom.');
-                        return false;
-                    }
-                }
+                required: true
             }
         },
-        data: function() {
-            return {
-                current_data: this.data,
-                search_term: this.search_value
-            }
-        },
-        watch: {
-            search_term() {
-                let term = this.search_term.toLowerCase();
-
-                this.current_data = this.data.filter((element) => {
-
-                    let found = false;
-
-                    element.forEach((value) => {
-
-                        let val = value.toString().toLowerCase();
-
-                        if (val.includes(term)) {
-                            found = true;
-                        }
-
-                    });
-
-                    return found;
-                });
-
-                if (term === '') this.current_data = this.data;
-            }
-        },
-        methods: {
-            subsetAllowed(key) {
-                if (this.subset === null) {
-                    return true;
-                } else {
-                    return this.subset.includes(key);
-                }
+        computed: {
+            no_data() {
+                return this.rows.length === 0;
+            },
+            column_count() {
+                return Object.keys(this.columns).length;
             }
         }
     }
@@ -127,50 +67,37 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
-    @import "../client/css/core"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Table theming
-    .aui.table-container
-        @include som-container
-        display: flex
-        flex-direction: column
+// Table styling
+.aui.table
+    margin: 1rem 0
 
-        .input-aligner
-            align-self: flex-start
-            display: flex
+    /* When there are no rows a message is displayed */
+    .no-data
+        text-align: center
+        font-style: italic
 
-            &.right
-                margin-left: auto
+    /* Root table styling */
+    table
+        border-collapse: collapse
+        width: 100%
+        background: white
+        border: 1px solid $primary
 
-            &.left
-                margin-right: auto
+        /* Header styling */
+        th
+            color: white
+            background: $primary
 
-        .input-container
-            align-self: flex-start
+        /* Cell styling */
+        td, th
+            text-align: left
+            padding: 0.5rem 1rem
 
-        .no-data
-            text-align: center
-            margin: .5rem 0 0 0
-            background-color: rgba(255,255,255,.6)
-            padding: .5rem 0
-
-        .table
-            border-collapse: collapse
-            width: 100%
-
-            td, th
-                text-align: left
-                padding: .5rem 1rem
-
-            tbody tr:nth-child(odd)
-                background-color: rgba(255,255,255,.6)
-
-            &.interactive
-                tbody tr
-                    cursor: pointer
-
-                    &:hover
-                        background-color: lighten($primary, 55%)
+        /* Zebra striping */
+        tbody tr:nth-of-type(odd)
+            background: whitesmoke
 
 </style>
