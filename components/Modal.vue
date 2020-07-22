@@ -17,13 +17,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui modal-container" v-if="state" @click.self="toggleEmit()">
+    <div v-if="show" class="aui modal-container" @click.self="runClose">
         <div class="modal">
-            <div v-if="title" class="modal-header" :class="title_classes">
-                <h4>{{title}}</h4>
-                <i class="fa fa-times" @click.self="toggleEmit()" v-if="close"></i>
+            <div v-if="title" class="header" :class="'modal-' + type">
+                <h2>{{title}}</h2>
+                <i v-if="closeable" class="fas fa-times" @click.self="runClose"></i>
             </div>
-            <div class="modal-body">
+            <div class="body">
                 <slot></slot>
             </div>
         </div>
@@ -33,124 +33,157 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
-            state: {
+            type: {
+                type: String,
+                default: 'primary',
+                validator(value) {
+                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                }
+            },
+            show: {
                 type: Boolean,
                 required: true
             },
             title: {
                 type: String
             },
-            html: {
-                type: String
-            },
-            close: {
+            closeable: {
                 type: Boolean,
                 default: true
-            },
-            title_classes: {
-                type: String
             }
         },
         methods: {
-            escEmit(event) {
-                if (event.keyCode === 27) {
-                    this.$emit('modal-close');
+            escapeClose(event) {
+                if (event.key === 'Escape') {
+                    this.runClose();
                 }
             },
-            toggleEmit() {
-                if (this.close) {
-                    this.$emit('modal-toggle');
+            runClose() {
+                if (!this.closeable) {
+                    return false;
                 }
+                this.$emit('close');
             }
         },
         watch: {
-            state() {
-                if (this.state && document.getElementById('ds-nav-container') && document.getElementById('ds-view-header')) {
+            show() {
+                if (
+                    this.show && document.getElementById('ds-nav-container') &&
+                    document.getElementById('ds-view-header')
+                ) {
                     document.getElementById('ds-nav-container').style.zIndex = '0';
                     document.getElementById('ds-view-header').style.zIndex = '-1';
-                    document.getElementById('ds-nav-container').classList.remove("ds-nav-show-mobile")
-                } else if (!this.state  && document.getElementById('ds-nav-container') && document.getElementById('ds-view-header')) {
+                    document.getElementById('ds-nav-container').classList.remove('ds-nav-show-mobile')
+                    document.getElementById('ds-view').style.overflowY = 'hidden';
+                } else if (
+                    !this.show && document.getElementById('ds-nav-container') &&
+                    document.getElementById('ds-view-header')
+                ) {
                     document.getElementById('ds-nav-container').style.zIndex = '1';
                     document.getElementById('ds-view-header').style.zIndex = '0';
+                    document.getElementById('ds-view').style.overflowY = 'auto';
                 }
             }
         },
-        created: function() {
-            if (this.close) document.addEventListener('keyup', this.escEmit);
+        created() {
+            if (this.closeable) {
+                document.addEventListener('keyup', this.escapeClose);
+            }
         },
-        destroyed: function() {
-            if (this.close) document.removeEventListener('keyup', this.escEmit);
+        beforeDestroy() {
+            if (this.closeable) {
+                document.removeEventListener('keyup', this.escapeClose);
+            }
         }
     }
 </script>
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
+@import "../../../client/css/colors"
 
-    .aui.modal-container
-        position: fixed
-        top: 0
-        left: 0
-        height: 100%
-        width: 100%
-        background: rgba(0,0,0,.8)
-        z-index: 99
+/* The modal container */
+.aui.modal-container
+    position: fixed
+    top: 0
+    left: 0
+    height: 100%
+    width: 100%
+    background: rgba(0, 0, 0, 0.8)
+    z-index: 99
+    display: flex
+    justify-content: center
+    align-items: center
+
+    /* The modal itself */
+    .modal
         display: flex
-        justify-content: center
-        align-items: center
+        flex-direction: column
+        z-index: 100
+        max-width: 600px
+        min-width: 300px
+        max-height: 80%
+        margin: 0 0.5rem
 
-        .modal
+        /* Pad out modal contents */
+        & > *
+            padding: 1rem
+
+        /* Header, if present */
+        .header
             display: flex
-            flex-direction: column
-            z-index: 100
-            max-width: 600px
-            max-height: 80%
-            margin: 0 .5rem
+            padding: 0
+            justify-content: space-between
+            align-items: center
+            border-bottom: 1px solid #ced4da
+            border-radius: .25rem .25rem 0 0
 
-            &>*
-                padding: 1.5rem
+            /* Header theme */
+            &.modal-primary
+                color: white
+                background: $primary
 
-            .modal-header
+            &.modal-secondary
+                color: white
+                background: $secondary
+
+            &.modal-warning
+                background: $warning
+
+            &.modal-success
+                color: white
+                background: $success
+
+            &.modal-failure
+                color: white
+                background: $failure
+
+            /* Modal header title */
+            h2
+                font-size: 1.125rem
+                margin: 1rem
                 display: flex
-                padding: .75rem 1.5rem
-                justify-content: space-between
-                border-bottom: 1px solid #ced4da
-                border-radius: .25rem .25rem 0 0
+                justify-content: center
+                align-items: center
 
-                &.primary
-                    color: white
-                    background: $primary
-                &.secondary
-                    color: white
-                    background: $secondary
-                &.warning
-                    background: $warning
-                &.success
-                    color: white
-                    background: $success
-                &.failure
-                    color: white
-                    background: $failure
+            /* Modal close button */
+            .fas.fa-times
+                padding: 0.5rem 0.6rem
+                margin: 0.5rem
+                cursor: pointer
+                border-radius: 50%
 
-                h4
-                    margin: 0
-                    display: flex
-                    justify-content: center
-                    align-items: center
+                &:hover
+                    background: rgba(0, 0, 0, 0.2)
 
-                .fa.fa-times
-                    padding: .5rem .7rem
-                    cursor: pointer
-                    border-radius: 50%
+        /* Modal slot body */
+        .body
+            background: #fff
+            border-radius: 0 0 0.25rem 0.25rem
+            overflow-y: auto
 
-                    &:hover
-                        background: rgba(0,0,0,.2)
-
-
-            .modal-body
-                background: #fff
-                border-radius: 0 0 .25rem .25rem
-                overflow-y: auto
+        /* Borders for when no header is present */
+        .body:only-child
+            border-radius: 0.25rem
 
 </style>
