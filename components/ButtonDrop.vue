@@ -103,50 +103,39 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
             // Toggle visibility state
             toggle() {
-
                 this.show_dropdown = !this.show_dropdown;
-
                 this.menu_align_master = null;
                 this.anchor = '';
-
                 Vue.nextTick(() => {
 
                     // Hide the element
-                    this.$refs.menu.style.opacity = '0';
+                    this.$refs['menu'].style.opacity = '0';
 
                     // Get element dimensions
-                    const domRect = this.$refs.menu.getBoundingClientRect();
-                    const spaceBelow = window.innerHeight - domRect.bottom;
-                    const spaceRight = window.innerWidth - domRect.right;
+                    const rect = this.$refs['menu'].getBoundingClientRect();
+                    const space_below = window.innerHeight - rect.bottom;
+                    const space_right = window.innerWidth - rect.right;
 
-
-                    // If the element is too close to the right edge
-                    if (spaceRight < 0) {
-
-                        // Assign a left anchor
+                    // If the element is too close to the right edge, assign a left anchor
+                    if (space_right < 0) {
                         this.menu_align_master = 'right';
-
                     }
 
-                    // If the element is too close to the bottom edge
-                    if (spaceBelow < 0) {
-
-                        // Assign it a top anchor
+                    // If the element is too close to the bottom edge, assign it a top anchor
+                    if (space_below < 0) {
                         this.anchor = 'top';
-
                     }
 
-                    // Unide the element
-                    this.$refs.menu.style.opacity = '1';
+                    // Un-hide the element
+                    this.$refs['menu'].style.opacity = '1';
 
-
-                })
+                });
             },
 
             // Reset the visibility state when clicking outside the element
             outsideReset(event) {
 
-                // If the element isn't the menu, hide menu; aka a faux clickout/blur event
+                // If the element isn't the menu, hide menu; aka a faux click-out/blur event
                 if (!this.$refs.dropdown.contains(event.target)) {
                     this.show_dropdown = false;
                 }
@@ -169,11 +158,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         },
         created() {
-            // Add event listener for blur/clickout tracking
+            // Add event listener for blur/click-out tracking
             window.addEventListener('click', this.outsideReset);
         },
         beforeDestroy() {
-            // Remove the blur/clickout event listener
+            // Remove the blur/click-out event listener
             window.removeEventListener('click', this.outsideReset);
         }
     }
