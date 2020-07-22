@@ -17,23 +17,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div :id="id + '-container'" class="aui select-container">
-        <label :for="id" v-if="title">{{title}}</label>
-        <div class="select-block">
+    <div :id="id + '-container'" class="aui select">
+        <label>
+            {{label}}
             <select
-                :name="name"
                 :id="id"
-                :class="classes + classFailure() + classSuccess()"
-                :value="value"
+                :class="input_classes"
+                :name="name"
                 :disabled="disabled"
+                :value="value"
                 @input="$emit('input', $event.target.value)"
                 @change="$emit('change', $event.target.value)"
             >
-                <option v-if="us_states" v-for="(element, key) in states" :value="key" :selected="isSelected(key)">{{element}}</option>
-                <option v-if="!us_states" v-for="(element, key) in data" :value="key" :selected="isSelected(key)">{{element}}</option>
+                <option v-for="(option, value) in render_options" :value="value">{{option}}</option>
             </select>
-        </div>
-        <div class="aui subtext" :class="subtextColorClass()" v-if="subtext" >{{subtext}}</div>
+        </label>
+        <div v-if="subtext_value" class="subtext" :class="subtext_classes">{{subtext_value}}</div>
     </div>
 </template>
 
@@ -44,34 +43,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 required: true
             },
-            data: {
-                type: Array | Object
-            },
-            value: {
-                type: Array | Object | String | Boolean | Number
-            },
-            title: {
+            label: {
                 type: String
             },
             name: {
                 type: String
             },
-            subtext: {
-                type: String
-            },
-            success: {
-                type: Boolean
-            },
-            failure: {
-                default: false
-            },
-            classes: {
-                type: String,
-                default: ''
-            },
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            value: {
+                type: String | Number| Boolean
+            },
+            options: {
+                type: Array | Object
+            },
+            success: {
+                type: String | Boolean,
+                default: false
+            },
+            failure: {
+                type: String | Boolean,
+                default: false
+            },
+            subtext: {
+                type: String
             },
             us_states: {
                 type: Boolean,
@@ -144,72 +141,99 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 }
             }
         },
-        methods: {
-            isSelected(key) {
-                return key == this.value;
+        computed: {
+            render_options() {
+                return this.us_states ? this.states : this.options;
             },
-            classSuccess() {
-                return (this.success) ? ' border-success' : '' ;
+            input_classes() {
+                return {
+                    'border-success': this.success,
+                    'border-failure': this.failure
+                }
             },
-            classFailure() {
-                return (this.failure) ? ' border-failure' : '' ;
+            subtext_classes() {
+                return {
+                    'text-success': this.success,
+                    'text-failure': this.failure
+                }
             },
-            subtextColorClass() {
-                if (this.success) return 'text-success';
-                if (this.failure) return 'text-failure';
-                return '';
-            },
+            subtext_value() {
+                if (this.success) {
+                    return this.success;
+                } else if (this.failure) {
+                    return this.failure;
+                } else {
+                    return this.subtext;
+                }
+            }
         }
     }
 </script>
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Select styling
-    .aui.select-container
+// Select styling
+.aui.select
+    display: flex
+    flex-direction: column
+    margin-bottom: 1rem
+
+    /* Select label */
+    label
         display: flex
         flex-direction: column
+        margin-bottom: 0
+        width: 100%
 
-        *
-            width: 100%
-
-        .select-block
-            display: flex
-            flex-direction: column
-
-        label
-            margin-bottom: .5rem
-
+        /* Select input root styling */
         select
+            display: flex
             flex: 1
+            margin-top: 0.25rem
             font-size: 1rem
-            padding: .5rem 2rem .5rem .5rem
+            padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da
-            align-self: flex-start
             -webkit-appearance: none
             -moz-appearance: none
             background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ced4da'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat calc(100% - 10px) 65%
             background-size: 12px
 
-            &.border-success
-                border: 1px solid $success
-
-            &.border-failure
-                border: 1px solid $failure
-
+            /* Clear focus */
             &:focus
                 outline: none
-                box-shadow: 0 0 0 1px rgba(0, 123, 255, .8)
+                box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.8)
 
+            /* Disabled flag */
             &:disabled
                 background: darken(#e9ecef, 15%)
 
-        .subtext
-            font-size: .8rem
-            margin-top: .25rem
-            color: #6c757d
+            /* Success styling */
+            &.border-success
+                padding-right: 2.5rem !important
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+                background-repeat: no-repeat
+                background-position: right 0.5rem center
+                background-size: 1.5rem
+                border: 1px solid $success
+
+            /* Failure styling */
+            &.border-failure
+                padding-right: 2.5rem !important
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
+                background-repeat: no-repeat
+                background-position: right 0.5rem center
+                background-size: 1.5rem
+                border: 1px solid $failure
+
+    /* Input subtext */
+    .subtext
+        font-size: 0.8rem
+        margin-top: 0.25rem
+        color: #6c757d
+        width: 100%
 
 </style>
