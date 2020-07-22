@@ -17,36 +17,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui aui-toggle flex">
-        <span class="switch-container" :class="label_location">
-            <label>{{label}}</label>
-            <label class="switch">
-                <input type="checkbox" :checked="checked" @change="$emit('input', $event.target.checked)">
-                <span class="slider round"></span>
-            </label>
+    <label class="aui toggle">
+        <slot></slot>
+        <span class="switch">
+            <input type="checkbox" :checked="toggled" :disabled="disabled" @change="$emit('input', $event.target.checked)">
+            <span class="slider"></span>
         </span>
-    </div>
+    </label>
 </template>
 
 <script>
     export default {
         props: {
-            checked: {
-                type: Boolean
+            toggled: {
+                type: Boolean,
+                default: false
             },
-            label: {
-                type: String,
-            },
-            label_location: {
-                type: String,
-                default: 'top',
-                validator: prop => {
-                    if (prop === 'left' || prop === 'right' || prop === 'top' || prop === 'bottom') return true;
-                    else {
-                        console.log('AUI-TOGGLE: Label location can only be left, right, top, or bottom.');
-                        return false;
-                    }
-                }
+            disabled: {
+                type: Boolean,
+                default: false
             }
         }
     }
@@ -54,68 +43,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
 
-    // Toggle switches
-    .switch-container
-        display: grid
-        grid-gap: .5rem
-        width: 100%
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-        label
-            display: flex
+// Toggle styling
+.aui.toggle
+    display: flex
+    align-items: center
+    position: relative
+    margin: 0.5rem 0
+    padding: 0.5rem 0
+    cursor: pointer
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
 
-        &.top
-            margin-top: .5rem
-
-            label
-                grid-row: 1
-                grid-column: 1
-                justify-content: center
-
-            .switch
-                grid-row: 2
-                grid-column: 1
-                justify-self: center
-
-        &.bottom
-            margin-bottom: .5rem
-
-            label
-                grid-row: 2
-                grid-column: 1
-                justify-content: center
-
-            .switch
-                grid-row: 1
-                grid-column: 1
-
-        &.left
-            grid-template-columns: auto 3.75rem
-            align-items: center
-            margin-left: .5rem
-
-            label
-                grid-row: 1
-                grid-column: 1
-                justify-content: flex-end
-
-            .switch
-                grid-row: 1
-                grid-column: 2
-
-        &.right
-            grid-template-columns: 3.75rem auto
-            align-items: center
-            margin-right: .5rem
-
-            label
-                grid-row: 1
-                grid-column: 2
-
-            .switch
-                grid-row: 1
-                grid-column: 1
+    /* Flex out the label */
+    label
+        display: flex
 
     /* The switch - the box around the slider */
     .switch
@@ -123,51 +70,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         display: inline-block
         width: 60px
         height: 28px
+        margin-left: 1rem
 
-    /* Hide default HTML checkbox */
-    .switch input
-        opacity: 0
-        width: 0
-        height: 0
+        /* Hide default HTML checkbox */
+        input
+            opacity: 0
+            width: 0
+            height: 0
 
-    /* The slider */
-    .slider
-        position: absolute
-        cursor: pointer
-        top: 0
-        left: 0
-        right: 0
-        bottom: 0
-        background-color: #ccc
-        -webkit-transition: .4s
-        transition: .4s
+        /* The slider */
+        .slider
+            position: absolute
+            cursor: pointer
+            top: 0
+            left: 0
+            right: 0
+            bottom: 0
+            background: #ccc
+            -webkit-transition: 0.4s
+            transition: 0.4s
+            border-radius: 34px
 
-    .slider:before
-        position: absolute
-        content: ""
-        height: 20px
-        width: 20px
-        left: 4px
-        bottom: 4px
-        background-color: white
-        -webkit-transition: .4s
-        transition: .4s
+            /* Slider circle */
+            &:before
+                position: absolute
+                content: ""
+                height: 20px
+                width: 20px
+                left: 4px
+                bottom: 4px
+                background: white
+                -webkit-transition: 0.4s
+                transition: 0.4s
+                border-radius: 50%
 
+    /* Slider color */
     input:checked + .slider
-        background-color: $primary
+        background: $primary
 
+    /* Slider shadow effect */
     input:focus + .slider
         box-shadow: 0 0 1px $primary
 
+    /* Transforms */
     input:checked + .slider:before
         -webkit-transform: translateX(32px)
         -ms-transform: translateX(32px)
         transform: translateX(32px)
 
-    /* Rounded sliders */
-    .slider.round
-        border-radius: 34px
+    /* Disabled slider */
+    input:disabled + .slider
+        background: $secondary
+        cursor: not-allowed
 
-    .slider.round:before
-        border-radius: 50%
+        /* Slider circle */
+        &:before
+            background: #ccc
+
 </style>

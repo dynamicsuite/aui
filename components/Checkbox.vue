@@ -85,6 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
     & > input:checked:disabled ~ .checkmark
         background-color: $secondary
+        cursor: not-allowed
 
     & > .checkmark:after
         content: ""
