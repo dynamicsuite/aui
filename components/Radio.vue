@@ -17,24 +17,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui">
-        <label class="radio-container">
-            <slot></slot>
-            <input type="radio" :name="name" :checked="checked"  @change="$emit('input', $event.target.checked)">
-            <span class="radio"></span>
-        </label>
-    </div>
+    <label class="aui radio">
+        <slot></slot>
+        <input type="radio" :name="group" :value="data" @change="$emit('input', $event.target.value)">
+        <span class="bubble"></span>
+    </label>
 </template>
 
 <script>
     export default {
         props: {
-            name: {
+            group: {
                 type: String,
                 required: true
             },
-            checked: {
-                type: Boolean
+            data: {
+                type: String | Number | Boolean
             }
         }
     }
@@ -42,17 +40,40 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    /* Create a custom radio button */
-    /* Hide the browser's default radio button */
-    .radio-container input
+/* Checkbox styling */
+.aui.radio
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    position: relative
+    padding-left: 35px
+    margin-bottom: 12px
+    height: 26px
+    cursor: pointer
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+
+    /* The actual input styling */
+    input
         position: absolute
         opacity: 0
         cursor: pointer
 
-    /* Create a custom radio button */
-    .radio
+        /* When the radio button is checked, add a blue background */
+        &:checked ~ .bubble
+            background-color: $primary
+
+        /* Show the indicator (dot/circle) when checked */
+        &:checked ~ .bubble:after
+            display: block
+
+    /* Create a custom radio bubble */
+    .bubble
         position: absolute
         top: 0
         left: 0
@@ -61,30 +82,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         background-color: darken(#eee, 10%)
         border-radius: 50%
 
+        /* Create the indicator (the dot/circle - hidden when not checked) */
+        &:after
+            content: ""
+            position: absolute
+            display: none
+            top: 9px
+            left: 9px
+            width: 8px
+            height: 8px
+            border-radius: 50%
+            background: white
+
     /* On mouse-over, add a grey background color */
-    .radio-container:hover input ~ .radio
+    &:hover input ~ .radio
         background-color: #ccc
 
-    /* When the radio button is checked, add a blue background */
-    .radio-container input:checked ~ .radio
-        background-color: $primary
-
-    /* Create the indicator (the dot/circle - hidden when not checked) */
-    .radio:after
-        content: ""
-        position: absolute
-        display: none
-
-    /* Show the indicator (dot/circle) when checked */
-    .radio-container input:checked ~ .radio:after
-        display: block
-
-    /* Style the indicator (dot/circle) */
-    .radio-container .radio:after
-        top: 9px
-        left: 9px
-        width: 8px
-        height: 8px
-        border-radius: 50%
-        background: white
 </style>
