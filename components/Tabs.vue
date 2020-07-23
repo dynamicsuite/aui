@@ -18,102 +18,160 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui tabs">
-        <aui-tab
-            v-for="(option, index) in options"
-            :key="index" :active="option.active"
-            :label="option.label"
-            :action="option.action"
-            :disabled="option.disabled"
-            @click="setActive(option)"
-            v-if="showTabs"
-        >
-        </aui-tab>
-        <aui-button-drop :options="options" v-if="!showTabs" menu_align="right">{{getActive()}}</aui-button-drop>
+        <span v-if="!collapsed" v-for="tab in tab_structure" class="tab" :class="tabClass(tab.id)" @click="tab.action">
+            {{tab.label}}
+        </span>
+        <aui-button-drop v-if="collapsed" :dropdown="tab_structure">{{tab_name}}</aui-button-drop>
     </div>
 </template>
 
 <script>
     export default {
         props: {
-            options: {
-                type: Array
+            tabs: {
+                type: Object,
+                required: true
             },
+            initial_tab: {
+                type: String,
+                default: null
+            }
         },
-        data: function() {
+        data() {
             return {
-                width: null,
-                hideWidth: null,
-                showTabs: true
+                width: 0,
+                collapsed: false,
+                tab: null
+            }
+        },
+        computed: {
+            tab_structure() {
+                let structure = [];
+                let tab_keys = Object.keys(this.tabs);
+                for (let i = 0; i < tab_keys.length; i++) {
+                    let tab = tab_keys[i];
+                    structure[i] = {
+                        id: tab,
+                        label: this.tabs[tab],
+                        action: () => {
+                            this.tab = tab;
+                            this.$emit('change', this.tab);
+                        }
+                    }
+                }
+                return structure;
+            },
+            tab_name() {
+                return this.tabs[this.tab];
             }
         },
         methods: {
-            setActive(new_active) {
-                if (new_active.disabled) {
-                    return;
-                }
-                this.options.forEach((option) => {
-                    option.active = false;
-                });
-
-                new_active.active = true;
-            },
-            getActive() {
-                let active = this.options.filter((option) => {
-                    if (option.active) return true;
-                });
-
-                return active[0].label;
-            },
-            manageOverflow() {
-
+            checkIfCollapsed() {
                 window.requestAnimationFrame(() => {
-                    this.showTabs = this.$el.clientWidth >= this.width;
+                    this.collapsed = this.$el.clientWidth <= this.width;
                 });
-
+            },
+            tabClass(tab) {
+                return {
+                    active: this.tab === tab
+                }
             }
         },
-        created: function() {
-            window.addEventListener('resize', this.manageOverflow);
+        created() {
+            window.addEventListener('resize', this.checkIfCollapsed);
         },
-        mounted: function() {
-            this.width = 0;
-
-            this.$children.forEach((component) => {
-                this.width = this.width + component.$el.offsetWidth + 16;
-            });
-
+        mounted() {
+            for (let i = 0; i < this.$el.childNodes.length; i++) {
+                if (typeof this.$el.childNodes[i].offsetWidth !== 'number') {
+                    continue;
+                }
+                this.width += this.$el.childNodes[i].offsetWidth + 1;
+            }
             this.width = this.width + 32;
-            this.showTabs = this.$el.clientWidth >= this.width;
+            this.checkIfCollapsed();
+            if (this.initial_tab) {
+                this.tab = this.initial_tab;
+            } else {
+                this.tab = Object.keys(this.tabs)[0];
+            }
         },
-        destroyed: function() {
-            window.removeEventListener('resize', this.manageOverflow);
+        beforeDestroy() {
+            window.removeEventListener('resize', this.checkIfCollapsed);
         }
     }
 </script>
 
 <style lang="sass">
 
-    @import "../../../client/css/colors"
+/* Import the core DS colors */
+@import "../../../client/css/colors"
 
-    // Tab styling
-    .aui.tabs
-        border-bottom: 1px solid #ced4da
-        padding: calc(.5rem - 1px) 1rem
-        display: flex
+// Tabs container
+.aui.tabs
+    display: flex
+    padding: calc(0.5rem - 1px) 1rem
+    border-bottom: 1px solid #ced4da
 
-        &>*
-            margin-bottom: -.5rem
+    /* Global margin adjustment */
+    & > *
+        margin-bottom: -.5rem
 
-        .btn
-            background: whitesmoke
+    /* Individual tabs */
+    .tab
+        padding: calc(0.5rem + 2px) 1rem
+        margin-right: 1rem
+        font-size: 1rem
+        cursor: pointer
+        white-space: nowrap
+        user-select: none
+        -webkit-touch-callout: none
+        -webkit-user-select: none
+
+        /* Non-active tabs */
+        &:not(.active)
+            border-left: 1px solid rgba(255, 255, 255, 0)
+            border-top: 1px solid rgba(255, 255, 255, 0)
+            border-right: 1px solid rgba(255, 255, 255, 0)
+
+        /* Active tabs */
+        &.active
             border-bottom: 1px solid whitesmoke
             border-left: 1px solid #ced4da
             border-top: 1px solid #ced4da
             border-right: 1px solid #ced4da
-            border-radius: .25rem .25rem 0 0
-            z-index: 2
-            height: 40px
+            border-radius: 0.25rem 0.25rem 0 0
 
-            .dropdown-menu
-                border-radius: 0 0 .25rem .25rem
+        /* Disabled tabs */
+        &.disabled
+            color: #777
+
+            /* Block the cursor when hovering disabled tabs */
+            &:hover
+                cursor: not-allowed
+
+    /* Button dropdown styling for when the tabs are collapsed */
+    .btn
+        background: none
+        color: black
+        border-bottom: 1px solid whitesmoke
+        border-left: 1px solid #ced4da
+        border-top: 1px solid #ced4da
+        border-right: 1px solid #ced4da
+        border-radius: 0.25rem 0.25rem 0 0
+        z-index: 2
+        height: 40px
+
+        /* Color overrides */
+        &:hover, &:focus, &.active
+            background: none
+            color: black
+
+    /* Dropdown overrides */
+    .dropdown
+        border-top: none !important
+        border-top-left-radius: 0 !important
+        border-top-right-radius: 0 !important
+        margin-top: 3px !important
+        width: 100%
+
 </style>
