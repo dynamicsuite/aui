@@ -45,16 +45,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Unique HTML ID for the datalist
             id: {
                 type: String,
                 required: true
             },
+            // Label to display before the datalist
             label: {
                 type: String
             },
+            // Datalist HTML input name
             name: {
                 type: String
             },
+            // Datalist input type
             type: {
                 type: String,
                 default: 'text',
@@ -62,45 +66,55 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['text', 'number'].indexOf(value) !== -1;
                 }
             },
+            // Placeholder text for input
             placeholder: {
                 type: String
             },
+            // If the input id disabled
             disabled: {
                 type: Boolean,
                 default: false
             },
+            // Initial value of the input
             value: {
                 type: String | Number| Boolean
             },
+            // List options for the datalist
             options: {
                 type: Array | Object,
                 default: []
             },
+            // Success feedback state
             success: {
                 type: String | Boolean,
                 default: false
             },
+            // Failure feedback state
             failure: {
                 type: String | Boolean,
                 default: false
             },
+            // Input subtext
             subtext: {
                 type: String
             }
         },
         computed: {
+            // Style classes for the input
             input_classes() {
                 return {
                     'border-success': this.success,
                     'border-failure': this.failure
                 }
             },
+            // Style classes for the subtext
             subtext_classes() {
                 return {
                     'text-success': this.success,
                     'text-failure': this.failure
                 }
             },
+            // Value of the subtext text
             subtext_value() {
                 if (this.success) {
                     return this.success;

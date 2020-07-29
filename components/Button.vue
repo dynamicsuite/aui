@@ -30,6 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The button type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -37,14 +38,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // If the button is disabled and un-clickable
             disabled: {
                 type: Boolean,
                 default: false
             },
+            // If the button is in its loading state, also disables
             loading: {
                 type: Boolean,
                 default: false
             },
+            // Text to display on the button when in the loading state, uses old text if null
             loading_text: {
                 type: String,
                 default: null
@@ -57,14 +61,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         computed: {
+            // If custom loading text was given
             has_loading_text() {
                 return typeof this.loading_text === 'string';
             },
+            // If the button should be disabled
             is_disabled() {
                 return this.loading || this.disabled;
             }
         },
         methods: {
+            // Set a delay to display the loading spinner so that there is not weird flickering on low latency loads
             isDelayed() {
                 if (this.loading) {
                     setTimeout(() => {

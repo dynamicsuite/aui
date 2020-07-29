@@ -31,6 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The card type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -38,10 +39,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['neutral', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // Card header text
             header: {
                 type: String,
                 required: true
             },
+            // Card body title text
             title: {
                 type: String
             }

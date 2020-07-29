@@ -28,10 +28,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Tab structure to render
             tabs: {
                 type: Object,
                 required: true
             },
+            // Initial tab to render and set active
             initial_tab: {
                 type: String,
                 default: null
@@ -45,6 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         computed: {
+            // Format the tab structure
             tab_structure() {
                 let structure = [];
                 let tab_keys = Object.keys(this.tabs);
@@ -61,16 +64,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 }
                 return structure;
             },
+            // Dropdown text for collapsed tabs
             tab_name() {
                 return this.tabs[this.tab];
             }
         },
         methods: {
+            // Check and set collapsed state on resize
             checkIfCollapsed() {
                 window.requestAnimationFrame(() => {
                     this.collapsed = this.$el.clientWidth <= this.width;
                 });
             },
+            // Style classes to apply to the tab
             tabClass(tab) {
                 return {
                     active: this.tab === tab
@@ -81,6 +87,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             window.addEventListener('resize', this.checkIfCollapsed);
         },
         mounted() {
+            // Check to see how wide the tabs are (in PX) and then checks if it exceeds the window width
             for (let i = 0; i < this.$el.childNodes.length; i++) {
                 if (typeof this.$el.childNodes[i].offsetWidth !== 'number') {
                     continue;

@@ -27,10 +27,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // If the checkbox is checked
             checked: {
                 type: Boolean,
                 default: false
             },
+            // If the checkbox is disabled
             disabled: {
                 type: Boolean,
                 default: false
@@ -59,6 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     -ms-user-select: none
     user-select: none
 
+    /* Input overrides */
     & > input
         position: absolute
         opacity: 0
@@ -66,6 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         height: 0
         width: 0
 
+    /* Checkmark styling */
     & > .checkmark
         position: absolute
         top: 0
@@ -74,27 +78,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         width: 25px
         background-color: darken(#eee, 10%)
 
+    /* Swap colors when disabled */
     &:disabled
         background: $secondary !important
 
+    /* Checkbox hovering */
     &:hover input ~ .checkmark
-        background-color: #ccc
+        background: #ccc
 
+    /* Checked box colors when not disabled */
     & > input:checked:not(disabled) ~ .checkmark
-        background-color: $primary
+        background: $primary
 
+    /* Checked box colors when disabled */
     & > input:checked:disabled ~ .checkmark
-        background-color: $secondary
+        background: $secondary
         cursor: not-allowed
 
+    /* Pseudo element overrides */
     & > .checkmark:after
         content: ""
         position: absolute
         display: none
 
+    /* Pseudo element overrides */
     & > input:checked ~ .checkmark:after
         display: block
 
+    /* Pseudo element styling */
     & > .checkmark:after
         left: 9px
         top: 5px

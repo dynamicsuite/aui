@@ -41,23 +41,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Columns to render on the table
             columns: {
                 type: Object,
                 required: true
             },
+            // If the header of the table should show
             show_headers: {
                 type: Boolean,
                 default: true
             },
+            // Rows to render on the table
             rows: {
                 type: Array,
                 required: true
             }
         },
         computed: {
+            // If there are no rows in the table
             no_data() {
                 return this.rows.length === 0;
             },
+            // How many columns are in the table
             column_count() {
                 return Object.keys(this.columns).length;
             }

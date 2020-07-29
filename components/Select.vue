@@ -39,37 +39,47 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Unique HTML ID for the select
             id: {
                 type: String,
                 required: true
             },
+            // Label to display before the select
             label: {
                 type: String
             },
+            // Select HTML name
             name: {
                 type: String
             },
+            // If the select is disabled or not
             disabled: {
                 type: Boolean,
                 default: false
             },
+            // Current value of the select
             value: {
                 type: String | Number| Boolean
             },
+            // Select options to render
             options: {
                 type: Array | Object
             },
+            // Success feedback state
             success: {
                 type: String | Boolean,
                 default: false
             },
+            // Failure feedback state
             failure: {
                 type: String | Boolean,
                 default: false
             },
+            // Select subtext
             subtext: {
                 type: String
             },
+            // If the select should render US states for its options
             us_states: {
                 type: Boolean,
                 default: false
@@ -142,21 +152,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         computed: {
+            // Which options list should render
             render_options() {
                 return this.us_states ? this.states : this.options;
             },
+            // Style classes for the input (select)
             input_classes() {
                 return {
                     'border-success': this.success,
                     'border-failure': this.failure
                 }
             },
+            // Style classes for the subtext
             subtext_classes() {
                 return {
                     'text-success': this.success,
                     'text-failure': this.failure
                 }
             },
+            // Value of the subtext text
             subtext_value() {
                 if (this.success) {
                     return this.success;

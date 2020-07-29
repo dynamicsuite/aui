@@ -26,13 +26,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Unique HTML ID for the editor
             id: {
                 type: String,
                 required: true
             },
+            // Label to display before the editor
             label: {
                 type: String
             },
+            // Text value of the editor (raw HTML)
             text: {
                 type: String,
                 default: ''
@@ -44,6 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         mounted() {
+            // Initialize the pell widget
             this.editor = pell.init({
                 element: document.getElementById(this.id),
                 defaultParagraphSeparator: 'p',

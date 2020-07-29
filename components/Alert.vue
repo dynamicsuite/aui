@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The alert type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -36,13 +37,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // Alert title, optional
             title: {
                 type: String,
             },
+            // If the alert is currently visible, bindable to the parent instance
             visible: {
                 type: Boolean,
                 default: true
             },
+            // If the alert is user-closeable
             closeable: {
                 type: Boolean,
                 default: false

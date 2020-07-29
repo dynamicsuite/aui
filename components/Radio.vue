@@ -27,10 +27,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // HTML name attribute to group the radio to
             group: {
                 type: String,
                 required: true
             },
+            // HTML value attribute binding
             data: {
                 type: String | Number | Boolean
             }

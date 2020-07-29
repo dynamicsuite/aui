@@ -31,6 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The dropdown type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -38,6 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // The structure of dropdown options to show in the list
             dropdown: {
                 type: Array,
                 required: true,
@@ -53,14 +55,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return true;
                 }
             },
+            // The icon to display when the dropdown is inactive
             icon_inactive: {
                 type: String,
                 default: 'fas fa-caret-down'
             },
+            // The icon to display when the dropdown is active
             icon_active: {
                 type: String,
                 default: 'fas fa-caret-up'
             },
+            // Where to align the dropdown relative to the button
             menu_align: {
                 style: String,
                 default: 'left',
@@ -70,42 +75,40 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         computed: {
+            // Style classes to apply to the button
             button_classes() {
-
                 let classes = {
                     active: this.show_dropdown
                 };
-
                 classes['btn-' + this.type] = true;
-
                 return classes;
             },
+            // The Font Awesome class to use for the icon
             icon_class() {
                 return this.show_dropdown ? this.icon_active : this.icon_inactive;
             },
+            // Style classes to apply to the dropdown list
             list_classes() {
-                if (this.menu_align_master) {
-                    return this.menu_align_master + ' ' + this.anchor;
-                } else {
-                    return this.menu_align + ' ' + this.anchor;
-                }
-
+                let classes = {
+                    top: this.anchor_top,
+                };
+                classes[this.menu_align_master] = !!this.menu_align_master;
+                classes[this.menu_align] = !this.menu_align_master;
             }
         },
         data() {
             return {
                 show_dropdown: false,
-                anchor: '',
+                anchor_top: false,
                 menu_align_master: null
             }
         },
         methods: {
-
             // Toggle visibility state
             toggle() {
                 this.show_dropdown = !this.show_dropdown;
                 this.menu_align_master = null;
-                this.anchor = '';
+                this.anchor_top = false;
                 Vue.nextTick(() => {
 
                     // Hide the element
@@ -123,7 +126,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
                     // If the element is too close to the bottom edge, assign it a top anchor
                     if (space_below < 0) {
-                        this.anchor = 'top';
+                        this.anchor_top = true;
                     }
 
                     // Un-hide the element
@@ -134,24 +137,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
             // Reset the visibility state when clicking outside the element
             outsideReset(event) {
-
                 // If the element isn't the menu, hide menu; aka a faux click-out/blur event
                 if (!this.$refs.dropdown.contains(event.target)) {
                     this.show_dropdown = false;
                 }
-
             },
 
             // Run the action for the selected dropdown option
             runAction(action) {
-
                 // Functions get run, otherwise treat as URL
                 if (typeof(action) === 'function') {
                     action();
                 } else {
                     window.open(action);
                 }
-
                 // Hide the dropdown once the action is completed
                 this.show_dropdown = false;
             }

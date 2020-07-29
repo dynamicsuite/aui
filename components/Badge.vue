@@ -23,6 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The badge type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -30,6 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // Text content of the badge
             content: {
                 type: String | Number,
                 required: true

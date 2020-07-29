@@ -53,22 +53,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Unique HTML ID for the input
             id: {
                 type: String,
                 required: true
             },
+            // Label to display before the input
             label: {
                 type: String
             },
+            // Leading cap content, if any
             leading_cap: {
                 type: String
             },
+            // Trailing cap content, if any
             trailing_cap: {
                 type: String
             },
+            // Input HTML name
             name: {
                 type: String
             },
+            // Input HTML type
             type: {
                 type: String,
                 default: 'text',
@@ -90,28 +96,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     ].indexOf(value) !== -1;
                 }
             },
+            // Placeholder text for input
             placeholder: {
                 type: String
             },
+            // HTML tab index for the input
             tabindex: {
                 type: String | Number
             },
+            // If the input id disabled
             disabled: {
                 type: Boolean,
                 default: false
             },
+            // Initial value of the input
             value: {
                 type: String | Number | Boolean
             },
+            // Numeric input step factor
             step: {
                 type: String | Number
             },
+            // Numeric input minimum value
             min: {
                 type: String | Number
             },
+            // Numeric input maximum value
             max: {
                 type: String | Number
             },
+            // HTML autocomplete value
             autocomplete: {
                 type: String,
                 default: 'on',
@@ -119,23 +133,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['on', 'off'].indexOf(value) !== -1;
                 }
             },
+            // Success feedback state
             success: {
                 type: String | Boolean,
                 default: false
             },
+            // Failure feedback state
             failure: {
                 type: String | Boolean,
                 default: false
             },
+            // Input subtext
             subtext: {
                 type: String
             },
+            // If no icon should trail the input on feedback, for use in short length inputs
             no_feedback_icon: {
                 type: Boolean,
                 default: false
             }
         },
         computed: {
+            // Style classes for the input
             input_classes() {
                 return {
                     'border-success': this.success,
@@ -143,12 +162,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     'no-feedback-icon': this.no_feedback_icon
                 }
             },
+            // Style classes for the subtext
             subtext_classes() {
                 return {
                     'text-success': this.success,
                     'text-failure': this.failure
                 }
             },
+            // Value of the subtext text
             subtext_value() {
                 if (this.success) {
                     return this.success;
@@ -160,9 +181,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         methods: {
+            // Force focus
             focus() {
                 this.$refs.input.focus();
             },
+            // Force select
             select() {
                 this.$refs.input.select();
             }
@@ -326,6 +349,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     background-position: right 0.5rem center
                     background-size: 1.5rem
 
+    /* Input subtext */
     .subtext
         font-size: .8rem
         margin-top: .25rem

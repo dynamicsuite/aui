@@ -29,10 +29,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // If the toggle is toggled on
             toggled: {
                 type: Boolean,
                 default: false
             },
+            // If the toggle is disabled
             disabled: {
                 type: Boolean,
                 default: false

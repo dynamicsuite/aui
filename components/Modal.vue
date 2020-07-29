@@ -33,6 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // The modal type, which determines style classes
             type: {
                 type: String,
                 default: 'primary',
@@ -40,24 +41,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
+            // If the modal should be shown
             show: {
                 type: Boolean,
                 required: true
             },
+            // Modal title
             title: {
                 type: String
             },
+            // If the modal is closeable
             closeable: {
                 type: Boolean,
                 default: true
             }
         },
         methods: {
+            // Run close binding for the escape key press
             escapeClose(event) {
                 if (event.key === 'Escape') {
                     this.runClose();
                 }
             },
+            // Actually close the modal (if possible)
             runClose() {
                 if (!this.closeable) {
                     return false;
@@ -66,6 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
         },
         watch: {
+            // Do some style overrides to make the container escape the Dynamic Suite bounds
             show() {
                 if (
                     this.show && document.getElementById('ds-nav-container') &&
@@ -100,6 +107,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
+/* Import the core DS colors */
 @import "../../../client/css/colors"
 
 /* The modal container */
