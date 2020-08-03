@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <span class="aui badge" :class="'badge-' + type">{{content}}</span>
+    <span class="aui badge" :class="badge_class">{{content}}</span>
 </template>
 
 <script>
@@ -28,13 +28,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
             // Text content of the badge
             content: {
                 type: String | Number,
                 required: true
+            }
+        },
+        computed: {
+            // Class for the badge
+            badge_class() {
+                return this.type === 'none' ? '' : 'badge-' + this.type;
             }
         }
     }
