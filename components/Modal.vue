@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div v-if="show" class="aui modal-container" @mousedown.self="runClose">
         <div class="modal">
-            <div v-if="title" class="header" :class="'modal-' + type">
+            <div v-if="title" class="header" :class="modal_class">
                 <h2>{{title}}</h2>
                 <i v-if="closeable" class="fas fa-times" @click.self="runClose"></i>
             </div>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
             // If the modal should be shown
@@ -54,6 +54,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             closeable: {
                 type: Boolean,
                 default: true
+            }
+        },
+        computed: {
+            // Class for the modal
+            modal_class() {
+                return this.type === 'none' ? '' : 'modal-' + this.type;
             }
         },
         methods: {
