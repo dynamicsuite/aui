@@ -205,7 +205,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 .aui.input
     display: flex
     flex-direction: column
-    margin-bottom: 1rem
 
     /* Input label */
     label
@@ -217,10 +216,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         /* Input group separators */
         span
             display: flex
-
-        /* Main input group padding with label */
-        > span
-            margin-top: 0.25rem
+            flex-direction: column
 
         /* Leading and trailing input group caps (if any) */
         .leading-cap, .trailing-cap
