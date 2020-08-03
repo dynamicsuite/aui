@@ -243,15 +243,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
             /* Success feedback */
             &.border-success
-                border-left: 1px solid $success
-                border-top: 1px solid $success
-                border-bottom: 1px solid $success
+                border: 1px solid $success
 
             /* Failure feedback*/
             &.border-failure
-                border-right: 1px solid $failure
-                border-top: 1px solid $failure
-                border-bottom: 1px solid $failure
+                border: 1px solid $failure
 
         /* Trailing input group cap (if present) */
         .trailing-cap
@@ -261,15 +257,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
             /* Success feedback */
             &.border-success
-                border-right: 1px solid $success
-                border-top: 1px solid $success
-                border-bottom: 1px solid $success
+                border: 1px solid $success
 
             /* Failure feedback */
             &.border-failure
-                border-right: 1px solid $failure
-                border-top: 1px solid $failure
-                border-bottom: 1px solid $failure
+                border: 1px solid $failure
 
         /* The input itself */
         input
