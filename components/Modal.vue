@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div v-if="show" class="aui modal-container" @click.self="runClose">
+    <div v-if="show" class="aui modal-container" @mousedown.self="runClose">
         <div class="modal">
             <div v-if="title" class="header" :class="'modal-' + type">
                 <h2>{{title}}</h2>
