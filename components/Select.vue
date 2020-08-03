@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div :id="id + '-container'" class="aui select">
+    <div :id="container_id" class="aui select">
         <label>
             {{label}}
             <select
@@ -41,8 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         props: {
             // Unique HTML ID for the select
             id: {
-                type: String,
-                required: true
+                type: String
             },
             // Label to display before the select
             label: {
@@ -179,6 +178,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 } else {
                     return this.subtext;
                 }
+            },
+            // Value of the container ID
+            container_id() {
+                return this.id ? this.id + '-container' : '';
             }
         }
     }

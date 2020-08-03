@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div :id="id + '-container'" class="aui input">
+    <div :id="container_id" class="aui input">
         <label>
             {{label}}
             <span>
@@ -53,10 +53,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
-            // Unique HTML ID for the input
+            // Unique HTML ID for the input and container
             id: {
-                type: String,
-                required: true
+                type: String
             },
             // Label to display before the input
             label: {
@@ -178,6 +177,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 } else {
                     return this.subtext;
                 }
+            },
+            // Value of the container ID
+            container_id() {
+                return this.id ? this.id + '-container' : '';
             }
         },
         methods: {
