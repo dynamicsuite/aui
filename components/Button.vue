@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <button class="aui btn" :class="'btn-' + type" :disabled="is_disabled" @click="$emit('click')">
+    <button class="aui btn" :class="button_class" :disabled="is_disabled" @click="$emit('click')">
         <span v-if="isDelayed()">
             <i class="fa fa-spin fa-circle-notch"></i>
             <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
             // If the button is disabled and un-clickable
@@ -68,6 +68,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // If the button should be disabled
             is_disabled() {
                 return this.loading || this.disabled;
+            },
+            // Class for the button
+            button_class() {
+                return this.type === 'none' ? '' : 'btn-' + this.type;
             }
         },
         methods: {
