@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
             // The structure of dropdown options to show in the list
@@ -80,7 +80,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 let classes = {
                     active: this.show_dropdown
                 };
-                classes['btn-' + this.type] = true;
+                if (this.type !== 'none') {
+                    classes['btn-' + this.type] = true;
+                }
                 return classes;
             },
             // The Font Awesome class to use for the icon

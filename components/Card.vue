@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui card" :class="'card-' + type">
+    <div class="aui card" :class="card_class">
         <h1>{{header}}</h1>
         <div class="body">
             <h2 v-if="title">{{title}}</h2>
@@ -36,7 +36,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['neutral', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return [
+                        'none',
+                        'neutral',
+                        'primary',
+                        'secondary',
+                        'success',
+                        'warning',
+                        'failure'
+                    ].indexOf(value) !== -1;
                 }
             },
             // Card header text
@@ -47,6 +55,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Card body title text
             title: {
                 type: String
+            }
+        },
+        computed: {
+            // Class for the card
+            card_class() {
+                return this.type === 'none' ? '' : 'card-' + this.type;
             }
         }
     }

@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div v-if="visible" class="aui alert" :class="'alert-' + type">
+    <div v-if="visible" class="aui alert" :class="container_class">
         <div>
             <h3 v-if="title">{{title}}</h3>
             <p><slot></slot></p>
@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: 'primary',
                 validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
                 }
             },
             // Alert title, optional
@@ -50,6 +50,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             closeable: {
                 type: Boolean,
                 default: false
+            }
+        },
+        computed: {
+            // Class for the container
+            container_class() {
+                return this.type === 'none' ? '' : 'alert-' + this.type;
             }
         }
     }
