@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <span class="label-text" v-if="label">
                 {{label}}
             </span>
-            <span>
+            <span class="input-parent">
                 <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
                 <input
                     :id="id"
@@ -218,11 +218,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         /* Input group separators */
         span
             display: flex
-            flex-direction: column
-
-
-        .label-text
-            margin-bottom: .25rem
 
         /* Leading and trailing input group caps (if any) */
         .leading-cap, .trailing-cap
