@@ -19,7 +19,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div :id="id + '-container'" class="aui datalist">
         <label>
-            {{label}}
+            <span class="label-text" v-if="label">
+                {{label}}
+            </span>
             <input
                 :id="id"
                 :class="input_classes"
@@ -116,9 +118,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Value of the subtext text
             subtext_value() {
-                if (this.success) {
+                if (typeof this.success === 'string') {
                     return this.success;
-                } else if (this.failure) {
+                } else if (typeof this.failure === 'string') {
                     return this.failure;
                 } else {
                     return this.subtext;
@@ -137,7 +139,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 .aui.datalist
     display: flex
     flex-direction: column
-    margin-bottom: 1rem
 
     /* List label */
     label
@@ -150,7 +151,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         input
             display: flex
             flex: 1
-            margin-top: 0.25rem
             font-size: 1rem
             padding: 0.5rem
             border-radius: 0.25rem
@@ -183,11 +183,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             background-size: 1.5rem
             border: 1px solid $failure
 
+        .label-text
+            margin-bottom: .25rem
+
     /* Input subtext */
     .subtext
         font-size: 0.8rem
         margin-top: 0.25rem
         color: #6c757d
         width: 100%
+
+        &.text-success
+            color: $success
+
+        &.text-failure
+            color: $failure
 
 </style>

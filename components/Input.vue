@@ -172,9 +172,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Value of the subtext text
             subtext_value() {
-                if (this.success) {
+                if (typeof this.success === 'string') {
                     return this.success;
-                } else if (this.failure) {
+                } else if (typeof this.failure === 'string') {
                     return this.failure;
                 } else {
                     return this.subtext;
@@ -218,6 +218,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         /* Input group separators */
         span
             display: flex
+
+        .label-text
+            margin-bottom: .25rem
 
         /* Leading and trailing input group caps (if any) */
         .leading-cap, .trailing-cap
@@ -269,6 +272,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             border-radius: 0.25rem
             border: 1px solid #ced4da
             z-index: 2
+            width: 100%
 
             /* Where the input meets the leading cap (if any) */
             &:not(:first-child)
@@ -346,5 +350,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         font-size: .8rem
         margin-top: .25rem
         color: #6c757d
+
+        &.text-success
+            color: $success
+
+        &.text-failure
+            color: $failure
 
 </style>
