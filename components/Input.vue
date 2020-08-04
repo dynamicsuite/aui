@@ -232,7 +232,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             color: #495057
             background: #e9ecef
             border: 1px solid #ced4da
-            z-index: 1
             white-space: nowrap
 
         /* Leading input group cap (if present) */
@@ -271,7 +270,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da
-            z-index: 2
             width: 100%
 
             /* Where the input meets the leading cap (if any) */
