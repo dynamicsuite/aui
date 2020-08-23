@@ -112,6 +112,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <style lang="sass">
 
+/* Media query mixin for mobile view breakpoint */
+@mixin on-mobile-view
+    @media (max-width: 500px)
+        @content
+
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
@@ -120,6 +125,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     display: flex
     padding: calc(0.5rem - 1px) 1rem
     border-bottom: 1px solid #ced4da
+
+    @include on-mobile-view
+        .btn-drop
+            display: flex
+            justify-content: center
+            width: 100%
 
     /* Global margin adjustment */
     & > *
