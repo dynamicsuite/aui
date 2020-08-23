@@ -73,7 +73,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Check and set collapsed state on resize
             checkIfCollapsed() {
                 window.requestAnimationFrame(() => {
-                    this.collapsed = this.$el.clientWidth <= this.width;
+                    this.collapsed =
+                        this.$el.clientWidth <= this.width ||
+                        this.$el.clientWidth + 40 >= window.innerWidth;
                 });
             },
             // Style classes to apply to the tab
