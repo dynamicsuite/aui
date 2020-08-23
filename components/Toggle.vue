@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <label class="aui toggle">
-        <slot></slot>
+        <span class="label-text">{{label}}</span>
         <span class="switch">
             <input type="checkbox" :checked="toggled" :disabled="disabled" @change="$emit('input', $event.target.checked)">
             <span class="slider"></span>
@@ -38,6 +38,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            // Label to display before the toggle
+            label: {
+                type: String | null,
+                default: null
             }
         }
     }
