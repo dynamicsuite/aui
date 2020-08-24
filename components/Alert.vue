@@ -43,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // If the alert is currently visible, bindable to the parent instance
             visible: {
-                type: Boolean,
+                type: Boolean | String,
                 default: true
             },
             // If the alert is user-closeable
