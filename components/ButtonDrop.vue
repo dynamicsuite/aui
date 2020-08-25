@@ -96,11 +96,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Style classes to apply to the dropdown list
             list_classes() {
-                let classes = {
-                    top: this.anchor_top,
-                };
-                classes[this.menu_align_master] = !!this.menu_align_master;
-                classes[this.menu_align] = !this.menu_align_master;
+
+                return (this.menu_align_master) ? this.menu_align_master : this.menu_align +
+                    ' ' +
+                    (this.anchor_top) ? 'top' : 'bottom';
             },
             // If the button should be disabled
             is_disabled() {
@@ -117,9 +116,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         methods: {
             // Toggle visibility state
             toggle() {
+
                 this.show_dropdown = !this.show_dropdown;
                 this.menu_align_master = null;
                 this.anchor_top = false;
+
                 Vue.nextTick(() => {
 
                     // Hide the element
@@ -130,13 +131,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     const space_below = window.innerHeight - rect.bottom;
                     const space_right = window.innerWidth - rect.right;
 
+                    console.log(space_below, space_right)
+
                     // If the element is too close to the right edge, assign a left anchor
                     if (space_right < 0) {
+                        console.log('right override')
                         this.menu_align_master = 'right';
                     }
 
                     // If the element is too close to the bottom edge, assign it a top anchor
                     if (space_below < 0) {
+
+                        console.log('bottom override')
                         this.anchor_top = true;
                     }
 
