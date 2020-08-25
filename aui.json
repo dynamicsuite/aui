@@ -1,17 +1,16 @@
 {
   "name": "Advanced User Interface",
   "author": "Dynamic Suite Team",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "Additional components and styling for DynamicSuite",
   "license": "GPLv3",
-  "depends": [
-    "dynamicsuite >= 4.1.0",
-    "vue >= 2.6.11.1"
-  ],
   "global": {
-    "autoload": "lib",
-    "init": "scripts/init.php",
-    "css": "css/aui.min.css",
-    "js": "js/pell.min.js"
+    "css": [
+      "css/aui.min.css"
+    ],
+    "js": [
+      "js/pell.min.js",
+      "js/aui.min.js"
+    ]
   }
 }
