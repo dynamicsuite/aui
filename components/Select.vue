@@ -84,6 +84,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             us_states: {
                 type: Boolean,
                 default: false
+            },
+            // If no icon should trail the input on feedback, for use in short length inputs
+            no_feedback_icon: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -161,7 +166,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             input_classes() {
                 return {
                     'border-success': this.success,
-                    'border-failure': this.failure
+                    'border-failure': this.failure,
+                    'no-feedback-icon': this.no_feedback_icon
                 }
             },
             // Style classes for the subtext
@@ -230,21 +236,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
             /* Success styling */
             &.border-success
-                padding-right: 2.5rem !important
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
-                background-repeat: no-repeat
-                background-position: right 0.5rem center
-                background-size: 1.5rem
                 border: 1px solid $success
+
+                /* Feedback icon if not disabled */
+                &:not(.no-feedback-icon)
+                    padding-right: 2.5rem !important
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+                    background-repeat: no-repeat
+                    background-position: right .5rem center
+                    background-size: 1.5rem
 
             /* Failure styling */
             &.border-failure
-                padding-right: 2.5rem !important
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
-                background-repeat: no-repeat
-                background-position: right 0.5rem center
-                background-size: 1.5rem
                 border: 1px solid $failure
+
+                /* Feedback icon if not disabled */
+                &:not(.no-feedback-icon)
+                    padding-right: 2.5rem !important
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
+                    background-repeat: no-repeat
+                    background-position: right 0.5rem center
+                    background-size: 1.5rem
 
         .label-text
             margin-bottom: .25rem
