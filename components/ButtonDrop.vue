@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui btn-drop" ref="dropdown">
-        <button class="aui btn" :class="button_classes" @click="toggle">
+        <button class="aui btn" :class="button_classes" :disabled="is_disabled" @click="toggle">
             <span v-if="$slots.default"><slot></slot></span>
             <i :class="icon_class"></i>
         </button>
@@ -54,6 +54,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     }
                     return true;
                 }
+            },
+            // If the button is disabled and un-clickable
+            disabled: {
+                type: Boolean,
+                default: false
             },
             // The icon to display when the dropdown is inactive
             icon_inactive: {
@@ -96,6 +101,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 };
                 classes[this.menu_align_master] = !!this.menu_align_master;
                 classes[this.menu_align] = !this.menu_align_master;
+            },
+            // If the button should be disabled
+            is_disabled() {
+                return this.loading || this.disabled;
             }
         },
         data() {
