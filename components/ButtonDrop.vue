@@ -97,10 +97,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Style classes to apply to the dropdown list
             list_classes() {
                 let classes = {
-                    top: this.anchor_top,
+                    top: this.anchor_top
                 };
+
                 classes[this.menu_align_master] = !!this.menu_align_master;
                 classes[this.menu_align] = !this.menu_align_master;
+
+                return classes;
             },
             // If the button should be disabled
             is_disabled() {
@@ -117,9 +120,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         methods: {
             // Toggle visibility state
             toggle() {
+
                 this.show_dropdown = !this.show_dropdown;
                 this.menu_align_master = null;
                 this.anchor_top = false;
+
                 Vue.nextTick(() => {
 
                     // Hide the element
