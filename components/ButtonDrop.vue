@@ -97,7 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Style classes to apply to the dropdown list
             list_classes() {
                 let classes = {
-                    top: this.anchor_top,
+                    top: this.anchor_top
                 };
 
                 classes[this.menu_align_master] = !!this.menu_align_master;
