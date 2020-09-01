@@ -200,7 +200,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Name calc for autocomplete disabling
             name_computed() {
                 if (this.disable_autofill) {
-                    return 'autofill-disabled-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                    return 'autofill-disabled-' +
+                        Math.random().toString(36).substring(2, 15) +
+                        Math.random().toString(36).substring(2, 15);
                 } else {
                     return this.name;
                 }
