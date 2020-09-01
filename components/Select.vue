@@ -25,9 +25,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <select
                 :id="id"
                 :class="input_classes"
-                :name="name"
+                :name="name_computed"
                 :disabled="disabled"
                 :value="value"
+                :autocomplete="autocomplete_computed"
                 @input="$emit('input', $event.target.value)"
                 @change="$emit('change', $event.target.value)"
             >
@@ -89,6 +90,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             no_feedback_icon: {
                 type: Boolean,
                 default: false
+            },
+            // Disable autofill
+            disable_autofill: {
+                type: Boolean,
+                default: true
             }
         },
         data() {
@@ -190,6 +196,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Value of the container ID
             container_id() {
                 return this.id ? this.id + '-container' : '';
+            },
+            // Autocomplete prop calculation
+            autocomplete_computed() {
+                if (this.disable_autofill || this.autocomplete === 'off') {
+                    return 'new-password';
+                } else {
+                    return 'on';
+                }
+            },
+            // Name calc for autocomplete disabling
+            name_computed() {
+                if (this.disable_autofill) {
+                    return 'autofill-disabled-' +
+                        Math.random().toString(36).substring(2, 15) +
+                        Math.random().toString(36).substring(2, 15);
+                } else {
+                    return this.name;
+                }
             }
         }
     }
