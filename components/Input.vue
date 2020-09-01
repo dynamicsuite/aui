@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 <input
                     :id="id"
                     :class="input_classes"
-                    :name="name"
+                    :name="name_computed"
                     :type="type"
                     :placeholder="placeholder"
                     :tabindex="tabindex"
@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     :step="step"
                     :min="min"
                     :max="max"
-                    :autocomplete="autocomplete"
+                    :autocomplete="autocomplete_computed"
                     ref="input"
                     @keydown="$emit('keydown', $event)"
                     @change="$emit('change', $event.target)"
@@ -152,6 +152,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             no_feedback_icon: {
                 type: Boolean,
                 default: false
+            },
+            // Disable autofill
+            disable_autofill: {
+                type: Boolean,
+                default: true
             }
         },
         computed: {
@@ -183,6 +188,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Value of the container ID
             container_id() {
                 return this.id ? this.id + '-container' : '';
+            },
+            // Autocomplete prop calculation
+            autocomplete_computed() {
+                if (this.disable_autofill || this.autocomplete === 'off') {
+                    return 'new-password';
+                } else {
+                    return 'on';
+                }
+            },
+            // Name calc for autocomplete disabling
+            name_computed() {
+                if (this.disable_autofill) {
+                    return 'autofill-disabled-' +
+                        Math.random().toString(36).substring(2, 15) +
+                        Math.random().toString(36).substring(2, 15);
+                } else {
+                    return this.name;
+                }
             }
         },
         methods: {
