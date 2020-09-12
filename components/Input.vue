@@ -23,29 +23,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 {{label}}
             </span>
             <span class="input-parent">
+
                 <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
-                <input
-                    :id="id"
-                    :class="input_classes"
-                    :name="name_computed"
-                    :type="type"
-                    :placeholder="placeholder"
-                    :tabindex="tabindex"
-                    :disabled="disabled"
-                    :value="value"
-                    :step="step"
-                    :min="min"
-                    :max="max"
-                    :autocomplete="autocomplete_computed"
-                    ref="input"
-                    @keydown="$emit('keydown', $event)"
-                    @change="$emit('change', $event.target)"
-                    @select="$emit('select', $event.target)"
-                    @focus="$emit('focus', $event.target)"
-                    @blur="$emit('blur', $event.target)"
-                    @input="$emit('input', $event.target.value)"
-                />
                 <span v-if="trailing_cap" class="trailing-cap" :class="input_classes" v-html="trailing_cap"></span>
+                <input
+                        :id="id"
+                        :class="input_classes + ' ' + cap_classes"
+                        :name="name_computed"
+                        :type="type"
+                        :placeholder="placeholder"
+                        :tabindex="tabindex"
+                        :disabled="disabled"
+                        :value="value"
+                        :step="step"
+                        :min="min"
+                        :max="max"
+                        :autocomplete="autocomplete_computed"
+                        ref="input"
+                        @keydown="$emit('keydown', $event)"
+                        @change="$emit('change', $event.target)"
+                        @select="$emit('select', $event.target)"
+                        @focus="$emit('focus', $event.target)"
+                        @blur="$emit('blur', $event.target)"
+                        @input="$emit('input', $event.target.value)"
+                />
             </span>
         </label>
         <div v-if="subtext_value" class="subtext" :class="subtext_classes">{{subtext_value}}</div>
@@ -206,6 +207,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 } else {
                     return this.name;
                 }
+            },
+            // Add classes for caps
+            cap_classes() {
+                let cap_class = '';
+
+                if (this.leading_cap) {
+                    cap_class += 'left-cap'
+                }
+                if (this.leading_cap && this.trailing_cap) {
+                    cap_class += ' '
+                }
+                if (this.trailing_cap) {
+                    cap_class += 'right-cap'
+                }
+
+                return cap_class;
             }
         },
         methods: {
@@ -235,12 +252,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     label
         display: flex
         flex-direction: column
+        justify-content: center
         margin-bottom: 0
-        width: 100%
 
         /* Input group separators */
         span
             display: flex
+
+        .input-parent
+            display: grid
+            grid-template-columns: min-content 1fr min-content
+            grid-auto-flow: dense
 
         .label-text
             margin-bottom: .25rem
@@ -259,7 +281,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         /* Leading input group cap (if present) */
         .leading-cap
-            flex: 0
+            grid-column: 1
             justify-self: flex-start
             border-radius: 0.25rem 0 0 0.25rem
 
@@ -273,7 +295,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         /* Trailing input group cap (if present) */
         .trailing-cap
-            flex: 0
+            grid-column: 3
             justify-self: flex-end
             border-radius: 0 0.25rem 0.25rem 0
 
@@ -287,23 +309,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         /* The input itself */
         input
+            grid-column: 2
             display: flex
             flex: 1
             font-size: 1rem
             padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da
-            width: 100%
 
             /* Where the input meets the leading cap (if any) */
-            &:not(:first-child)
+            &.left-cap
                 border-top-left-radius: 0
                 border-bottom-left-radius: 0
                 margin-left: -1px
                 padding-left: calc(0.5rem + 1px)
 
             /* Where the input meets the trailing cap (if any) */
-            &:not(:last-child)
+            &.right-cap
                 border-top-right-radius: 0
                 border-bottom-right-radius: 0
                 margin-right: -1px
