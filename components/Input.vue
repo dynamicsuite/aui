@@ -28,7 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 <span v-if="trailing_cap" class="trailing-cap" :class="input_classes" v-html="trailing_cap"></span>
                 <input
                     :id="id"
-                    :class="input_classes + ' ' + cap_classes"
+                    :class="input_classes"
                     :name="name_computed"
                     :type="type"
                     :placeholder="placeholder"
@@ -166,7 +166,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 return {
                     'border-success': this.success,
                     'border-failure': this.failure,
-                    'no-feedback-icon': this.no_feedback_icon
+                    'no-feedback-icon': this.no_feedback_icon,
+                    'right-cap': this.trailing_cap,
+                    'left-cap': this.leading_cap
                 }
             },
             // Style classes for the subtext
@@ -208,22 +210,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     return this.name;
                 }
             },
-            // Add classes for caps
-            cap_classes() {
-                let cap_class = '';
-
-                if (this.leading_cap) {
-                    cap_class += 'left-cap'
-                }
-                if (this.leading_cap && this.trailing_cap) {
-                    cap_class += ' '
-                }
-                if (this.trailing_cap) {
-                    cap_class += 'right-cap'
-                }
-
-                return cap_class;
-            }
         },
         methods: {
             // Force focus
