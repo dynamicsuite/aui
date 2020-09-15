@@ -27,25 +27,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
                 <span v-if="trailing_cap" class="trailing-cap" :class="input_classes" v-html="trailing_cap"></span>
                 <input
-                        :id="id"
-                        :class="input_classes + ' ' + cap_classes"
-                        :name="name_computed"
-                        :type="type"
-                        :placeholder="placeholder"
-                        :tabindex="tabindex"
-                        :disabled="disabled"
-                        :value="value"
-                        :step="step"
-                        :min="min"
-                        :max="max"
-                        :autocomplete="autocomplete_computed"
-                        ref="input"
-                        @keydown="$emit('keydown', $event)"
-                        @change="$emit('change', $event.target)"
-                        @select="$emit('select', $event.target)"
-                        @focus="$emit('focus', $event.target)"
-                        @blur="$emit('blur', $event.target)"
-                        @input="$emit('input', $event.target.value)"
+                    :id="id"
+                    :class="input_classes + ' ' + cap_classes"
+                    :name="name_computed"
+                    :type="type"
+                    :placeholder="placeholder"
+                    :tabindex="tabindex"
+                    :disabled="disabled"
+                    :value="value"
+                    :step="step"
+                    :min="min"
+                    :max="max"
+                    :autocomplete="autocomplete_computed"
+                    ref="input"
+                    @keydown="$emit('keydown', $event)"
+                    @change="$emit('change', $event.target)"
+                    @select="$emit('select', $event.target)"
+                    @focus="$emit('focus', $event.target)"
+                    @blur="$emit('blur', $event.target)"
+                    @input="$emit('input', $event.target.value)"
                 />
             </span>
         </label>
@@ -261,7 +261,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         .input-parent
             display: grid
-            grid-template-columns: min-content 1fr min-content
+            grid-template-columns: auto 1fr auto
             grid-auto-flow: dense
 
         .label-text
