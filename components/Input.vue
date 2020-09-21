@@ -302,6 +302,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da
+            width: calc(100% - 1rem)
 
             /* Where the input meets the leading cap (if any) */
             &.left-cap
