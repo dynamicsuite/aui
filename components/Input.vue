@@ -302,7 +302,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da
-            width: calc(100% - 1rem)
+            width: 100%
+            -webkit-box-sizing: border-box
+            -moz-box-sizing: border-box
+            box-sizing: border-box
 
             /* Where the input meets the leading cap (if any) */
             &.left-cap
@@ -380,7 +383,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         font-size: .8rem
         margin-top: .25rem
         color: #6c757d
-        width: 100%
         text-align: left
 
         &.text-success
