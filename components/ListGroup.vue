@@ -84,7 +84,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         /* Leading icon if present */
         .leading-icon
             font-size: 2rem
-            color: #777
+            color: lighten(#777, 15%)
             width: 2.5rem
             display: flex
             justify-content: center
