@@ -270,6 +270,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             grid-column: 1
             justify-self: flex-start
             border-radius: 0.25rem 0 0 0.25rem
+            margin-right: -2px
 
             /* Success feedback */
             &.border-success
@@ -284,6 +285,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             grid-column: 3
             justify-self: flex-end
             border-radius: 0 0.25rem 0.25rem 0
+            margin-left: -2px
 
             /* Success feedback */
             &.border-success
@@ -311,14 +313,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             &.left-cap
                 border-top-left-radius: 0
                 border-bottom-left-radius: 0
-                margin-left: -1px
                 padding-left: calc(0.5rem + 1px)
 
             /* Where the input meets the trailing cap (if any) */
             &.right-cap
                 border-top-right-radius: 0
                 border-bottom-right-radius: 0
-                margin-right: -1px
                 padding-right: calc(0.5rem + 1px)
 
             /* Clear focus */
