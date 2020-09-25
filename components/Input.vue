@@ -18,6 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div :id="container_id" class="aui input">
+        <div class="scroll-anchor" ref="scrollAnchor"></div>
         <label>
             <span class="label-text" v-if="label">
                 {{label}}
@@ -220,6 +221,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             select() {
                 this.$refs.input.select();
             }
+        },
+        watch: {
+            failure() {
+                this.$refs.scrollAnchor.scrollIntoView({behavior: "smooth", block: "nearest"});
+            }
         }
     }
 </script>
@@ -233,6 +239,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 .aui.input
     display: flex
     flex-direction: column
+    position: relative
+
+    .scroll-anchor
+        position: absolute
+        top: -2rem
 
     /* Input label */
     label
