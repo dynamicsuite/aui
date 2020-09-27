@@ -212,6 +212,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 }
             },
         },
+        watch: {
+            failure() {
+                const scroll_callback = () => {
+                    let view = document.getElementById('ds-view');
+                    let el = document.querySelectorAll('.aui .border-failure')[0]
+                    if (el) {
+                        let box = el.getBoundingClientRect()
+                        let scroll_position = box.top - box.height - 100
+                        view.scrollBy({
+                            top: scroll_position,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+                clearTimeout(window.aui_failure_timeout);
+                window.aui_failure_timeout = setTimeout(scroll_callback, 99);
+            }
+        },
         methods: {
             // Force focus
             focus() {
@@ -220,32 +238,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Force select
             select() {
                 this.$refs.input.select();
-            }
-        },
-        watch: {
-            failure() {
-
-                const scroll_callback = () => {
-
-                    let view = document.getElementById('ds-view');
-                    let el = document.querySelectorAll('.aui.input .border-failure')[0]
-
-                    if (el) {
-
-                        let box = el.getBoundingClientRect()
-                        let scroll_position = box.top - box.height - 100
-
-                        view.scrollBy({
-                            top: scroll_position,
-                            behavior: 'smooth'
-                        });
-
-                    }
-                }
-
-                clearTimeout(window.aui_failure_timeout);
-                window.aui_failure_timeout = setTimeout(scroll_callback, 99);
-
             }
         }
     }
