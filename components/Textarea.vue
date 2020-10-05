@@ -4,7 +4,7 @@
             <span class="label-text" v-if="label">
                 {{label}}
             </span>
-            <input
+            <textarea
                 :id="id"
                 :class="input_classes"
                 :name="name_computed"
@@ -171,7 +171,7 @@
 @import "../../../client/css/colors"
 
 // Input container
-.aui.input
+.aui.textarea
     display: flex
     flex-direction: column
 
@@ -195,7 +195,7 @@
             margin-bottom: .25rem
 
         /* The input itself */
-        input
+        textarea
             grid-column: 2
             display: flex
             flex: 1
