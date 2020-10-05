@@ -56,7 +56,6 @@ export default {
     },
     computed: {
 
-
         /**
          * If the value in the slot is negative, apply negative styling
          *
