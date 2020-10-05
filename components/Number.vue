@@ -29,7 +29,7 @@ export default {
             type: Boolean,
             default: false
         },
-        currency_sign: {
+        currency_symbol: {
             type: String,
             default: '$'
         },
@@ -50,8 +50,8 @@ export default {
          * @returns {object}
          */
         negative_class() {
-            return {
-                negative: (this.$slots.default[0].text >= 0)
+            return {14
+                negative: this.$slots.default[0].text >= 0
             }
         },
 
@@ -74,7 +74,7 @@ export default {
             whole = Math.abs(whole).toString();
 
             // Recombine before adding fixed zeroes
-            const combined = parseFloat(whole + '.' + decimals)
+            const combined = parseFloat(`${whole}.${decimals}`)
 
             // If the decimals of the input are less than the requested decimals, display requested, otherwise
             // display the original amount
@@ -85,8 +85,8 @@ export default {
             )
 
             // Split one more time to add comma formatting
-            let new_whole = (fixed + '').split('.')[0].toString();
-            const new_decimals = (fixed + '').split('.')[1].toString();
+            let new_whole = (fixed).split('.')[0].toString();
+            const new_decimals = (fixed).split('.')[1].toString();
 
             // Add the commas in
             new_whole = new_whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
