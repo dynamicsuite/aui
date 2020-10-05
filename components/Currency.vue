@@ -6,18 +6,13 @@
 
 <script>
 export default {
-    props: {
-        value: {
-            type: String
-        }
-    },
     computed: {
         negativeClass() {
-            return (this.value >= 0) ? '' : 'negative';
+            return (this.$slots.default[0].text >= 0) ? '' : 'negative';
         },
         prettyValue() {
-            let abs = Math.abs(parseFloat(this.value)).toFixed(2);
-            return (this.value >= 0) ? '$' + abs  : '-$' + abs;
+            let abs = Math.abs(parseFloat(this.$slots.default[0].text)).toFixed(2);
+            return (this.$slots.default[0].text >= 0) ? '$' + abs  : '-$' + abs;
         }
     }
 }
