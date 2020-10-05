@@ -1,19 +1,48 @@
 <template>
-    <span class="aui currency" :class="negativeClass">
-        {{prettyValue}}
+    <span class="aui number" :class="negative_class">
+        {{pretty_value}}
     </span>
 </template>
 
 <script>
 export default {
+    props: {
+        is_currency: {
+            type: Boolean,
+            default: false
+        },
+        currency_sign: {
+            type: String,
+            default: '$'
+        },
+        decimals: {
+            type: Number,
+            default: 0,
+            validator: function(value) {
+                return value >= 0 && parseInt(value) === value;
+            }
+        }
+    },
     computed: {
-        negativeClass() {
+        // If the value in the slot is negative, apply negative styling
+        negative_class() {
             return (this.$slots.default[0].text >= 0) ? '' : 'negative';
         },
-        prettyValue() {
-            let abs = Math.abs(parseFloat(this.$slots.default[0].text)).toFixed(2);
-            return (this.$slots.default[0].text >= 0) ? '$' + abs  : '-$' + abs;
-        }
+
+        // Convert a value to currency representation (NA locale)
+        pretty_value() {
+
+            let is_negative = input < 0;
+            let input = this.$slots.default[0].text
+            let currency = (this.is_currency ? this.currency_sign : '')
+
+            //let decimals = (this.$slots.default[0].text + "").split(".")[1];
+            //console.log(decimals > value)
+
+            input = parseFloat(input.toString().replace(',', ''));
+            input = Math.abs(input);
+            return (is_negative ? `-${currency}` : `${currency}`) + input.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
+        },
     }
 }
 </script>
@@ -23,7 +52,8 @@ export default {
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-.negative
-    color: $failure
+.aui.number
+    &.negative
+        color: $failure
 
 </style>
