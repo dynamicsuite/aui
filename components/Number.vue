@@ -39,7 +39,7 @@ export default {
             let whole = (input + "").split(".")[0].toString();
             let decimals = (input + "").split(".")[1].toString();
 
-            // Pretty up the integer side of the number
+            // Strip the whole number side of any extraneous signage
             whole = parseFloat(whole.toString().replace(',', ''));
             whole = Math.abs(whole).toString();
 
