@@ -25,21 +25,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
 export default {
     props: {
+
+        /**
+         * If the number should be rendered as currency
+         */
         is_currency: {
             type: Boolean,
             default: false
         },
+
+        /**
+         * The currency symbol to use if the number is defined as currency
+         */
         currency_symbol: {
             type: String,
             default: '$'
         },
-        decimals: {
-            type: Number,
-            default: 0,
+
+        /**
+         * The number of zeros that should pad the number to the right of the decimal place.
+         */
+        padding: {
+            type: Number | null,
+            default: null,
             validator: value => {
                 return value >= 0 && parseInt(value) === value;
             }
         }
+
     },
     computed: {
 
@@ -50,50 +63,52 @@ export default {
          * @returns {object}
          */
         negative_class() {
-            return {14
-                negative: this.$slots.default[0].text >= 0
+            return {
+                negative: parseFloat(this.$slots.default[0].text.replace(/[^0-9.-]/g, '')) < 0
             }
         },
 
         /**
-         * Convert a value to currency representation (NA locale)
+         * Convert a value to fixed decimal format with optional currency symbols
          *
          * @returns {string}
          */
         pretty_value() {
 
             // Initialize values we're working with
-            const input = this.$slots.default[0].text
-            const currency = (this.is_currency ? this.currency_sign : '');
-            const is_negative = input < 0;
-            let whole = input.split('.')[0].toString();
-            const decimals = input.split('.')[1].toString();
+            const input = this.$slots.default[0].text.replace(/[^0-9.-]/g, '');
+            const currency = (this.is_currency ? this.currency_symbol : '');
+            const is_negative = parseFloat(input) < 0;
+            const whole = Math.abs(parseInt(input.split('.')[0])).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            const fractional = parseInt(input.split('.')[1]);
+            const pad_length = this.padding !== null ? this.padding : (this.is_currency ? 2 : 0);
 
-            // Strip the whole number side of any extraneous signage
-            whole = parseFloat(whole.toString().replace(',', ''));
-            whole = Math.abs(whole).toString();
+            // Format the decimals
+            let decimals = '.';
 
-            // Recombine before adding fixed zeroes
-            const combined = parseFloat(`${whole}.${decimals}`)
+            // Fractional value present, make sure they are the proper length
+            if (!isNaN(fractional)) {
+                decimals += (fractional.toString().length < pad_length
+                    ? fractional.padEnd(pad_length + 1, '0')
+                    : fractional
+                );
+            }
 
-            // If the decimals of the input are less than the requested decimals, display requested, otherwise
-            // display the original amount
-            const fixed = (
-                decimals && decimals.length < this.decimals
-                    ? combined.toFixed(this.decimals)
-                    : combined.toFixed(decimals.length)
-            )
+            // Decimals not present, make sure pad length is met
+            else if (pad_length > 0) {
+                decimals = decimals.padEnd(pad_length + 1, '0');
+            }
 
-            // Split one more time to add comma formatting
-            let new_whole = (fixed).split('.')[0].toString();
-            const new_decimals = (fixed).split('.')[1].toString();
+            // No decimals at all
+            else {
+                decimals = '';
+            }
 
-            // Add the commas in
-            new_whole = new_whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            // Combine the sign, currency, and value, and return
+            return (is_negative ? '-' : '') + (currency ? currency : '') + `${whole}${decimals}`;
 
-            // Finally, combine and return
-            return (is_negative ? `-${currency}` : `${currency}`) + new_whole + '.' + new_decimals;
         }
+
     }
 }
 </script>
