@@ -79,7 +79,7 @@ export default {
             const currency = (this.is_currency ? this.currency_symbol : '');
             const is_negative = parseFloat(input) < 0;
             const whole = Math.abs(parseInt(input.split('.')[0])).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            const fractional = parseInt(input.split('.')[1]);
+            const fractional = input.split('.')[1];
             const pad_length = this.padding !== null ? this.padding : (this.is_currency ? 2 : 0);
 
             // Format the decimals
