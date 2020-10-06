@@ -43,7 +43,7 @@ export default {
         },
 
         /**
-         * The number of zeros that should pad the number to the right of the decimal place.
+         * The number of zeros that should pad the number to the right of the decimal place
          */
         padding: {
             type: Number | null,
@@ -51,6 +51,14 @@ export default {
             validator: value => {
                 return value >= 0 && parseInt(value) === value;
             }
+        },
+
+        /**
+         * The number to format and display
+         */
+        number: {
+            type: Number | String,
+            required: true
         }
 
     },
@@ -63,7 +71,7 @@ export default {
          */
         negative_class() {
             return {
-                negative: parseFloat(this.$slots.default[0].text.replace(/[^0-9.-]/g, '')) < 0
+                negative: parseFloat(this.number.toString().replace(/[^0-9.-]/g, '')) < 0
             }
         },
 
@@ -75,7 +83,7 @@ export default {
         pretty_value() {
 
             // Initialize values we're working with
-            const input = this.$slots.default[0].text.replace(/[^0-9.-]/g, '');
+            const input = this.number.toString().replace(/[^0-9.-]/g, '');
             const currency = (this.is_currency ? this.currency_symbol : '');
             const is_negative = parseFloat(input) < 0;
             const whole = Math.abs(parseInt(input.split('.')[0])).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
