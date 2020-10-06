@@ -94,9 +94,9 @@ export default {
             let decimals = '.';
 
             // Fractional value present, make sure they are the proper length
-            if (!isNaN(fractional)) {
+            if (fractional) {
                 decimals += (fractional.toString().length < pad_length
-                    ? fractional.padEnd(pad_length + 1, '0')
+                    ? fractional.padEnd(pad_length, '0')
                     : fractional
                 );
             }
