@@ -72,11 +72,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Where to align the dropdown relative to the button
             menu_align: {
-                style: String,
+                type: String,
                 default: 'left',
                 validator(value) {
                     return ['left', 'right'].indexOf(value) !== -1;
                 }
+            },
+            // Relative container for the dropdown placement
+            relative_to: {
+                type: String | null,
+                default: null
             }
         },
         computed: {
@@ -132,8 +137,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
                     // Get element dimensions
                     const rect = this.$refs['menu'].getBoundingClientRect();
-                    const space_below = window.innerHeight - rect.bottom;
-                    const space_right = window.innerWidth - rect.right;
+                    let space_below = window.innerHeight - rect.bottom;
+                    let space_right = window.innerWidth - rect.right;
+                    if (this.relative_to) {
+                        const element = this.$refs['menu'].closest(this.relative_to);
+                        if (element) {
+                            space_below = element.offsetHeight - rect.bottom;
+                            space_right = element.offsetWidth - rect.right;
+                        }
+                    }
 
                     // If the element is too close to the right edge, assign a left anchor
                     if (space_right < 0) {

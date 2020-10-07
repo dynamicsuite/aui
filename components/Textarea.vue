@@ -1,56 +1,29 @@
-<!--
-Aui Package
-Copyright (C) 2020 Dynamic Suite Team
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation version 3.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
--->
-
 <template>
-    <div :id="container_id" class="aui input">
-        <div class="scroll-anchor" ref="scrollAnchor"></div>
+    <div :id="container_id" class="aui textarea">
         <label>
             <span class="label-text" v-if="label">
                 {{label}}
             </span>
-            <span class="input-parent">
-
-                <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
-                <span v-if="trailing_cap" class="trailing-cap" :class="input_classes" v-html="trailing_cap"></span>
-                <input
-                    :id="id"
-                    :class="input_classes"
-                    :name="name_computed"
-                    :type="type"
-                    :placeholder="placeholder"
-                    :tabindex="tabindex"
-                    :disabled="disabled"
-                    :value="value"
-                    :step="step"
-                    :min="min"
-                    :max="max"
-                    :autocomplete="autocomplete_computed"
-                    ref="input"
-                    @keydown="$emit('keydown', $event)"
-                    @change="$emit('change', $event.target)"
-                    @select="$emit('select', $event.target)"
-                    @focus="$emit('focus', $event.target)"
-                    @blur="$emit('blur', $event.target)"
-                    @input="$emit('input', $event.target.value)"
-                />
-            </span>
+            <textarea
+                :id="id"
+                :class="input_classes"
+                :name="name_computed"
+                :type="type"
+                :placeholder="placeholder"
+                :disabled="disabled"
+                :value="value"
+                ref="textarea"
+                @keydown="$emit('keydown', $event)"
+                @change="$emit('change', $event.target)"
+                @select="$emit('select', $event.target)"
+                @focus="$emit('focus', $event.target)"
+                @blur="$emit('blur', $event.target)"
+                @input="$emit('input', $event.target.value)"
+            />
         </label>
-        <div v-if="subtext_value" class="subtext" :class="subtext_classes">{{subtext_value}}</div>
+        <div v-if="subtext_value" class="subtext" :class="subtext_classes">
+            {{subtext_value}}
+        </div>
     </div>
 </template>
 
@@ -63,14 +36,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Label to display before the input
             label: {
-                type: String
-            },
-            // Leading cap content, if any
-            leading_cap: {
-                type: String
-            },
-            // Trailing cap content, if any
-            trailing_cap: {
                 type: String
             },
             // Input HTML name
@@ -103,10 +68,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             placeholder: {
                 type: String
             },
-            // HTML tab index for the input
-            tabindex: {
-                type: String | Number
-            },
             // If the input id disabled
             disabled: {
                 type: Boolean,
@@ -115,26 +76,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Initial value of the input
             value: {
                 type: String | Number | Boolean
-            },
-            // Numeric input step factor
-            step: {
-                type: String | Number
-            },
-            // Numeric input minimum value
-            min: {
-                type: String | Number
-            },
-            // Numeric input maximum value
-            max: {
-                type: String | Number
-            },
-            // HTML autocomplete value
-            autocomplete: {
-                type: String,
-                default: 'on',
-                validator(value) {
-                    return ['on', 'off'].indexOf(value) !== -1;
-                }
             },
             // Success feedback state
             success: {
@@ -149,16 +90,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Input subtext
             subtext: {
                 type: String
-            },
-            // If no icon should trail the input on feedback, for use in short length inputs
-            no_feedback_icon: {
-                type: Boolean,
-                default: false
-            },
-            // Disable autofill
-            disable_autofill: {
-                type: Boolean,
-                default: true
             }
         },
         computed: {
@@ -192,14 +123,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Value of the container ID
             container_id() {
                 return this.id ? this.id + '-container' : '';
-            },
-            // Autocomplete prop calculation
-            autocomplete_computed() {
-                if (this.disable_autofill || this.autocomplete === 'off') {
-                    return 'new-password';
-                } else {
-                    return 'on';
-                }
             },
             // Name calc for autocomplete disabling
             name_computed() {
@@ -244,19 +167,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 </script>
 
 <style lang="sass">
-
-/* Import the core DS colors */
+    /* Import the core DS colors */
 @import "../../../client/css/colors"
 
 // Input container
-.aui.input
+.aui.textarea
     display: flex
     flex-direction: column
-    position: relative
-
-    .scroll-anchor
-        position: absolute
-        top: -2rem
 
     /* Input label */
     label
@@ -277,50 +194,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         .label-text
             margin-bottom: .25rem
 
-        /* Leading and trailing input group caps (if any) */
-        .leading-cap, .trailing-cap
-            display: flex
-            justify-content: center
-            align-items: center
-            font-size: 0.9rem
-            padding: 0.45rem 0.5rem
-            color: #495057
-            background: #e9ecef
-            border: 1px solid #ced4da
-            white-space: nowrap
-
-        /* Leading input group cap (if present) */
-        .leading-cap
-            grid-column: 1
-            justify-self: flex-start
-            border-radius: 0.25rem 0 0 0.25rem
-            margin-right: -2px
-
-            /* Success feedback */
-            &.border-success
-                border: 1px solid $success
-
-            /* Failure feedback*/
-            &.border-failure
-                border: 1px solid $failure
-
-        /* Trailing input group cap (if present) */
-        .trailing-cap
-            grid-column: 3
-            justify-self: flex-end
-            border-radius: 0 0.25rem 0.25rem 0
-            margin-left: -2px
-
-            /* Success feedback */
-            &.border-success
-                border: 1px solid $success
-
-            /* Failure feedback */
-            &.border-failure
-                border: 1px solid $failure
-
         /* The input itself */
-        input
+        textarea
             grid-column: 2
             display: flex
             flex: 1
@@ -414,5 +289,4 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         &.text-failure
             color: $failure
-
 </style>

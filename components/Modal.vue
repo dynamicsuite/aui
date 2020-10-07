@@ -137,6 +137,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         max-width: 600px
         min-width: 300px
         max-height: 80%
+        width: 100%
         margin: 0 0.5rem
 
         /* Pad out modal contents */
@@ -192,7 +193,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         /* Modal slot body */
         .body
-            background: #fff
+            background: whitesmoke
             border-radius: 0 0 0.25rem 0.25rem
             overflow-y: auto
 

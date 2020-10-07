@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <span class="aui badge" :class="badge_class">{{content}}</span>
+    <span class="aui badge" :class="badge_class" v-html="content"></span>
 </template>
 
 <script>
