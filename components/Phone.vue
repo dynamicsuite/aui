@@ -44,9 +44,9 @@ export default {
             const number = this.number.replace(/[^0-9]/g, '');
             const length = number.length;
             if (length === 10) {
-                return `(${number.substr(0, 3)}) ${number.substr(4, 3)}-${number.substr(7, 4)}`;
+                return `(${number.substr(0, 3)}) ${number.substr(3, 3)}-${number.substr(6, 4)}`;
             } else if (length === 11 && number.charAt(0) === '1') {
-                return `+1 (${number.substr(0, 3)}) ${number.substr(4, 3)}-${number.substr(7, 4)}`;
+                return `+1 (${number.substr(1, 3)}) ${number.substr(4, 3)}-${number.substr(7, 4)}`;
             } else {
                 return this.number;
             }
