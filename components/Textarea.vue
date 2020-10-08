@@ -177,9 +177,6 @@
 
     /* Input label */
     label
-        display: flex
-        flex-direction: column
-        justify-content: center
         margin-bottom: 0
 
         /* Input group separators */
