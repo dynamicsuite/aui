@@ -24,6 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <slot v-else></slot>
         </span>
         <slot v-else></slot>
+        <aui-badge type="failure" v-if="alert" :content="alert_content"></aui-badge>
     </button>
 </template>
 
@@ -52,6 +53,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             loading_text: {
                 type: String,
                 default: null
+            },
+            alert: {
+                type: Boolean,
+                default: false
+            },
+            alert_content: {
+                type: String,
+                default: '!'
             }
         },
         data() {
@@ -101,6 +110,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     font-size: 1rem
     user-select: none
     cursor: pointer
+    position: relative
 
     /* Remove browser focus */
     &:focus
@@ -172,5 +182,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         &:disabled
             background: lighten($failure, 20%)
+
+    .aui.badge
+        position: absolute
+        top: -.75rem
+        right: -.25rem
+        z-index: 1
+        border: 1px solid white
 
 </style>
