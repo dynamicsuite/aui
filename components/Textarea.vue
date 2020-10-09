@@ -8,7 +8,6 @@
                 :id="id"
                 :class="input_classes"
                 :name="name_computed"
-                :type="type"
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :value="value"
@@ -42,33 +41,11 @@
             name: {
                 type: String
             },
-            // Input HTML type
-            type: {
-                type: String,
-                default: 'text',
-                validator(value) {
-                    return ['color',
-                        'date',
-                        'datetime-local',
-                        'email',
-                        'file',
-                        'number',
-                        'password',
-                        'range',
-                        'search',
-                        'tel',
-                        'text',
-                        'time',
-                        'url',
-                        'week'
-                    ].indexOf(value) !== -1;
-                }
-            },
-            // Placeholder text for input
+            // Placeholder text for textarea
             placeholder: {
                 type: String
             },
-            // If the input id disabled
+            // If the textarea is disabled
             disabled: {
                 type: Boolean,
                 default: false
@@ -90,7 +67,12 @@
             // Input subtext
             subtext: {
                 type: String
-            }
+            },
+            // If no icon should trail the input on feedback, for use in short length inputs
+            no_feedback_icon: {
+                type: Boolean,
+                default: false
+            },
         },
         computed: {
             // Style classes for the input
