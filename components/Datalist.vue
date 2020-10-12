@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 @keydown="$emit('keydown')"
                 @focus="$emit('focus')"
                 @blur="$emit('blur')"
-                @input="$emit('input', $event.target.value)"
+                @input="onInput"
             >
             <datalist :id="id + '-datalist'">
                 <option v-for="option in options" :value="option"></option>
@@ -105,6 +105,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             disable_autofill: {
                 type: Boolean,
                 default: true
+            }
+        },
+        methods: {
+            onInput(event) {
+                if (this.options.includes(event.target.value)) event.target.blur()
+                this.$emit('input', event.target.value)
             }
         },
         computed: {
