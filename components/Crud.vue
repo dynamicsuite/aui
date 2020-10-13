@@ -464,8 +464,7 @@ export default {
          * The API called to read the form for the interacted row ID.
          */
         form_api_read: {
-            type: String,
-            required: true
+            type: String
         },
 
         /**
@@ -480,8 +479,7 @@ export default {
          * The API called to create the form for the interacted row ID.
          */
         form_api_create: {
-            type: String,
-            required: true
+            type: String
         },
 
         /**
@@ -496,8 +494,7 @@ export default {
          * The API called to update the form for the interacted row ID.
          */
         form_api_update: {
-            type: String,
-            required: true
+            type: String
         },
 
         /**
@@ -512,8 +509,7 @@ export default {
          * The API called to delete the form for the interacted row ID.
          */
         form_api_delete: {
-            type: String,
-            required: true
+            type: String
         },
 
         /**
