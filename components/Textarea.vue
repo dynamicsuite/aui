@@ -178,7 +178,8 @@
             grid-column: 2
             display: flex
             flex: 1
-            font-size: 1rem
+            font-size: inherit
+            font-family: inherit
             padding: 0.5rem
             border-radius: 0.25rem
             border: 1px solid #ced4da

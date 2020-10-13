@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
             <slot v-else></slot>
         </span>
-        <slot v-else></slot>
+        <slot v-else>{{text}}</slot>
         <aui-badge type="failure" v-if="alert" :content="alert_content"></aui-badge>
     </button>
 </template>
@@ -38,6 +38,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 validator(value) {
                     return ['primary', 'secondary', 'success', 'warning', 'failure', 'none'].indexOf(value) !== -1;
                 }
+            },
+            // Button text to use. If the slot is used, it will use the slot over this value.
+            text: {
+                type: String | null,
+                default: null
             },
             // If the button is disabled and un-clickable
             disabled: {

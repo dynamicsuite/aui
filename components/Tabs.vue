@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             },
             // Initial tab to render and set active
             initial_tab: {
-                type: String,
+                type: String | Number,
                 default: null
             }
         },
@@ -81,7 +81,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             // Style classes to apply to the tab
             tabClass(tab) {
                 return {
-                    active: this.tab === tab
+                    active: this.tab !== null ? this.tab.toString() === tab.toString() : false
                 }
             }
         },
@@ -98,7 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             }
             this.width = this.width + 32;
             this.checkIfCollapsed();
-            if (this.initial_tab) {
+            if (this.initial_tab !== null) {
                 this.tab = this.initial_tab;
             } else {
                 this.tab = Object.keys(this.tabs)[0];
