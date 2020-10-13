@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div class="aui notice">
         <i :class="icon_classes"></i>
-        <h4><slot></slot></h4>
+        <h4><slot>{{text}}</slot></h4>
         <span v-if="subtext" v-html="subtext"></span>
     </div>
 </template>
@@ -45,6 +45,16 @@ export default {
         icon: {
             type: String,
             default: 'fas fa-cog',
+        },
+
+        /**
+         * The text to display under the icon.
+         *
+         * This can be set with this property or using the default slot.
+         */
+        text: {
+            type: String | null,
+            default: null
         },
 
         /**
