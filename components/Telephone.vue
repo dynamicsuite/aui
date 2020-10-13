@@ -3,17 +3,20 @@
     <div class="aui telephone">
         <aui-input
             class="country"
+            label="Intl."
             v-if="international"
             v-model="country_code"
+            :disabled="disabled"
             @input="inputHandler('input')"
             @change="inputHandler('change')"
         ></aui-input>
 
         <aui-input
             class="phone-number"
-            label="Phone Number"
+            :label="label"
             type="tel"
             v-model="number"
+            :disabled="disabled"
             @input="inputHandler('input')"
             @change="inputHandler('change')"
         ></aui-input>
@@ -23,6 +26,7 @@
             label="Ext."
             v-if="extension"
             v-model="extension_code"
+            :disabled="disabled"
             @input="inputHandler('input')"
             @change="inputHandler('change')"
         ></aui-input>
@@ -38,6 +42,14 @@ export default {
             default: false
         },
         extension: {
+            type: Boolean,
+            default: false
+        },
+        label: {
+            type: String,
+            default: 'Phone Number'
+        },
+        disabled: {
             type: Boolean,
             default: false
         }
