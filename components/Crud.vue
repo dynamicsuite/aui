@@ -909,7 +909,7 @@ export default {
                 this.$delete(this.list.sort, column);
                 this.$emit('sort-clear', column);
             }
-            this.paginate(1);
+            this.paginate(1, true);
         },
 
         /**
