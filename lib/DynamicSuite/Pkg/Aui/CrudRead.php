@@ -182,6 +182,9 @@ final class CrudRead
          * Add the search clause to the query
          */
         $query = clone $this->query;
+        if ($this->sort_order) {
+            $query->clearOrderBy();
+        }
         foreach ($this->sort_order as $column) {
             if (!isset($this->sort[$column])) {
                 throw new Exception('Sort column not found in sort order');
