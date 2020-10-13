@@ -278,6 +278,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     :closeModals="closeModals"
                 >
                     <p class="delete-text">{{form_delete_text}}</p>
+                    <aui-alert v-if="error.delete_protect" type="failure">{{error.delete_protect}}</aui-alert>
                     <div class="action">
                         <aui-button
                             type="secondary"
@@ -631,6 +632,7 @@ export default {
             },
             error: {
                 server: false,
+                delete_protect: null,
                 form: {}
             }
         }
@@ -1181,6 +1183,7 @@ export default {
         resetFormFeedback() {
             this.state.show_failure_tick = false;
             this.state.show_success_tick = false;
+            this.error.delete_protect = null;
             for (const field in this.error.form) {
                 this.error.form[field] = null;
             }
@@ -1266,8 +1269,8 @@ export default {
          * @return void
          */
         runDelete(confirm = false) {
+            this.resetFormFeedback();
             if (!confirm) {
-                this.resetFormFeedback();
                 this.state.show_delete_modal = true;
                 this.$emit('delete-confirm');
             } else {
@@ -1281,6 +1284,11 @@ export default {
                             this.showForm(false);
                             this.clearURIState();
                             this.$emit('delete');
+                            break;
+                        case 'DELETE_PROTECT':
+                            this.error.delete_protect = response.message;
+                            this.state.calling = false;
+                            this.$emit('delete-protect');
                             break;
                         default:
                             this.error.server = true;
