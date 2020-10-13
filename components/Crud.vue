@@ -109,7 +109,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     </thead>
                     <tbody>
                         <tr v-for="(row, key) in list_table_data" :key="key + '-row'" @click="emitListClick(row.id)">
-                            <td v-for="(column, col_key) in row" :key="col_key + '-column'">{{column}}</td>
+                            <td v-for="(column, col_key) in row.data" :key="col_key + '-column'">{{column}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -714,10 +714,13 @@ export default {
                 return list;
             }
             for (const entry of this.list.data) {
-                const row = {};
+                const row = {
+                    id: entry.id,
+                    data: {}
+                };
                 for (const column in this.list_table_columns) {
                     if (typeof entry[column] !== 'undefined') {
-                        row[column] = entry[column];
+                        row.data[column] = entry[column];
                     }
                 }
                 list.push(row);
