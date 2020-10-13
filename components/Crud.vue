@@ -277,7 +277,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     :runDelete="runDelete"
                     :closeModals="closeModals"
                 >
-                    <p>{{form_delete_text}}</p>
+                    <p class="delete-text">{{form_delete_text}}</p>
                     <div class="action">
                         <aui-button
                             type="secondary"
@@ -290,7 +290,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                                 type="failure"
                                 :loading="state.overlay"
                                 loading_text="Deleting..."
-                                text="Confirm Delete"
+                                text="Delete"
                                 @click="runDelete(true)"
                             />
                         </div>
@@ -1628,9 +1628,36 @@ export default {
     /* Form view */
     .form
 
+        /* Pad tabs */
+        & > .aui.tabs, & > .aui.input, & > .aui.select, & > .aui.datalist, & > .aui.textarea
+            margin-bottom: 1rem
+
+        /* Delete confirmation text */
+        .delete-text
+            margin-top: 0
+
+        /* 2 Column grid */
+        .col-2
+            display: grid
+            grid-template-columns: 1fr 1fr
+            grid-gap: 1rem
+
+            @include on-mobile-view
+                grid-template-columns: 1fr
+
+        /* 3 Column grid */
+        .col-3
+            display: grid
+            grid-template-columns: 1fr 1fr 1fr
+            grid-gap: 1rem
+
+            @include on-mobile-view
+                grid-template-columns: 1fr
+
         /* Action bar on the bottom, if visible */
         .action
             display: flex
+            margin-top: 1rem
 
             /* Primary action */
             .primary
