@@ -36,18 +36,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             rows: {
                 type: Array,
                 required: true,
-                validator(value) {
-                    for (let i = 0; i < value.length; i++) {
-                        if (typeof value[i].title !== 'string') {
+                validator: value => {
+                    for (const row of value) {
+                        if (typeof row.title !== 'string') {
                             return false;
                         }
-                        if (value[i].subtext !== null && typeof value[i].subtext !== 'string') {
-                            return false;
-                        }
-                        if (typeof value[i].action !== 'function') {
-                            return false;
-                        }
-                        if (typeof value[i].icon !== 'undefined' && typeof value[i].subtext !== 'string') {
+                        if (typeof row.action !== 'function') {
                             return false;
                         }
                     }
@@ -99,6 +93,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             /* Padding when icon present */
             & + .text
                 margin-left: 1rem
+
+        /* Vertical align text */
+        .text
+            display: flex
+            flex-direction: column
+            justify-content: center
 
         /* Entry title */
         .title

@@ -215,8 +215,8 @@ final class CrudRead
                 throw new Exception('CRUD read must contain an "ID" column');
             }
             if ($this->type === 'group') {
-                if (!array_key_exists('title', $row) || !array_key_exists('subtext', $row)) {
-                    throw new Exception('CRUD read of the "group" type must contain a "title" and "subtext"');
+                if (!array_key_exists('title', $row)) {
+                    throw new Exception('CRUD read of the "group" type must contain a "title"');
                 }
             }
         }
