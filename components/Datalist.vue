@@ -109,7 +109,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         },
         methods: {
             onInput(event) {
-                if (this.options.includes(event.target.value)) event.target.blur()
+                if (typeof this.options === 'object') {
+                    Object.keys(this.options).forEach(key => {
+                        if (this.options[key] === (event.target.value)) event.target.blur()
+                    })
+                } else {
+                    if (this.options.includes(event.target.value)) event.target.blur()
+                }
                 this.$emit('input', event.target.value)
             }
         },
