@@ -98,9 +98,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                             <th
                                 v-for="(column, key) in list_table_columns"
                                 :key="key + '-header'"
+                                :class="listTableColumnClasses(key)"
                                 @click="sortList(key)"
                             >
-                                {{column}}
+                                {{listTableColumnName(column)}}
                                 <i v-if="isSortedAsc(key)" class="fas fa-sort-amount-down-alt"></i>
                                 <i v-else-if="isSortedDesc(key)" class="fas fa-sort-amount-down"></i>
                                 <i v-else class="fas fa-sort"></i>
@@ -109,7 +110,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     </thead>
                     <tbody>
                         <tr v-for="(row, key) in list_table_data" :key="key + '-row'" @click="emitListClick(row.id)">
-                            <td v-for="(column, col_key) in row.data" :key="col_key + '-column'">{{column}}</td>
+                            <td
+                                v-for="(value, column) in row.data"
+                                :key="column + '-column'"
+                                :class="listTableColumnClasses(column)"
+                            >
+                                {{listTableColumnFormat(column, value)}}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -360,8 +367,16 @@ export default {
             },
             validator: value => {
                 for (const key in value) {
-                    if (typeof value[key] !== 'string') {
-                        return false;
+                    if (typeof value[key] === 'string') {
+                        return true;
+                    }
+                    if (typeof value[key] === 'object') {
+                        if (typeof value[key]['label'] !== 'string') {
+                            return false;
+                        }
+                        if (typeof value[key]['format'] !== 'undefined' && typeof value[key]['format'] !== 'function') {
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -886,6 +901,50 @@ export default {
                 this.paginate(1, true);
                 this.$emit('search', this.list.search);
             }, 300);
+        },
+
+        /**
+         * Get the value of the given table column name when in table list mode.
+         *
+         * @return string
+         */
+        listTableColumnName(column) {
+            if (typeof column === 'object') {
+                return column.label;
+            } else {
+                return column;
+            }
+        },
+
+        /**
+         * Format the value of the column using the format callback (if present).
+         *
+         * @return string
+         */
+        listTableColumnFormat(column, value) {
+            if (typeof this.list_table_columns[column] === 'string') {
+                return value;
+            } else {
+                return this.list_table_columns[column].format(value);
+            }
+        },
+
+        /**
+         * Classes for the columns when in the table view, specifically for hiding on different screen types.
+         *
+         * @return Object
+         */
+        listTableColumnClasses(column) {
+            return {
+                'hide-on-ipad': (
+                    typeof this.list_table_columns[column] === 'object' &&
+                    this.list_table_columns[column].hide_on_ipad === true
+                ),
+                'hide-on-mobile': (
+                    typeof this.list_table_columns[column] === 'object' &&
+                    this.list_table_columns[column].hide_on_mobile === true
+                )
+            };
         },
 
         /**
@@ -1525,11 +1584,26 @@ export default {
                     text-align: left
                     padding: 0.75rem
                     color: #111
+                    white-space: nowrap
+
+                    /* Hidden columns */
+                    &.hide-on-ipad
+                        @include on-ipad-view
+                            display: none
+
+                    /* Hidden columns */
+                    &.hide-on-mobile
+                        @include on-mobile-view
+                            display: none
 
                 /* Header styling */
                 th
                     user-select: none
                     border-bottom: 2px solid lighten($secondary, 40%)
+
+                    /* Grow last column */
+                    &:last-of-type
+                        width: 100%
 
                     /* Sort icon */
                     i
@@ -1542,6 +1616,12 @@ export default {
 
                 /* Table body */
                 tbody
+
+                    /* Special last column styling */
+                    tr td:last-of-type
+                        max-width: 0
+                        overflow: hidden
+                        text-overflow: ellipsis
 
                     /* Add border to all but last cells */
                     tr:not(:last-of-type) td
