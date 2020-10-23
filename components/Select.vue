@@ -220,6 +220,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             failure() {
                 const scroll_callback = () => {
                     let view = document.getElementById('ds-view');
+                    if (!view) {
+                        return;
+                    }
                     let el = document.querySelectorAll('.aui .border-failure')[0]
                     if (el) {
                         let box = el.getBoundingClientRect()
