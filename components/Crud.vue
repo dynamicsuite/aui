@@ -1427,6 +1427,7 @@ export default {
             const hashids = new Hashids.default();
             const state = hashids.decode(params.get(`_${this._uid}`));
             if (state.length === 3) {
+                this.loadFields();
                 this.showForm(!!state[0]);
                 this.tab_id = state[1];
                 if (state[2]) {
