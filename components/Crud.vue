@@ -1751,7 +1751,7 @@ export default {
     .form
 
         /* Form headers */
-        h2
+        .body > h2
             padding-bottom: 0.25rem
             border-bottom: 1px solid #ced4da
 
