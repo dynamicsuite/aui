@@ -491,14 +491,29 @@ export default {
         },
 
         /**
-         * The API called to create the form for the interacted row ID.
+         * The API called to setup the create form.
+         */
+        form_api_create_setup: {
+            type: String
+        },
+
+        /**
+         * Optional data to send to the create setup API when called.
+         */
+        form_api_create_setup_optional_data: {
+            type: Object,
+            default: () => {}
+        },
+
+        /**
+         * The API called to create the storable.
          */
         form_api_create: {
             type: String
         },
 
         /**
-         * Optional data to send to the create form API when called.
+         * Optional data to send to the create API when called.
          */
         form_api_create_optional_data: {
             type: Object,
@@ -1189,7 +1204,27 @@ export default {
             this.created = false;
             this.loadFields();
             this.resetFormFeedback();
-            this.showForm(true, true);
+            if (this.form_api_create_setup) {
+                const data = Object.assign({}, this.form_api_create_setup_optional_data);
+                this.state.calling = true;
+                DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
+                    switch (response.status) {
+                        case 'OK':
+                            for (const key in response.data) {
+                                this.$set(this.form, key, response.data[key]);
+                            }
+                            this.state.calling = false;
+                            this.showForm(true, true);
+                            this.$emit('create-setup');
+                            break;
+                        default:
+                            this.clearURIState();
+                            this.error.server = true;
+                    }
+                });
+            } else {
+                this.showForm(true, true);
+            }
             this.$emit('setup-create');
         },
 
@@ -1467,6 +1502,24 @@ export default {
                     this.tab_id = state[1];
                     this.readStorable(state[2], false);
                     this.created = true;
+                } else if (this.form_api_create_setup) {
+                    const data = Object.assign({}, this.form_api_create_setup_optional_data);
+                    this.state.calling = true;
+                    DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
+                        switch (response.status) {
+                            case 'OK':
+                                for (const key in response.data) {
+                                    this.$set(this.form, key, response.data[key]);
+                                }
+                                this.state.calling = false;
+                                this.showForm(true, true);
+                                this.$emit('create-setup');
+                                break;
+                            default:
+                                this.clearURIState();
+                                this.error.server = true;
+                        }
+                    });
                 }
             } else {
                 this.clearURIState();
