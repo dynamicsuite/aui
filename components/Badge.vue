@@ -57,6 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     font-weight: bold
     padding: .125rem .4rem
     border-radius: 1rem
+    text-align: center
 
     // Primary Badge Styling
     &.badge-primary
