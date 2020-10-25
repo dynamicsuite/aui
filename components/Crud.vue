@@ -1713,8 +1713,17 @@ export default {
     /* Form view */
     .form
 
+        /* Form headers */
+        h2
+            padding-bottom: 0.25rem
+            border-bottom: 1px solid #ced4da
+
+            /* Section separators */
+            &:not(:first-child)
+                margin-top: 1rem
+
         /* Pad tabs */
-        & > .aui.tabs, & > .aui.input, & > .aui.select, & > .aui.datalist, & > .aui.textarea
+        & > .aui.tabs, .aui.input, .aui.select, .aui.datalist, .aui.textarea
             margin-bottom: 1rem
 
         /* Delete confirmation text */
@@ -1742,7 +1751,6 @@ export default {
         /* Action bar on the bottom, if visible */
         .action
             display: flex
-            margin-top: 1rem
 
             /* Primary action */
             .primary
