@@ -580,7 +580,18 @@ export default {
         /**
          * Secure fields such as passwords that are reset after create/update/delete actions.
          */
-        secure_fields: [],
+        secure_fields: {
+            type: Array,
+            default: () => [],
+            validator: value => {
+                for (const field of value) {
+                    if (typeof field !== 'string') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        },
 
         /**
          * Views for the form view.
