@@ -1476,6 +1476,10 @@ export default {
 
 /* CRUD container */
 .aui.crud
+    background: whitesmoke
+    border-radius: 4px
+    padding: 1rem
+    box-shadow: 0 0 12px -3px rgba(0, 0, 0, 0.47)
 
     /* List view */
     .list
@@ -1723,7 +1727,7 @@ export default {
                 margin-top: 1rem
 
         /* Pad tabs */
-        & > .aui.tabs, .aui.input, .aui.select, .aui.datalist, .aui.textarea
+        & > .aui.tabs, .body > .aui.input, .body > .aui.select, .body > .aui.datalist, .body > .aui.textarea
             margin-bottom: 1rem
 
         /* Delete confirmation text */
