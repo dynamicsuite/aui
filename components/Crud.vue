@@ -1772,6 +1772,7 @@ export default {
             display: grid
             grid-template-columns: 1fr 1fr
             grid-gap: 1rem
+            margin-bottom: 1rem
 
             @include on-mobile-view
                 grid-template-columns: 1fr
@@ -1781,6 +1782,7 @@ export default {
             display: grid
             grid-template-columns: 1fr 1fr 1fr
             grid-gap: 1rem
+            margin-bottom: 1rem
 
             @include on-mobile-view
                 grid-template-columns: 1fr
