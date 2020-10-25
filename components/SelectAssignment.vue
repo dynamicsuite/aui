@@ -57,7 +57,7 @@ export default {
          * List of assigned options.
          */
         assigned: {
-            type: Object,
+            type: Object | null,
             required: true
         },
 
@@ -73,7 +73,7 @@ export default {
          * List of unassigned options.
          */
         unassigned: {
-            type: Object,
+            type: Object | null,
             required: true
         },
 
@@ -144,13 +144,13 @@ export default {
 
     /* Assignment groups */
     .assigned, .unassigned
-        margin-top: 0 !important
+        margin-bottom: 0 !important
 
     /* Select formatting */
     select
         min-height: 10rem
-        margin-bottom: 1rem
         background: #fff !important
+        margin-bottom: 1rem
 
     /* Changes for mobile view */
     @include on-mobile-view
