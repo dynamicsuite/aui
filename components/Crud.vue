@@ -578,6 +578,11 @@ export default {
         },
 
         /**
+         * Secure fields such as passwords that are reset after create/update/delete actions.
+         */
+        secure_fields: [],
+
+        /**
          * Views for the form view.
          */
         views: {
@@ -1127,6 +1132,19 @@ export default {
         },
 
         /**
+         * Clear any secured fields from the model.
+         *
+         * Useful for things such as passwords.
+         *
+         * @return void
+         */
+        secureFields() {
+            for (const field of this.secure_fields) {
+                this.form[field] = null;
+            }
+        },
+
+        /**
          * If the form(s) should be shown.
          *
          * If show is true, the form will be shown and the list will be hidden.
@@ -1269,6 +1287,7 @@ export default {
                         setTimeout(() => {
                             this.state.show_created_confirmation = false;
                         }, 1000);
+                        this.secureFields();
                         this.$emit('create', response.data);
                         break;
                     case 'INPUT_ERROR':
@@ -1301,6 +1320,7 @@ export default {
                     case 'OK':
                         this.state.show_success_tick = true;
                         this.state.calling = false;
+                        this.secureFields();
                         this.$emit('update');
                         break;
                     case 'INPUT_ERROR':
@@ -1339,6 +1359,7 @@ export default {
                             this.closeModals();
                             this.showForm(false);
                             this.clearURIState();
+                            this.secureFields();
                             this.$emit('delete');
                             break;
                         case 'DELETE_PROTECT':
