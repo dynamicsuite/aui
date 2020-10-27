@@ -59,10 +59,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String,
                 default: null
             },
+            // Toggle alert icon on button
             alert: {
                 type: Boolean,
                 default: false
             },
+            // Custom content for alerts on buttons
             alert_content: {
                 type: String,
                 default: '!'
