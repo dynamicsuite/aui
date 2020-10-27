@@ -269,6 +269,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             -moz-appearance: none
             background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ced4da'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat calc(100% - 10px) 65%
             background-size: 12px
+            text-overflow: ellipsis
+
+            &:not(.no-feedback-icon)
+                padding-right: 2rem !important
 
             /* Clear focus */
             &:focus
