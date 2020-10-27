@@ -491,14 +491,29 @@ export default {
         },
 
         /**
-         * The API called to create the form for the interacted row ID.
+         * The API called to setup the create form.
+         */
+        form_api_create_setup: {
+            type: String
+        },
+
+        /**
+         * Optional data to send to the create setup API when called.
+         */
+        form_api_create_setup_optional_data: {
+            type: Object,
+            default: () => {}
+        },
+
+        /**
+         * The API called to create the storable.
          */
         form_api_create: {
             type: String
         },
 
         /**
-         * Optional data to send to the create form API when called.
+         * Optional data to send to the create API when called.
          */
         form_api_create_optional_data: {
             type: Object,
@@ -565,6 +580,22 @@ export default {
          * Fields to preload the form and form errors with.
          */
         fields: {
+            type: Array,
+            default: () => [],
+            validator: value => {
+                for (const field of value) {
+                    if (typeof field !== 'string') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        },
+
+        /**
+         * Secure fields such as passwords that are reset after create/update/delete actions.
+         */
+        secure_fields: {
             type: Array,
             default: () => [],
             validator: value => {
@@ -1127,6 +1158,19 @@ export default {
         },
 
         /**
+         * Clear any secured fields from the model.
+         *
+         * Useful for things such as passwords.
+         *
+         * @return void
+         */
+        secureFields() {
+            for (const field of this.secure_fields) {
+                this.form[field] = null;
+            }
+        },
+
+        /**
          * If the form(s) should be shown.
          *
          * If show is true, the form will be shown and the list will be hidden.
@@ -1160,7 +1204,27 @@ export default {
             this.created = false;
             this.loadFields();
             this.resetFormFeedback();
-            this.showForm(true, true);
+            if (this.form_api_create_setup) {
+                const data = Object.assign({}, this.form_api_create_setup_optional_data);
+                this.state.calling = true;
+                DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
+                    switch (response.status) {
+                        case 'OK':
+                            for (const key in response.data) {
+                                this.$set(this.form, key, response.data[key]);
+                            }
+                            this.state.calling = false;
+                            this.showForm(true, true);
+                            this.$emit('create-setup');
+                            break;
+                        default:
+                            this.clearURIState();
+                            this.error.server = true;
+                    }
+                });
+            } else {
+                this.showForm(true, true);
+            }
             this.$emit('setup-create');
         },
 
@@ -1269,6 +1333,7 @@ export default {
                         setTimeout(() => {
                             this.state.show_created_confirmation = false;
                         }, 1000);
+                        this.secureFields();
                         this.$emit('create', response.data);
                         break;
                     case 'INPUT_ERROR':
@@ -1301,6 +1366,7 @@ export default {
                     case 'OK':
                         this.state.show_success_tick = true;
                         this.state.calling = false;
+                        this.secureFields();
                         this.$emit('update');
                         break;
                     case 'INPUT_ERROR':
@@ -1339,6 +1405,7 @@ export default {
                             this.closeModals();
                             this.showForm(false);
                             this.clearURIState();
+                            this.secureFields();
                             this.$emit('delete');
                             break;
                         case 'DELETE_PROTECT':
@@ -1427,6 +1494,7 @@ export default {
             const hashids = new Hashids.default();
             const state = hashids.decode(params.get(`_${this._uid}`));
             if (state.length === 3) {
+                this.loadFields();
                 this.showForm(!!state[0]);
                 this.tab_id = state[1];
                 if (state[2]) {
@@ -1434,6 +1502,24 @@ export default {
                     this.tab_id = state[1];
                     this.readStorable(state[2], false);
                     this.created = true;
+                } else if (this.form_api_create_setup) {
+                    const data = Object.assign({}, this.form_api_create_setup_optional_data);
+                    this.state.calling = true;
+                    DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
+                        switch (response.status) {
+                            case 'OK':
+                                for (const key in response.data) {
+                                    this.$set(this.form, key, response.data[key]);
+                                }
+                                this.state.calling = false;
+                                this.showForm(true, true);
+                                this.$emit('create-setup');
+                                break;
+                            default:
+                                this.clearURIState();
+                                this.error.server = true;
+                        }
+                    });
                 }
             } else {
                 this.clearURIState();
@@ -1476,6 +1562,10 @@ export default {
 
 /* CRUD container */
 .aui.crud
+    background: whitesmoke
+    border-radius: 4px
+    padding: 1rem
+    box-shadow: 0 0 12px -3px rgba(0, 0, 0, 0.47)
 
     /* List view */
     .list
@@ -1713,8 +1803,17 @@ export default {
     /* Form view */
     .form
 
+        /* Form headers */
+        .body > h2
+            padding-bottom: 0.25rem
+            border-bottom: 1px solid #ced4da
+
+            /* Section separators */
+            &:not(:first-child)
+                margin-top: 1rem
+
         /* Pad tabs */
-        & > .aui.tabs, & > .aui.input, & > .aui.select, & > .aui.datalist, & > .aui.textarea
+        & > .aui.tabs, .body > .aui.input, .body > .aui.select, .body > .aui.datalist, .body > .aui.textarea
             margin-bottom: 1rem
 
         /* Delete confirmation text */
@@ -1726,6 +1825,7 @@ export default {
             display: grid
             grid-template-columns: 1fr 1fr
             grid-gap: 1rem
+            margin-bottom: 1rem
 
             @include on-mobile-view
                 grid-template-columns: 1fr
@@ -1735,6 +1835,7 @@ export default {
             display: grid
             grid-template-columns: 1fr 1fr 1fr
             grid-gap: 1rem
+            margin-bottom: 1rem
 
             @include on-mobile-view
                 grid-template-columns: 1fr
@@ -1742,7 +1843,6 @@ export default {
         /* Action bar on the bottom, if visible */
         .action
             display: flex
-            margin-top: 1rem
 
             /* Primary action */
             .primary
