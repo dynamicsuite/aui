@@ -215,6 +215,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             failure() {
                 const scroll_callback = () => {
                     let view = document.getElementById('ds-view');
+                    if (!view) {
+                        return;
+                    }
                     let el = document.querySelectorAll('.aui .border-failure')[0]
                     if (el) {
                         let box = el.getBoundingClientRect()
@@ -327,6 +330,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             -webkit-box-sizing: border-box
             -moz-box-sizing: border-box
             box-sizing: border-box
+            margin: 0 // Mandatory for iOS rendering and caps
 
             /* Where the input meets the leading cap (if any) */
             &.left-cap
