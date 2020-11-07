@@ -73,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
                 <!-- No data in list -->
                 <aui-notice
-                    v-if="!has_list_data && !state.calling"
+                    v-if="!has_list_data && !calling"
                     :icon="list_empty_icon"
                     :text="list_empty_text"
                     :subtext="list_empty_subtext"
@@ -214,9 +214,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     v-if="isActiveTab(view.name)"
                     :name="view.name"
                     :tab="tab"
-                    :form="form"
-                    :error="error.form"
-                    :calling="state.calling"
                     :overlay="state.overlay"
                     :showForm="showForm"
                     :runCreate="runCreate"
@@ -274,10 +271,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 <slot
                     name="confirm-delete"
                     :tab="tab"
-                    :form="form"
-                    :error="error.form"
                     :warning="error.delete_protect"
-                    :calling="state.calling"
                     :overlay="state.overlay"
                     :showForm="showForm"
                     :runCreate="runCreate"
@@ -476,6 +470,30 @@ export default {
         },
 
         /**
+         * Form data container.
+         */
+        form: {
+            type: Object,
+            default: () => {}
+        },
+
+        /**
+         * Input feedback container.
+         */
+        feedback: {
+            type: Object,
+            default: () => {}
+        },
+
+        /**
+         * If a calling state is preset.
+         */
+        calling: {
+            type: Boolean,
+            required: true
+        },
+
+        /**
          * The API called to read the form for the interacted row ID.
          */
         form_api_read: {
@@ -657,7 +675,6 @@ export default {
             created: false,
             tab: null,
             tab_id: null,
-            form: {},
             form_delete_dropdown: [{
                 label: 'Delete',
                 action: () => {
@@ -665,7 +682,6 @@ export default {
                 }
             }],
             state: {
-                calling: false,
                 overlay: false,
                 show_form: false,
                 show_delete_modal: false,
@@ -675,8 +691,7 @@ export default {
             },
             error: {
                 server: false,
-                delete_protect: null,
-                form: {}
+                delete_protect: null
             }
         }
     },
@@ -860,11 +875,11 @@ export default {
         /**
          * Calling watcher for the overlay.
          */
-        'state.calling': {
+        calling: {
             handler: function (new_value) {
                 if (new_value) {
                     setTimeout(() => {
-                        if (this.state.calling) {
+                        if (this.calling) {
                             this.state.overlay = true;
                         }
                     }, 100);
@@ -883,7 +898,7 @@ export default {
          * @return void
          */
         readList() {
-            if (this.state.calling) {
+            if (this.calling) {
                 return;
             }
             const data = Object.assign({
@@ -894,7 +909,7 @@ export default {
                 sort: this.list.sort,
                 sort_order: this.list.sort_order
             }, this.list_api_read_optional_data);
-            this.state.calling = true;
+            this.$emit('update:calling', true);
             DynamicSuite.call(this.package, this.list_api_read, data, response => {
                 switch (response.status) {
                     case 'OK':
@@ -912,7 +927,7 @@ export default {
                             this.list.to = this.list.total;
                         }
                         this.updatePaginationRange();
-                        this.state.calling = false;
+                        this.$emit('update:calling', false);
                         this.$emit('read-list');
                         break;
                     default:
@@ -1144,30 +1159,19 @@ export default {
         },
 
         /**
-         * Load the fields into the component if using the form can be shown.
-         *
-         * @return void
-         */
-        loadFields() {
-            this.form = {};
-            this.error.form = {};
-            for (const field of this.fields) {
-                this.$set(this.form, field, null);
-                this.$set(this.error.form, field, null);
-            }
-        },
-
-        /**
          * Clear any secured fields from the model.
          *
          * Useful for things such as passwords.
          *
+         * @param previous_form
          * @return void
          */
-        secureFields() {
+        secureFields(previous_form = false) {
+            const form = previous_form ? previous_form : Object.assign({}, this.form);
             for (const field of this.secure_fields) {
-                this.form[field] = null;
+                form[field] = null;
             }
+            this.$emit('update:form', form);
         },
 
         /**
@@ -1181,7 +1185,6 @@ export default {
          */
         showForm(show, update_state = false) {
             if (!show) {
-                this.loadFields();
                 this.tab = this.form_views[0].name;
                 this.tab_id = 0;
                 this.readList();
@@ -1196,24 +1199,49 @@ export default {
         },
 
         /**
+         * Reset the form.
+         *
+         * @return void
+         */
+        resetForm() {
+            const form = Object.assign({}, this.form);
+            for (const field in this.form) {
+                form[field] = null;
+            }
+            this.$emit('update:form', form);
+        },
+
+        /**
+         * Set the form to specific values.
+         *
+         * @param data
+         * @return void
+         */
+        setForm(data) {
+            const form = Object.assign({}, this.form);
+            for (const key in data) {
+                form[key] = data[key];
+            }
+            this.$emit('update:form', form);
+        },
+
+        /**
          * Setup the form for create.
          *
          * @return void
          */
         setupCreate() {
             this.created = false;
-            this.loadFields();
+            this.resetForm();
             this.resetFormFeedback();
             if (this.form_api_create_setup) {
                 const data = Object.assign({}, this.form_api_create_setup_optional_data);
-                this.state.calling = true;
+                this.$emit('update:calling', true);
                 DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
                     switch (response.status) {
                         case 'OK':
-                            for (const key in response.data) {
-                                this.$set(this.form, key, response.data[key]);
-                            }
-                            this.state.calling = false;
+                            this.setForm(response.data);
+                            this.$emit('update:calling', false);
                             this.showForm(true, true);
                             this.$emit('create-setup');
                             break;
@@ -1267,32 +1295,44 @@ export default {
          * @return void
          */
         readStorable(id, set_state = true) {
-            if (this.state.calling) {
+            if (this.calling) {
                 return;
             }
-            this.loadFields();
             const data = Object.assign({id: id}, this.form_api_read_optional_data);
-            this.state.calling = true;
+            this.$emit('update:calling', true);
             DynamicSuite.call(this.package, this.form_api_read, data, response => {
                 switch (response.status) {
                     case 'OK':
-                        for (const key in response.data) {
-                            this.$set(this.form, key, response.data[key]);
-                        }
-                        this.resetFormFeedback();
-                        this.showForm(true, false);
-                        this.created = true;
-                        this.state.calling = false;
-                        if (set_state) {
-                            this.setURIState();
-                        }
-                        this.$emit('read-form', id);
+                        this.setForm(response.data);
+                        this.$nextTick(() => {
+                            this.resetFormFeedback();
+                            this.showForm(true, false);
+                            this.created = true;
+                            this.$emit('update:calling', false);
+                            if (set_state) {
+                                this.setURIState();
+                            }
+                            this.$emit('read-form', id);
+                        });
                         break;
                     default:
                         this.clearURIState();
                         this.error.server = true;
                 }
             });
+        },
+
+        /**
+         * Set form feedback.
+         *
+         * @return void
+         */
+        setFeedback(data) {
+            const feedback = Object.assign({}, this.feedback);
+            for (const key in data) {
+                feedback[key] = data[key];
+            }
+            this.$emit('update:feedback', feedback);
         },
 
         /**
@@ -1304,9 +1344,11 @@ export default {
             this.state.show_failure_tick = false;
             this.state.show_success_tick = false;
             this.error.delete_protect = null;
-            for (const field in this.error.form) {
-                this.error.form[field] = null;
+            const feedback = Object.assign({}, this.feedback);
+            for (const field in this.feedback) {
+                feedback[field] = null;
             }
+            this.$emit('update:feedback', feedback);
         },
 
         /**
@@ -1315,33 +1357,32 @@ export default {
          * @return void
          */
         runCreate() {
-            if (this.state.calling) {
+            if (this.calling) {
                 return;
             }
             this.resetFormFeedback();
             const data = Object.assign({}, this.form, this.form_api_create_optional_data);
-            this.state.calling = true;
+            this.$emit('update:calling', true);
             DynamicSuite.call(this.package, this.form_api_create, data, response => {
                 switch (response.status) {
                     case 'OK':
                         this.state.show_created_confirmation = true;
-                        this.form[this.form_storable_key] = parseInt(response.data);
+                        const form = Object.assign({}, this.form);
+                        form[this.form_storable_key] = parseInt(response.data);
                         this.created = true;
-                        this.state.calling = false;
-                        this.setURIState();
+                        this.$emit('update:calling', false);
+                        this.secureFields(form);
                         this.readList();
                         setTimeout(() => {
+                            this.setURIState();
                             this.state.show_created_confirmation = false;
                         }, 1000);
-                        this.secureFields();
                         this.$emit('create', response.data);
                         break;
                     case 'INPUT_ERROR':
                         this.state.show_failure_tick = true;
-                        for (const key in response.data) {
-                            this.error.form[key] = response.data[key];
-                        }
-                        this.state.calling = false;
+                        this.setFeedback(response.data);
+                        this.$emit('update:calling', false);
                         break;
                     default:
                         this.error.server = true;
@@ -1355,26 +1396,24 @@ export default {
          * @return void
          */
         runUpdate() {
-            if (this.state.calling) {
+            if (this.calling) {
                 return;
             }
             this.resetFormFeedback();
             const data = Object.assign({}, this.form, this.form_api_update_optional_data);
-            this.state.calling = true;
+            this.$emit('update:calling', true);
             DynamicSuite.call(this.package, this.form_api_update, data, response => {
                 switch (response.status) {
                     case 'OK':
                         this.state.show_success_tick = true;
-                        this.state.calling = false;
+                        this.$emit('update:calling', false);
                         this.secureFields();
                         this.$emit('update');
                         break;
                     case 'INPUT_ERROR':
                         this.state.show_failure_tick = true;
-                        for (const key in response.data) {
-                            this.error.form[key] = response.data[key];
-                        }
-                        this.state.calling = false;
+                        this.setFeedback(response.data);
+                        this.$emit('update:calling', false);
                         break;
                     default:
                         this.error.server = true;
@@ -1397,11 +1436,11 @@ export default {
                 this.$emit('delete-confirm');
             } else {
                 const data = Object.assign({}, this.form, this.form_api_delete_optional_data);
-                this.state.calling = true;
+                this.$emit('update:calling', true);
                 DynamicSuite.call(this.package, this.form_api_delete, data, response => {
                     switch (response.status) {
                         case 'OK':
-                            this.state.calling = false;
+                            this.$emit('update:calling', false);
                             this.closeModals();
                             this.showForm(false);
                             this.clearURIState();
@@ -1410,7 +1449,7 @@ export default {
                             break;
                         case 'DELETE_PROTECT':
                             this.error.delete_protect = response.message;
-                            this.state.calling = false;
+                            this.$emit('update:calling', false);
                             this.$emit('delete-protect');
                             break;
                         default:
@@ -1426,7 +1465,7 @@ export default {
          * @return void
          */
         closeModals() {
-            if (!this.state.calling) {
+            if (!this.calling) {
                 this.state.show_delete_modal = false;
             }
             this.$emit('modals-closed');
@@ -1494,7 +1533,6 @@ export default {
             const hashids = new Hashids.default();
             const state = hashids.decode(params.get(`_${this._uid}`));
             if (state.length === 3) {
-                this.loadFields();
                 this.showForm(!!state[0]);
                 this.tab_id = state[1];
                 if (state[2]) {
@@ -1504,14 +1542,12 @@ export default {
                     this.created = true;
                 } else if (this.form_api_create_setup) {
                     const data = Object.assign({}, this.form_api_create_setup_optional_data);
-                    this.state.calling = true;
+                    this.$emit('update:calling', true);
                     DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
                         switch (response.status) {
                             case 'OK':
-                                for (const key in response.data) {
-                                    this.$set(this.form, key, response.data[key]);
-                                }
-                                this.state.calling = false;
+                                this.setForm(response.data);
+                                this.$emit('update:calling', false);
                                 this.showForm(true, true);
                                 this.$emit('create-setup');
                                 break;
@@ -1566,6 +1602,10 @@ export default {
     border-radius: 4px
     padding: 1rem
     box-shadow: 0 0 12px -3px rgba(0, 0, 0, 0.47)
+
+    /* Margin reset */
+    .aui.notice h4
+        margin-bottom: 0
 
     /* List view */
     .list

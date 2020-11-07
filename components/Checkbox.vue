@@ -20,11 +20,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
     <div class="aui checkbox">
         <label :class="classes">
-            <slot></slot>
+            <slot>{{label}}</slot>
             <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
             <span class="checkmark"></span>
         </label>
-        <div class="subtext" :class="classes">{{subtext}}</div>
+        <div class="subtext" :class="classes">{{subtext_value}}</div>
     </div>
 
 </template>
@@ -32,6 +32,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            // Label alternative
+            label: {
+                type: String | null,
+                default: null
+            },
             // If the checkbox is checked
             checked: {
                 type: Boolean | Number,
@@ -52,6 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 type: String | Boolean,
                 default: false
             },
+            // Checkbox subtext
             subtext: {
                 type: String
             }
@@ -62,6 +68,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     disabled: this.disabled,
                     failure: this.failure,
                     success: this.success
+                }
+            },
+            // Value of the subtext text
+            subtext_value() {
+                if (typeof this.success === 'string') {
+                    return this.success;
+                } else if (typeof this.failure === 'string') {
+                    return this.failure;
+                } else {
+                    return this.subtext;
                 }
             }
         }
