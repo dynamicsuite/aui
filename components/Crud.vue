@@ -1441,11 +1441,13 @@ export default {
                     switch (response.status) {
                         case 'OK':
                             this.$emit('update:calling', false);
-                            this.closeModals();
-                            this.showForm(false);
-                            this.clearURIState();
-                            this.secureFields();
-                            this.$emit('delete');
+                            this.$nextTick(() => {
+                                this.closeModals();
+                                this.showForm(false);
+                                this.clearURIState();
+                                this.secureFields();
+                                this.$emit('delete');
+                            });
                             break;
                         case 'DELETE_PROTECT':
                             this.error.delete_protect = response.message;
