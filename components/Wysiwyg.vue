@@ -172,7 +172,9 @@ export default {
                 this.$emit('input', html);
             }
         });
-        this.editor.content.innerHTML = this.value;
+        if (this.value) {
+            this.editor.content.innerHTML = this.value;
+        }
     }
 }
 </script>
