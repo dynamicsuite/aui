@@ -19,7 +19,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div class="aui wysiwyg">
         <label>{{label}}</label>
-        <div ref="editor" :class="editor_classes"></div>
+        <div>
+            <div v-if="disabled" class="overlay"></div>
+            <div ref="editor" :class="editor_classes"></div>
+        </div>
         <div v-if="subtext_value" :class="subtext_classes">{{subtext_value}}</div>
     </div>
 </template>
@@ -79,6 +82,14 @@ export default {
                     selected: 'pell-button-selected'
                 }
             }
+        },
+
+        /**
+         * If the editor is disabled.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
         },
 
         /**
@@ -144,6 +155,15 @@ export default {
             } else {
                 return this.subtext;
             }
+        },
+
+        /**
+         * Disabled input classes.
+         */
+        disabled_classes() {
+            return {
+                disabled: this.disabled
+            }
         }
 
     },
@@ -187,11 +207,21 @@ export default {
 // Input container
 .aui.wysiwyg
     margin: 1rem 0
+    position: relative
 
     /* Editor label */
     label
         display: block
         margin-bottom: 0.5rem
+
+    /* Disabled overlay */
+    .overlay
+        position: absolute
+        width: 100%
+        height: calc(100% - 1.6rem)
+        border-radius: 0.25rem
+        background: rgba(189, 198, 207, 0.6)
+        cursor: not-allowed
 
     /* Editor subtext */
     .subtext
