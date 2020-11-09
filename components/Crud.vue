@@ -1615,7 +1615,7 @@ export default {
     .list
 
         /* List header */
-        .header
+        & > .header
             display: flex
             align-items: center
             padding-bottom: 0.5rem
