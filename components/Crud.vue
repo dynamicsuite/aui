@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
                 <!-- List action area -->
                 <div class="action">
-                    <slot name="list-buttons"></slot>
+                    <slot name="list-buttons" :readList="readList"></slot>
                     <aui-button
                         v-if="list_show_create_button"
                         :disabled="state.overlay"
