@@ -675,6 +675,7 @@ export default {
             created: false,
             tab: null,
             tab_id: null,
+            initial_form: {},
             form_delete_dropdown: [{
                 label: 'Delete',
                 action: () => {
@@ -1204,11 +1205,7 @@ export default {
          * @return void
          */
         resetForm() {
-            const form = Object.assign({}, this.form);
-            for (const field in this.form) {
-                form[field] = null;
-            }
-            this.$emit('update:form', form);
+            this.$emit('update:form', this.initial_form);
         },
 
         /**
@@ -1512,6 +1509,11 @@ export default {
 
     },
     mounted() {
+
+        /**
+         * Set initial form
+         */
+        this.initial_form = this.form;
 
         /**
          * Update range limit.
@@ -1855,7 +1857,7 @@ export default {
                 margin-top: 1rem
 
         /* Pad tabs */
-        & > .aui.tabs, .body > .aui.input, .body > .aui.select, .body > .aui.datalist, .body > .aui.textarea
+        & > .aui
             margin-bottom: 1rem
 
         /* Delete confirmation text */
