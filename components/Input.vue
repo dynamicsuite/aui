@@ -328,6 +328,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             -webkit-box-sizing: border-box
             -moz-box-sizing: border-box
             box-sizing: border-box
+            background: #fff
             margin: 0 // Mandatory for iOS rendering and caps
 
             /* Where the input meets the leading cap (if any) */
