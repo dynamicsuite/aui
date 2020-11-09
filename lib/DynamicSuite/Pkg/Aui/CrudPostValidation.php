@@ -66,7 +66,7 @@ final class CrudPostValidation
     public function minimums(array $minimums): CrudPostValidation
     {
         foreach ($minimums as $key => $value) {
-            if (!is_string($key) || !is_int($value)) {
+            if (!is_string($key) || !is_numeric($value)) {
                 throw new Exception('Minimums must be an array of integers with string keys');
             }
         }
