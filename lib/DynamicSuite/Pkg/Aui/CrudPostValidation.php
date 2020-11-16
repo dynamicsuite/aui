@@ -152,10 +152,7 @@ final class CrudPostValidation
             $column = array_key_exists($key, $this->prefix_map)
                 ? $this->prefix_map[$key]
                 : ucfirst(str_replace('_', ' ', $key));
-            if (
-                (is_numeric($value) && !isset($this->cast[$key]))
-                || (isset($this->cast[$key]) && $this->cast[$key] === 'number')
-            ) {
+            if (isset($this->cast[$key]) && $this->cast[$key] === 'number') {
                 if (array_key_exists($key, $this->limits)) {
                     if ($value > $this->limits[$key]) {
                         $errors[$key] = "$column cannot exceed {$this->limits[$key]}";
