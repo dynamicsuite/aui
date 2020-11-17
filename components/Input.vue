@@ -19,9 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div :id="container_id" class="aui input">
         <label>
-            <span class="label-text" v-if="label">
-                {{label}}
-            </span>
+            <span v-if="label" class="label-text" v-html="label"></span>
             <span class="input-parent">
 
                 <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
@@ -330,6 +328,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             -webkit-box-sizing: border-box
             -moz-box-sizing: border-box
             box-sizing: border-box
+            background: #fff
             margin: 0 // Mandatory for iOS rendering and caps
 
             /* Where the input meets the leading cap (if any) */

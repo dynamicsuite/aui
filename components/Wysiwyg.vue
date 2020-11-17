@@ -17,62 +17,186 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div :id="id + '-container'" class="aui wysiwyg">
+    <div class="aui wysiwyg">
         <label>{{label}}</label>
-        <div :id="id"></div>
+        <div>
+            <div v-if="disabled" class="overlay"></div>
+            <div ref="editor" :class="editor_classes"></div>
+        </div>
+        <div v-if="subtext_value" :class="subtext_classes">{{subtext_value}}</div>
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            // Unique HTML ID for the editor
-            id: {
-                type: String,
-                required: true
-            },
-            // Label to display before the editor
-            label: {
-                type: String
-            },
-            // Text value of the editor (raw HTML)
-            text: {
-                type: String,
-                default: ''
-            }
+export default {
+    props: {
+
+        /**
+         * Editor value.
+         */
+        value: {
+            type: String
         },
-        data() {
-            return {
-                editor: null
-            }
+
+        /**
+         * Editor form label.
+         */
+        label: {
+            type: String
         },
-        mounted() {
-            // Initialize the pell widget
-            this.editor = pell.init({
-                element: document.getElementById(this.id),
-                defaultParagraphSeparator: 'p',
-                styleWithCSS: true,
-                onChange: html => {
-                    this.$emit('input', html);
-                },
-                actions: ['bold', 'italic', 'underline', 'heading1', 'ulist', 'olist'],
-                classes: {
+
+        /**
+         * Pell action bar actions.
+         */
+        actions: {
+            type: Array,
+            default: () => ['bold', 'italic', 'underline', 'heading1', 'ulist', 'olist']
+        },
+
+        /**
+         * Default HTML tag separator for paragraphs.
+         */
+        default_paragraph_separator: {
+            type: String,
+            default: 'p'
+        },
+
+        /**
+         * If the content should be styled with CSS vs tags.
+         */
+        style_with_css: {
+            type: Boolean,
+            default: true
+        },
+
+        /**
+         * Custom Pell widget classes.
+         */
+        classes: {
+            type: Object,
+            default: () => {
+                return {
                     actionbar: 'pell-actionbar',
                     button: 'pell-btn',
                     content: 'pell-content',
-                    selected: 'pell-button-selected',
-                },
-            });
-            this.editor.content.innerHTML = this.text;
-        },
-        watch: {
-            text() {
-                if (this.editor.content.innerHTML === '') {
-                    this.editor.content.innerHTML = this.text;
+                    selected: 'pell-button-selected'
                 }
             }
+        },
+
+        /**
+         * If the editor is disabled.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * Success feedback state.
+         */
+        success: {
+            type: String | Boolean,
+            default: false
+        },
+
+        /**
+         * Failure feedback state.
+         */
+        failure: {
+            type: String | Boolean,
+            default: false
+        },
+
+        /**
+         * Editor subtext
+         */
+        subtext: {
+            type: String
+        }
+
+    },
+    data() {
+        return {
+            editor: null
+        }
+    },
+    computed: {
+
+        /**
+         * Style classes for the editor.
+         */
+        editor_classes() {
+            return {
+                'border-success': this.success,
+                'border-failure': this.failure
+            }
+        },
+
+        /**
+         * Style classes for the subtext.
+         */
+        subtext_classes() {
+            return {
+                'subtext': true,
+                'text-success': this.success,
+                'text-failure': this.failure
+            }
+        },
+
+        /**
+         * Value of the subtext text.
+         */
+        subtext_value() {
+            if (typeof this.success === 'string') {
+                return this.success;
+            } else if (typeof this.failure === 'string') {
+                return this.failure;
+            } else {
+                return this.subtext;
+            }
+        },
+
+        /**
+         * Disabled input classes.
+         */
+        disabled_classes() {
+            return {
+                disabled: this.disabled
+            }
+        }
+
+    },
+    watch: {
+
+        /**
+         * Update the value on model changes.
+         *
+         * @param value
+         */
+        value: function (value) {
+            if (this.editor.content.innerHTML !== value) {
+                this.editor.content.innerHTML = value;
+            }
+        }
+
+    },
+    mounted() {
+        this.editor = pell.init({
+            element: this.$refs.editor,
+            actions: this.actions,
+            defaultParagraphSeparator: this.default_paragraph_separator,
+            styleWithCSS: this.style_with_css,
+            classes: this.classes,
+            onChange: html => {
+                this.$emit('input', html);
+            }
+        });
+        if (this.value) {
+            this.editor.content.innerHTML = this.value;
         }
     }
+}
 </script>
 
 <style lang="sass">
@@ -83,11 +207,50 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 // Input container
 .aui.wysiwyg
     margin: 1rem 0
+    position: relative
 
     /* Editor label */
     label
         display: block
         margin-bottom: 0.5rem
+
+    /* Disabled overlay */
+    .overlay
+        position: absolute
+        width: 100%
+        height: calc(100% - 1.6rem)
+        border-radius: 0.25rem
+        background: rgba(189, 198, 207, 0.6)
+        cursor: not-allowed
+
+    /* Editor subtext */
+    .subtext
+        font-size: 0.8rem
+        margin-top: 0.25rem
+        color: #6c757d
+        text-align: left
+
+        /* Success feedback */
+        &.text-success
+            color: $success
+
+        /* Failure feedback */
+        &.text-failure
+            color: $failure
+
+    /* Success feedback */
+    & > .border-success
+        .pell-actionbar, .pell-content
+            border: 1px solid $success
+        .pell-actionbar
+            border-bottom: none
+
+    /* Failure feedback */
+    & > .border-failure
+        .pell-actionbar, .pell-content
+            border: 1px solid $failure
+        .pell-actionbar
+            border-bottom: none
 
     /* Editor action bar area */
     .pell-actionbar
@@ -108,8 +271,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             width: 2.5rem
             background: none
             border: none
+            outline: none
 
-            &:hover
+            /* Selection overrides */
+            &:hover, &.pell-button-selected
                 cursor: pointer
                 background: darken(#f9f9f9, 10%)
 
@@ -124,13 +289,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         background: white
         overflow-y: scroll
 
+        /* Editor focus */
         &:focus
             outline: none
             box-shadow: 0 2px 5px 0 #ccc inset
 
+        /* Resets */
         p
             margin: 0
             padding: 0
-            overflow-wrap: break-spaces
 
 </style>

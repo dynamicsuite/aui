@@ -29,6 +29,7 @@ use Exception;
  *
  * @package DynamicSuite\Pkg\Aui
  * @property int[] $minimums
+ * @property string[] $cast
  * @property int[] $limits
  * @property string[] $prefix_map
  */
@@ -41,6 +42,13 @@ final class CrudPostValidation
      * @var int[]
      */
     private array $minimums = [];
+
+    /**
+     * Type casting overrides.
+     *
+     * @var array
+     */
+    private array $cast = [];
 
     /**
      * Maximum post value lengths.
@@ -66,11 +74,29 @@ final class CrudPostValidation
     public function minimums(array $minimums): CrudPostValidation
     {
         foreach ($minimums as $key => $value) {
-            if (!is_string($key) || !is_int($value)) {
+            if (!is_string($key) || !is_numeric($value)) {
                 throw new Exception('Minimums must be an array of integers with string keys');
             }
         }
         $this->minimums = $minimums;
+        return $this;
+    }
+
+    /**
+     * Cast types.
+     *
+     * @param string[] $cast
+     * @return CrudPostValidation
+     * @throws Exception
+     */
+    public function cast(array $cast): CrudPostValidation
+    {
+        foreach ($cast as $key => $value) {
+            if (!is_string($key) || !is_string($value)) {
+                throw new Exception('Casting must be an array of strings with string keys');
+            }
+        }
+        $this->cast = $cast;
         return $this;
     }
 
@@ -126,7 +152,7 @@ final class CrudPostValidation
             $column = array_key_exists($key, $this->prefix_map)
                 ? $this->prefix_map[$key]
                 : ucfirst(str_replace('_', ' ', $key));
-            if (is_int($value) || is_float($value)) {
+            if (isset($this->cast[$key]) && $this->cast[$key] === 'number') {
                 if (array_key_exists($key, $this->limits)) {
                     if ($value > $this->limits[$key]) {
                         $errors[$key] = "$column cannot exceed {$this->limits[$key]}";
@@ -137,7 +163,11 @@ final class CrudPostValidation
                         $errors[$key] = "$column cannot be less than {$this->minimums[$key]}";
                     }
                 }
-            } elseif (is_string($value) || $value === null) {
+            } elseif (
+                $value === null ||
+                (is_string($value) && !isset($this->cast[$key])) ||
+                (isset($this->cast[$key]) && $this->cast[$key] === 'string')
+            ) {
                 if (array_key_exists($key, $this->limits)) {
                     if (mb_strlen($value) > $this->limits[$key]) {
                         $errors[$key] = "$column cannot exceed {$this->limits[$key]} characters";

@@ -177,6 +177,12 @@ final class CrudRead
          * Calculate the page offset for the query
          */
         $offset = ($this->page - 1) * $this->limit;
+        if ($offset < 0) {
+            return [
+                'list' => [],
+                'total' => 0
+            ];
+        }
 
         /**
          * Add the search clause to the query

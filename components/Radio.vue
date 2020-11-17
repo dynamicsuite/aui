@@ -18,8 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <label class="aui radio">
-        <slot></slot>
-        <input type="radio" :name="group" :value="data" @change="$emit('input', $event.target.value)">
+        <slot>{{label}}</slot>
+        <input type="radio" :name="group" :value="data" :disabled="disabled" @change="$emit('input', $event.target.value)">
         <span class="bubble"></span>
     </label>
 </template>
@@ -27,10 +27,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <script>
     export default {
         props: {
+            label: {
+                type: String
+            },
             // HTML name attribute to group the radio to
             group: {
                 type: String,
                 required: true
+            },
+            // If the checkbox is disabled
+            disabled: {
+                type: Boolean,
+                default: false
             },
             // HTML value attribute binding
             data: {
@@ -49,7 +57,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 .aui.radio
     display: inline-flex
     align-items: center
-    justify-content: center
     position: relative
     padding-left: 35px
     margin-bottom: 12px

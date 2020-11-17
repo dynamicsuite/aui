@@ -32,7 +32,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 @input="$emit('input', $event.target.value)"
                 @change="$emit('change', $event.target.value)"
             >
-                <option v-for="(option, value) in render_options" :value="value">{{option}}</option>
+                <option v-for="(option, key) in render_options" :value="key" :selected="key == value">
+                    {{option}}
+                </option>
             </select>
         </label>
         <div v-if="subtext_value" class="subtext" :class="subtext_classes">{{subtext_value}}</div>

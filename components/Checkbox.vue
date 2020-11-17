@@ -17,16 +17,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <label class="aui checkbox" :class="classes">
-        <slot></slot>
-        <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
-        <span class="checkmark"></span>
-    </label>
+
+    <div class="aui checkbox">
+        <label :class="classes">
+            <slot>{{label}}</slot>
+            <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
+            <span class="checkmark"></span>
+        </label>
+        <div class="subtext" :class="classes">{{subtext_value}}</div>
+    </div>
+
 </template>
 
 <script>
     export default {
         props: {
+            // Label alternative
+            label: {
+                type: String | null,
+                default: null
+            },
             // If the checkbox is checked
             checked: {
                 type: Boolean | Number,
@@ -36,12 +46,38 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            // Success feedback state
+            success: {
+                type: String | Boolean,
+                default: false
+            },
+            // Failure feedback state
+            failure: {
+                type: String | Boolean,
+                default: false
+            },
+            // Checkbox subtext
+            subtext: {
+                type: String
             }
         },
         computed: {
             classes() {
                 return {
-                    disabled: this.disabled
+                    disabled: this.disabled,
+                    failure: this.failure,
+                    success: this.success
+                }
+            },
+            // Value of the subtext text
+            subtext_value() {
+                if (typeof this.success === 'string') {
+                    return this.success;
+                } else if (typeof this.failure === 'string') {
+                    return this.failure;
+                } else {
+                    return this.subtext;
                 }
             }
         }
@@ -55,76 +91,120 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 /* Checkbox styling */
 .aui.checkbox
-    display: inline-flex
-    align-items: center
-    justify-content: center
-    position: relative
-    padding-left: 35px
-    margin-bottom: 12px
-    height: 26px
-    cursor: pointer
-    -webkit-user-select: none
-    -moz-user-select: none
-    -ms-user-select: none
-    user-select: none
 
-    &.disabled
-        cursor: not-allowed !important
-
-    /* Input overrides */
-    & > input
-        position: absolute
-        opacity: 0
+    label
+        display: inline-flex
+        align-items: center
+        justify-content: center
+        position: relative
+        padding-left: 35px
+        height: 26px
         cursor: pointer
-        height: 0
-        width: 0
+        -webkit-user-select: none
+        -moz-user-select: none
+        -ms-user-select: none
+        user-select: none
 
-    /* Checkmark styling */
-    & > .checkmark
-        position: absolute
-        top: 0
-        left: 0
-        height: 25px
-        width: 25px
-        background-color: darken(#eee, 10%)
+        &.disabled
+            cursor: not-allowed !important
 
-    /* Swap colors when disabled */
-    &:disabled
-        background: $secondary !important
+        /* Input overrides */
+        & > input
+            position: absolute
+            opacity: 0
+            cursor: pointer
+            height: 0
+            width: 0
 
-    /* Checkbox hovering */
-    &:hover input ~ .checkmark
-        background: #ccc
+        /* Checkmark styling */
+        & > .checkmark
+            position: absolute
+            top: 0
+            left: 0
+            height: 25px
+            width: 25px
+            background-color: darken(#eee, 10%)
 
-    /* Checked box colors when not disabled */
-    & > input:checked:not(disabled) ~ .checkmark
-        background: $primary
+        /* Checkmark failure styling */
+        &.failure > .checkmark
+            background-color: lighten($failure, 20%)
 
-    /* Checked box colors when disabled */
-    & > input:checked:disabled ~ .checkmark
-        background: $secondary
-        cursor: not-allowed
+        /* Checkmark success styling */
+        &.success > .checkmark
+            background-color: lighten($success, 30%)
 
-    /* Pseudo element overrides */
-    & > .checkmark:after
-        content: ""
-        position: absolute
-        display: none
+        /* Swap colors when disabled */
+        &:disabled
+            background: $secondary !important
 
-    /* Pseudo element overrides */
-    & > input:checked ~ .checkmark:after
-        display: block
+        /* Checkbox hovering */
+        &:hover input ~ .checkmark
+            background: #ccc
 
-    /* Pseudo element styling */
-    & > .checkmark:after
-        left: 9px
-        top: 5px
-        width: 5px
-        height: 10px
-        border: solid white
-        border-width: 0 3px 3px 0
-        -webkit-transform: rotate(45deg)
-        -ms-transform: rotate(45deg)
-        transform: rotate(45deg)
+        /* Checkbox success hovering */
+        &.success:hover input ~ .checkmark
+            background-color: lighten($success, 40%)
+
+        /* Checkbox failure hovering */
+        &.failure:hover input ~ .checkmark
+            background-color: lighten($failure, 30%)
+
+        /* Swap colors when disabled */
+        &:disabled
+            background: $secondary !important
+
+        /* Checked box colors when not disabled */
+        & > input:checked:not(disabled) ~ .checkmark
+            background: $primary
+
+        /* Checked box colors when not disabled */
+        &.failure > input:checked:not(disabled) ~ .checkmark
+            background: $failure
+
+        /* Checked box colors when not disabled */
+        &.success > input:checked:not(disabled) ~ .checkmark
+            background: $success
+
+        /* Checked box colors when disabled */
+        & > input:checked:disabled ~ .checkmark
+            background: $secondary
+            cursor: not-allowed
+
+        /* Pseudo element overrides */
+        & > .checkmark:after
+            content: ""
+            position: absolute
+            display: none
+
+        /* Pseudo element overrides */
+        & > input:checked ~ .checkmark:after
+            display: block
+
+        /* Pseudo element styling */
+        & > .checkmark:after
+            left: 9px
+            top: 5px
+            width: 5px
+            height: 10px
+            border: solid white
+            border-width: 0 3px 3px 0
+            -webkit-transform: rotate(45deg)
+            -ms-transform: rotate(45deg)
+            transform: rotate(45deg)
+
+    .subtext
+        margin-left: 35px
+        font-size: 0.8rem
+        color: #6c757d
+        width: 100%
+        text-align: left
+
+        &.failure
+            color: $failure
+
+        &.success
+            color: $success
+
+
 
 </style>
