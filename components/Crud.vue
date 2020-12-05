@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui crud">
+    <div class="aui crud aui-container primary">
 
         <!-- Fatal error notice -->
         <aui-notice
@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
                 <!-- List action area -->
                 <div class="action">
-                    <slot name="list-buttons" :readList="readList"></slot>
+                    <slot name="list-buttons" :readList="readList" />
                     <aui-button
                         v-if="list_show_create_button"
                         :disabled="state.overlay"
@@ -89,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 </div>
 
                 <!-- Group mode -->
-                <aui-list-group v-if="list_is_group" :rows="list_group_data" />
+                <aui-list-group v-if="list_is_group" :list="list_group_data" @click="emitListClick" />
 
                 <!-- Table mode -->
                 <table v-if="list_is_table" :class="list_table_classes">
@@ -97,7 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                         <tr>
                             <th
                                 v-for="(column, key) in list_table_columns"
-                                :key="key + '-header'"
+                                :key="'header-' + key"
                                 :class="listTableColumnClasses(key)"
                                 @click="sortList(key)"
                             >
@@ -109,14 +109,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(row, key) in list_table_data" :key="key + '-row'" @click="emitListClick(row.id)">
+                        <tr v-for="(row, key) in list_table_data" :key="'row-' + key" @click="emitListClick(row.id)">
                             <td
                                 v-for="(value, column) in row.data"
-                                :key="column + '-column'"
+                                :key="'column-' + column"
                                 :class="listTableColumnClasses(column)"
-                            >
-                                {{listTableColumnFormat(column, value)}}
-                            </td>
+                                v-html="listTableColumnFormat(column, value)"
+                            />
                         </tr>
                     </tbody>
                 </table>
@@ -124,81 +123,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             </div>
 
             <!-- Pagination range and buttons -->
-            <div v-if="has_list_data" class="pagination">
-
-                <!-- Display range text -->
-                <div class="range">
-                    <span>Showing</span>
-                    <label>
-                        <select v-model="list.limit" :disabled="state.overlay" @change="readList">
-                            <option
-                                v-for="limit in list_range_limit"
-                                :key="limit + '-page-limit'"
-                                :value="limit"
-                            >{{limit}}</option>
-                        </select>
-                    </label>
-                    <span>
-                        from
-                        {{list.from.toLocaleString()}} to
-                        {{list.to.toLocaleString()}} of
-                        {{list.total.toLocaleString()}}
-                    </span>
-                </div>
-
-                <!-- Pagination buttons  -->
-                <div class="buttons">
-
-                    <!-- Left Chevrons -->
-                    <aui-button
-                        type="secondary"
-                        class="chevron"
-                        :disabled="state.overlay"
-                        @click="stepPageFirst"
-                    >
-                        &laquo;
-                    </aui-button>
-                    <aui-button
-                        type="secondary"
-                        class="chevron"
-                        :disabled="state.overlay"
-                        @click="stepPagePrevious"
-                    >
-                        &lsaquo;
-                    </aui-button>
-
-                    <!-- Page buttons -->
-                    <aui-button
-                        v-for="(page, key) in list.range"
-                        :key="key + '-pagination'"
-                        :type="paginateButtonType(page)"
-                        :text="page"
-                        :disabled="state.overlay"
-                        class="page-button"
-                        @click="paginate(page)"
-                    />
-
-                    <!-- Right Chevrons -->
-                    <aui-button
-                        type="secondary"
-                        class="chevron"
-                        :disabled="state.overlay"
-                        @click="stepPageNext"
-                    >
-                        &rsaquo;
-                    </aui-button>
-                    <aui-button
-                        type="secondary"
-                        class="chevron"
-                        :disabled="state.overlay"
-                        @click="stepPageLast"
-                    >
-                        &raquo;
-                    </aui-button>
-
-                </div>
-
-            </div>
+            <aui-pagination
+                v-if="has_list_data"
+                :disabled="state.overlay"
+                :page.sync="list.page"
+                :total="list.total"
+                :limit.sync="list.limit"
+                :list_range_limit="list_range_limit"
+                @paginate="readList"
+            />
 
         </div>
 
@@ -206,21 +139,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         <div v-if="show_form" class="form">
 
             <!-- Form tabs if multiple views -->
-            <aui-tabs v-if="view_show_tabs" :tabs="view_tabs" :initial_tab="tab_id" @change="changeTab" />
+            <aui-tabs v-if="view_show_tabs" :tabs="view_tabs" :tab.sync="tab" @change="handleTabChange" />
 
             <!-- Build form slots -->
-            <div class="body" v-for="(view, key) in form_views" :key="'view-' + key">
+            <div class="body" v-for="(form, key) in form_views" :key="'view-' + key">
                 <slot
-                    v-if="isActiveTab(view.name)"
-                    :name="view.name"
-                    :tab="tab"
+                    v-if="isActiveTab(key)"
+                    :form="form"
+                    :name="key"
                     :overlay="state.overlay"
                     :showForm="showForm"
                     :runCreate="runCreate"
                     :runUpdate="runUpdate"
                     :runDelete="runDelete"
                     :closeModals="closeModals"
-                ></slot>
+                />
             </div>
 
             <!-- Form bottom action bar -->
@@ -231,15 +164,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     type="secondary"
                     :disabled="state.overlay"
                     text="Back"
-                    @click="showForm(false, true)"
+                    @click="showForm(false)"
                 />
 
                 <!-- Primary action area -->
                 <div class="primary">
-                    <i v-if="state.show_failure_tick" class="tic fas fa-times"></i>
-                    <i v-if="state.show_success_tick" class="tic fas fa-check"></i>
+                    <i v-if="state.show_failure_tick" class="tic fas fa-times" />
+                    <i v-if="state.show_success_tick" class="tic fas fa-check" />
                     <aui-button
-                        v-if="!created"
+                        v-if="!is_valid"
                         :loading="state.overlay"
                         loading_text="Creating..."
                         text="Create"
@@ -255,6 +188,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                         <aui-button-drop
                             :dropdown="form_delete_dropdown"
                             :disabled="state.overlay"
+                            @delete="runDelete"
                         />
                     </div>
                 </div>
@@ -262,43 +196,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             </div>
 
             <!-- Delete confirm modal -->
-            <aui-modal
-                type="failure"
-                title="Confirm Delete"
-                :show="state.show_delete_modal"
-                @close="closeModals"
-            >
-                <slot
-                    name="confirm-delete"
-                    :tab="tab"
-                    :warning="error.delete_protect"
-                    :overlay="state.overlay"
-                    :showForm="showForm"
-                    :runCreate="runCreate"
-                    :runUpdate="runUpdate"
-                    :runDelete="runDelete"
-                    :closeModals="closeModals"
-                >
-                    <p class="delete-text">{{form_delete_text}}</p>
-                    <aui-alert v-if="error.delete_protect" type="failure">{{error.delete_protect}}</aui-alert>
-                    <div class="action">
-                        <aui-button
-                            type="secondary"
-                            :disabled="state.overlay"
-                            text="Cancel"
-                            @click="closeModals"
-                        />
-                        <div class="primary">
-                            <aui-button
-                                type="failure"
-                                :loading="state.overlay"
-                                loading_text="Deleting..."
-                                text="Delete"
-                                @click="runDelete(true)"
-                            />
-                        </div>
-                    </div>
-                </slot>
+            <aui-modal type="failure" title="Confirm Delete" :show.sync="state.show_delete_modal">
+                <template #content>
+                    <p>{{form_delete_text}}</p>
+                    <aui-input label="Type DELETE to confirm" v-model="delete_confirm" />
+                    <aui-alert v-if="error.delete_protect" type="failure" :text="error.delete_protect" />
+                </template>
+                <template #left>
+                    <aui-button
+                        type="secondary"
+                        :disabled="state.overlay"
+                        text="Cancel"
+                        @click="closeModals"
+                    />
+                </template>
+                <template #right>
+                    <aui-button
+                        type="failure"
+                        :disabled="form_delete_disabled"
+                        :loading="state.overlay"
+                        loading_text="Deleting..."
+                        text="Delete"
+                        @click="runDelete(true)"
+                    />
+                </template>
             </aui-modal>
 
         </div>
@@ -352,18 +273,15 @@ export default {
         },
 
         /**
-         * Columns to display when using table mode.
+         * Columns to display when using table mode. The key must be the column name and the value is a sub-object
+         * with a label key which will display as the label on the column, and an optional format key to define a
+         * value formatter.
          */
         list_table_columns: {
             type: Object,
-            default: () => {
-                return { id: 'ID' };
-            },
+            default: () => {},
             validator: value => {
                 for (const key in value) {
-                    if (typeof value[key] === 'string') {
-                        return true;
-                    }
                     if (typeof value[key] === 'object') {
                         if (typeof value[key]['label'] !== 'string') {
                             return false;
@@ -434,7 +352,7 @@ export default {
         },
 
         /**
-         * If the search should be shown in the list view
+         * If the search should be shown in the list view.
          */
         list_show_search: {
             type: Boolean,
@@ -586,8 +504,6 @@ export default {
 
         /**
          * Text to display when deleting a storable (shows in the modal).
-         *
-         * This is ignored when a slot override is present for the modal.
          */
         form_delete_text: {
             type: String,
@@ -628,26 +544,29 @@ export default {
 
         /**
          * Views for the form view.
+         *
+         * The key of each entry is the view ID that is used for the slot name and tab name. If the value is a string,
+         * the string will be the name of the view that is rendered. If the value is an object, you can define extra
+         * parameters such as show_action_bar. This sub-object MUST contain a name property as well to define the
+         * rendered name.
          */
         views: {
-            type: Array,
-            default: () => [],
+            type: Object,
+            default: () => {},
             validator: value => {
-                for (const view of value) {
-                    if (typeof view !== 'string' && typeof view !== 'object') {
+                for (const view in value) {
+                    if (typeof value[view] !== 'object' && typeof value[view] !== 'string') {
                         return false;
                     }
-                    if (typeof view === 'object') {
-                        for (const key in view) {
-                            if (key === 'name' && typeof view[key] !== 'string') {
-                                return false;
-                            }
-                            if (key === 'tab_name' && typeof view[key] !== 'string') {
-                                return false;
-                            }
-                            if (key === 'show_action_bar' && typeof view[key] !== 'boolean') {
-                                return false;
-                            }
+                    if (typeof value[view] === 'object') {
+                        if (typeof value[view].name !== 'string') {
+                            return false;
+                        }
+                        if (
+                            typeof value[view].show_action_bar !== 'undefined' &&
+                            typeof value[view].show_action_bar !== 'boolean'
+                        ) {
+                            return false;
                         }
                     }
                 }
@@ -661,27 +580,18 @@ export default {
             list: {
                 data: [],
                 limit: 0,
-                from: 0,
-                to: 0,
                 total: 0,
-                pages: 0,
                 page: 1,
                 search_timer: null,
                 search: null,
-                range: [],
                 sort: {},
                 sort_order: []
             },
-            created: false,
             tab: null,
-            tab_id: null,
-            initial_form: {},
-            form_delete_dropdown: [{
-                label: 'Delete',
-                action: () => {
-                    this.runDelete();
-                }
-            }],
+            form_delete_dropdown: {
+                delete: 'Delete'
+            },
+            delete_confirm: null,
             state: {
                 overlay: false,
                 show_form: false,
@@ -693,6 +603,11 @@ export default {
             error: {
                 server: false,
                 delete_protect: null
+            },
+            page_state: {
+                show_create: 0,
+                show_storable: 0,
+                tab_index: 0
             }
         }
     },
@@ -700,6 +615,8 @@ export default {
 
         /**
          * If the error notice should be shown (fatal error).
+         *
+         * @returns {boolean}
          */
         show_error() {
             return this.error.server;
@@ -707,6 +624,8 @@ export default {
 
         /**
          * If the list should be shown.
+         *
+         * @returns {boolean}
          */
         show_list() {
             return !this.error.server && !this.state.show_form && !this.state.show_created_confirmation;
@@ -714,6 +633,8 @@ export default {
 
         /**
          * If the form should be shown.
+         *
+         * @returns {boolean}
          */
         show_form() {
             return !this.error.server && this.state.show_form && !this.state.show_created_confirmation;
@@ -721,6 +642,8 @@ export default {
 
         /**
          * If the created confirmation notice should be shown.
+         *
+         * @returns {boolean}
          */
         show_created_confirmation() {
             return !this.error.server && this.state.show_created_confirmation;
@@ -728,6 +651,8 @@ export default {
 
         /**
          * If there is data in the list.
+         *
+         * @returns {boolean}
          */
         has_list_data() {
             return this.list.data.length > 0;
@@ -735,6 +660,8 @@ export default {
 
         /**
          * If the list is in group mode.
+         *
+         * @returns {boolean}
          */
         list_is_group() {
             return this.has_list_data && this.list_type === 'group';
@@ -742,6 +669,8 @@ export default {
 
         /**
          * If the list is in table mode.
+         *
+         * @returns {boolean}
          */
         list_is_table() {
             return this.has_list_data && this.list_type === 'table';
@@ -749,6 +678,13 @@ export default {
 
         /**
          * List data if using "group" mode.
+         *
+         * @returns [
+         *     {icon: string},
+         *     {title: string},
+         *     {subtext: string},
+         *     {value: number}
+         * ]
          */
         list_group_data() {
             const list = [];
@@ -760,7 +696,7 @@ export default {
                     icon: entry.icon ? entry.icon : '',
                     title: entry.title,
                     subtext: entry.subtext,
-                    action: () => this.emitListClick(entry.id)
+                    value: entry[this.form_storable_key]
                 });
             }
             return list;
@@ -768,6 +704,11 @@ export default {
 
         /**
          * List data if using "table" mode.
+         *
+         * @returns [
+         *     {id: number},
+         *     {data: object}
+         * ]
          */
         list_table_data() {
             const list = [];
@@ -776,7 +717,7 @@ export default {
             }
             for (const entry of this.list.data) {
                 const row = {
-                    id: entry.id,
+                    id: entry[this.form_storable_key],
                     data: {}
                 };
                 for (const column in this.list_table_columns) {
@@ -791,6 +732,11 @@ export default {
 
         /**
          * Classes for the loader/overlay when in the list view.
+         *
+         * @returns {
+         *     {overlay: boolean},
+         *     {empty: boolean}
+         * }
          */
         list_overlay_classes() {
             return {
@@ -801,6 +747,10 @@ export default {
 
         /**
          * Classes for the table.
+         *
+         * @returns {
+         *     {interactive: boolean}
+         * }
          */
         list_table_classes() {
             return {
@@ -809,54 +759,62 @@ export default {
         },
 
         /**
-         * Wrapper for the given views to make sure they all have the proper keys.
-         */
-        form_views() {
-            const views = [];
-            for (const key in this.views) {
-                let entry = {
-                    name: null,
-                    tab_name: null,
-                    show_action_bar: true
-                };
-                if (typeof this.views[key] === 'string') {
-                    entry.name = this.views[key];
-                    entry.tab_name = this.views[key];
-                } else {
-                    for (const prop in this.views[key]) {
-                        entry[prop] = this.views[key][prop];
-                    }
-                }
-                views.push(entry);
-            }
-            return views;
-        },
-
-        /**
          * If the update call is running into an overlay state and not the delete running.
+         *
+         * @returns {boolean}
          */
         form_update_is_running() {
             return this.state.overlay && !this.state.show_delete_modal;
         },
 
         /**
+         * Formatted views for use in rendering.
+         *
+         * @returns {
+         *     {name: string},
+         *     {show_action_bar: boolean}
+         * }
+         */
+        form_views() {
+            const views = {};
+            for (const view in this.views) {
+                views[view] = {
+                    name: typeof this.views[view] === 'string' ? this.views[view] : this.views[view].name,
+                    show_action_bar: typeof this.views[view].show_action_bar === 'boolean'
+                        ? this.views[view].show_action_bar
+                        : true
+                };
+            }
+            return views;
+        },
+
+        /**
+         * If the actual delete button is disabled due to not matching the confirm input.
+         *
+         * @returns {boolean}
+         */
+        form_delete_disabled() {
+            return this.delete_confirm !== 'DELETE';
+        },
+
+        /**
          * If the tabs should be shown.
          *
-         * @return boolean
+         * @returns {boolean}
          */
         view_show_tabs() {
-            return this.form_views.length > 1 && this.created;
+            return Object.keys(this.views).length > 1 && this.is_valid;
         },
 
         /**
          * Get the AUI tab options object for when tabs are present.
          *
-         * @return Object
+         * @returns {object}
          */
         view_tabs() {
             const tabs = {};
             for (const view in this.form_views) {
-                tabs[view] = this.form_views[view].tab_name;
+                tabs[view] = this.form_views[view].name;
             }
             return tabs;
         },
@@ -864,10 +822,19 @@ export default {
         /**
          * If the action bar should be shown.
          *
-         * @return boolean
+         * @returns {boolean}
          */
         view_show_action_bar() {
-            return this.form_views[this.tab_id].show_action_bar;
+            return this.form_views[this.tab].show_action_bar;
+        },
+
+        /**
+         * If the storable is valid (has ID).
+         *
+         * @returns {boolean}
+         */
+        is_valid() {
+            return !!this.form[this.form_storable_key];
         }
 
     },
@@ -876,17 +843,15 @@ export default {
         /**
          * Calling watcher for the overlay.
          */
-        calling: {
-            handler: function (new_value) {
-                if (new_value) {
-                    setTimeout(() => {
-                        if (this.calling) {
-                            this.state.overlay = true;
-                        }
-                    }, 100);
-                } else {
-                    this.state.overlay = false;
-                }
+        calling: function(value) {
+            if (value) {
+                setTimeout(() => {
+                    if (this.calling) {
+                        this.state.overlay = true;
+                    }
+                }, 100);
+            } else {
+                this.state.overlay = false;
             }
         }
 
@@ -896,7 +861,7 @@ export default {
         /**
          * Read the list using the given list read API.
          *
-         * @return void
+         * @returns {undefined}
          */
         readList() {
             if (this.calling) {
@@ -916,20 +881,7 @@ export default {
                     case 'OK':
                         this.list.data = response.data.list;
                         this.list.total = response.data.total;
-                        this.list.pages = Math.ceil(this.list.total / this.list.limit);
-                        let offset = (this.list.page - 1) * this.list.limit;
-                        if (offset > this.list.total) {
-                            offset = this.list.total - this.list.limit
-                            this.list.page = this.list.pages;
-                        }
-                        this.list.from = offset + 1;
-                        this.list.to = this.list.from + this.list.limit - 1;
-                        if (this.list.to > this.list.total) {
-                            this.list.to = this.list.total;
-                        }
-                        this.updatePaginationRange();
                         this.$emit('update:calling', false);
-                        this.$emit('read-list');
                         break;
                     default:
                         this.error.server = true;
@@ -940,20 +892,21 @@ export default {
         /**
          * Run the search for the list.
          *
-         * @return void
+         * @returns {undefined}
          */
         runSearch() {
             clearTimeout(this.list.search_timer);
             this.list.search_timer = setTimeout(() => {
-                this.paginate(1, true);
-                this.$emit('search', this.list.search);
+                this.list.page = 1;
+                this.readList();
             }, 300);
         },
 
         /**
          * Get the value of the given table column name when in table list mode.
          *
-         * @return string
+         * @param {string} column - The column name.
+         * @returns {string}
          */
         listTableColumnName(column) {
             if (typeof column === 'object') {
@@ -966,7 +919,9 @@ export default {
         /**
          * Format the value of the column using the format callback (if present).
          *
-         * @return string
+         * @param {string} column - The column name.
+         * @param {string} value - The column value.
+         * @returns {string}
          */
         listTableColumnFormat(column, value) {
             if (typeof this.list_table_columns[column] === 'string') {
@@ -979,15 +934,19 @@ export default {
         /**
          * Classes for the columns when in the table view, specifically for hiding on different screen types.
          *
-         * @return Object
+         * @param {string} column - The column name.
+         * @returns {
+         *     {hide_on_ipad: boolean},
+         *     {hide_on_mobile: boolean}
+         * }
          */
         listTableColumnClasses(column) {
             return {
-                'hide-on-ipad': (
+                hide_on_ipad: (
                     typeof this.list_table_columns[column] === 'object' &&
                     this.list_table_columns[column].hide_on_ipad === true
                 ),
-                'hide-on-mobile': (
+                hide_on_mobile: (
                     typeof this.list_table_columns[column] === 'object' &&
                     this.list_table_columns[column].hide_on_mobile === true
                 )
@@ -999,30 +958,28 @@ export default {
          *
          * The column will first be sorted ascending, on second click, descending, and on third click, removed.
          *
-         * @param column
-         * @return void
+         * @param {string} column - The column name.
+         * @returns {undefined}
          */
         sortList(column) {
             if (typeof this.list.sort[column] === 'undefined') {
                 this.list.sort_order.push(column);
                 this.$set(this.list.sort, column, 'ASC');
-                this.$emit('sort-asc', column);
             } else if (this.list.sort[column] === 'ASC') {
                 this.$set(this.list.sort, column, 'DESC');
-                this.$emit('sort-desc', column);
             } else {
                 this.list.sort_order.splice(this.list.sort_order.indexOf(column), 1);
                 this.$delete(this.list.sort, column);
-                this.$emit('sort-clear', column);
             }
-            this.paginate(1, true);
+            this.list.page = 1;
+            this.readList();
         },
 
         /**
          * If the given column is in the sorted columns list as ascending.
          *
-         * @param column
-         * @return boolean
+         * @param {string} column - The column name.
+         * @returns {boolean}
          */
         isSortedAsc(column) {
             return typeof this.list.sort[column] !== 'undefined' && this.list.sort[column] === 'ASC';
@@ -1031,8 +988,8 @@ export default {
         /**
          * If the given column is in the sorted columns list as descending.
          *
-         * @param column
-         * @return boolean
+         * @param {string} column - The column name.
+         * @returns {boolean}
          */
         isSortedDesc(column) {
             return typeof this.list.sort[column] !== 'undefined' && this.list.sort[column] === 'DESC';
@@ -1041,122 +998,11 @@ export default {
         /**
          * Emit a list click event and associated row ID.
          *
-         * @param id
-         * @return void
+         * @param {number} id - The row ID.
+         * @returns {undefined}
          */
         emitListClick(id) {
             this.$emit('list-click', id);
-        },
-
-        /**
-         * Update the pagination range (page numbers) for rendering pagination buttons.
-         *
-         * @return void
-         */
-        updatePaginationRange() {
-            const range = [];
-            if (this.list.pages < 5) {
-                for (let i = 1; i <= this.list.pages; i++) {
-                    range.push(i);
-                }
-            } else if (this.list.page < 3) {
-                for (let i = 1; i <= 5; i++) {
-                    range.push(i);
-                }
-            } else {
-                const at_end = this.list.page + 2 > this.list.pages
-                const offset = !at_end ? this.list.page + 2 : this.list.pages;
-                for (let i = at_end ? this.list.pages - 4 : this.list.page - 2; i <= offset; i++) {
-                    range.push(i);
-                }
-            }
-            this.list.range = range;
-        },
-
-        /**
-         * Get the button type for the given pagination button page.
-         *
-         * The button for the current page should be primary, all others should be secondary.
-         *
-         * @param page
-         * @return string
-         */
-        paginateButtonType(page) {
-            return this.list.page === parseInt(page) ? 'primary' : 'secondary';
-        },
-
-        /**
-         * Pagination: Paginate the list to a specific page and re-read the list.
-         *
-         * @param from_search
-         * @param page
-         * @return void
-         */
-        paginate(page, from_search = false) {
-            if (parseInt(page) === this.list.page && !from_search) {
-                return;
-            }
-            this.list.page = parseInt(page);
-            this.readList();
-            this.$emit('paginate', page);
-        },
-
-        /**
-         * Pagination: Step to the first page and re-read.
-         *
-         * @return void
-         */
-        stepPageFirst() {
-            if (this.list.page === 1) {
-                return;
-            }
-            this.paginate(1);
-            this.$emit('paginate-first');
-        },
-
-        /**
-         * Pagination: Step to the previous page and re-read.
-         *
-         * @return void
-         */
-        stepPagePrevious() {
-            if (this.list.page === 1) {
-                return;
-            }
-            const previous = this.list.page - 1;
-            if (previous > 0) {
-                this.paginate(previous);
-                this.$emit('paginate-previous');
-            }
-        },
-
-        /**
-         * Pagination: Step to the next page and re-read.
-         *
-         * @return void
-         */
-        stepPageNext() {
-            if (this.list.page === this.list.pages) {
-                return;
-            }
-            const next = this.list.page + 1;
-            if (next <= this.list.pages) {
-                this.paginate(next);
-                this.$emit('paginate-next');
-            }
-        },
-
-        /**
-         * Pagination: step to the last page and re-read.
-         *
-         * @return void
-         */
-        stepPageLast() {
-            if (this.list.page === this.list.pages) {
-                return;
-            }
-            this.paginate(this.list.pages);
-            this.$emit('paginate-last');
         },
 
         /**
@@ -1164,11 +1010,10 @@ export default {
          *
          * Useful for things such as passwords.
          *
-         * @param previous_form
-         * @return void
+         * @returns {undefined}
          */
-        secureFields(previous_form = false) {
-            const form = previous_form ? previous_form : Object.assign({}, this.form);
+        secureFields() {
+            const form = this.form;
             for (const field of this.secure_fields) {
                 form[field] = null;
             }
@@ -1180,55 +1025,56 @@ export default {
          *
          * If show is true, the form will be shown and the list will be hidden.
          *
-         * @param show
-         * @param update_state
-         * @return void
+         * @param {boolean} show - If the form should be shown.
+         * @param {number} tab - The tab to update.
+         * @returns {undefined}
          */
-        showForm(show, update_state = false) {
+        showForm(show, tab = 0) {
+            this.tab = Object.keys(this.views)[tab];
             if (!show) {
-                this.tab = this.form_views[0].name;
-                this.tab_id = 0;
+                this.page_state.show_create = 0;
+                this.page_state.show_storable = 0;
+                this.page_state.tab_index = 0;
                 this.readList();
-                this.$emit('show-list');
             } else {
-                this.$emit('show-form');
+                this.page_state.show_create = this.is_valid ? 0 : 1;
+                this.page_state.show_storable = this.is_valid ? this.form[this.form_storable_key] : 0;
+                this.page_state.tab_index = Object.keys(this.views).indexOf(this.tab);
             }
+            this.$emit('page-state-change');
             this.state.show_form = show;
-            if (update_state) {
-                this.setURIState();
-            }
         },
 
         /**
          * Reset the form.
          *
-         * @return void
+         * @returns {undefined}
          */
         resetForm() {
-            this.$emit('update:form', this.initial_form);
-        },
-
-        /**
-         * Set the form to specific values.
-         *
-         * @param data
-         * @return void
-         */
-        setForm(data) {
-            const form = Object.assign({}, this.form);
-            for (const key in data) {
-                form[key] = data[key];
+            const form = this.form;
+            for (const key in form) {
+                form[key] = null;
             }
             this.$emit('update:form', form);
         },
 
         /**
+         * Merge the given data with the form.
+         *
+         * @param {object} data - The data to merge.
+         * @returns {undefined}
+         */
+        setForm(data) {
+            this.resetFormFeedback();
+            this.$emit('update:form', Object.assign(this.form, data));
+        },
+
+        /**
          * Setup the form for create.
          *
-         * @return void
+         * @returns {undefined}
          */
         setupCreate() {
-            this.created = false;
             this.resetForm();
             this.resetFormFeedback();
             if (this.form_api_create_setup) {
@@ -1239,8 +1085,7 @@ export default {
                         case 'OK':
                             this.setForm(response.data);
                             this.$emit('update:calling', false);
-                            this.showForm(true, true);
-                            this.$emit('create-setup');
+                            this.showForm(true);
                             break;
                         default:
                             this.clearURIState();
@@ -1248,50 +1093,30 @@ export default {
                     }
                 });
             } else {
-                this.showForm(true, true);
+                this.showForm(true);
             }
-            this.$emit('setup-create');
         },
 
         /**
          * Check if the given tab is the active tab when using form views.
          *
-         * This also initializes the default tab on first run.
-         *
-         * @param tab
-         * @return boolean
+         * @param {string} tab - The tab to compare the set against.
+         * @returns {boolean}
          */
         isActiveTab(tab) {
-            if (this.tab === null) {
-                this.tab = this.form_views[0].name;
-                this.tab_id = 0;
-            }
             return tab === this.tab;
-        },
-
-        /**
-         * Change the tab to the given tab.
-         *
-         * @param tab
-         * @return void
-         */
-        changeTab(tab) {
-            this.tab = this.form_views[tab].name;
-            this.tab_id = tab;
-            this.setURIState();
-            this.$emit('tab-changed', {tab: this.form_views[tab].name, tab_id: tab});
         },
 
         /**
          * Read the storable for the given ID.
          *
-         * Note: This will also set the view to the first view in viewing the form.
+         * Note: This will also set the view to the first view on the form.
          *
-         * @param id
-         * @param set_state
-         * @return void
+         * @param {number} id - The storable ID.
+         * @param {number} tab - Set to a specific tab.
+         * @returns {undefined}
          */
-        readStorable(id, set_state = true) {
+        readStorable(id, tab = 0) {
             if (this.calling) {
                 return;
             }
@@ -1301,28 +1126,24 @@ export default {
                 switch (response.status) {
                     case 'OK':
                         this.setForm(response.data);
-                        this.$nextTick(() => {
-                            this.resetFormFeedback();
-                            this.showForm(true, false);
-                            this.created = true;
-                            this.$emit('update:calling', false);
-                            if (set_state) {
-                                this.setURIState();
-                            }
-                            this.$emit('read-form', id);
-                        });
+                        this.showForm(true, tab);
+                        this.$emit('update:calling', false);
+                        break;
+                    case 'NOT_FOUND':
+                        this.showForm(false);
+                        this.$emit('update:calling', false);
                         break;
                     default:
-                        this.clearURIState();
                         this.error.server = true;
                 }
             });
         },
 
         /**
-         * Set form feedback.
+         * Merge the given feedback with the current feedback.
          *
-         * @return void
+         * @param {object} data - The feedback object to merge.
+         * @returns {undefined}
          */
         setFeedback(data) {
             const feedback = Object.assign({}, this.feedback);
@@ -1335,7 +1156,7 @@ export default {
         /**
          * Reset any feedback on the form
          *
-         * @return void
+         * @returns {undefined}
          */
         resetFormFeedback() {
             this.state.show_failure_tick = false;
@@ -1351,7 +1172,7 @@ export default {
         /**
          * Create the storable for the given form data.
          *
-         * @return void
+         * @returns {undefined}
          */
         runCreate() {
             if (this.calling) {
@@ -1364,17 +1185,15 @@ export default {
                 switch (response.status) {
                     case 'OK':
                         this.state.show_created_confirmation = true;
-                        const form = Object.assign({}, this.form);
-                        form[this.form_storable_key] = parseInt(response.data);
-                        this.created = true;
+                        this.setForm({
+                            [this.form_storable_key]: parseInt(response.data)
+                        });
                         this.$emit('update:calling', false);
-                        this.secureFields(form);
+                        this.secureFields();
                         this.readList();
                         setTimeout(() => {
-                            this.setURIState();
                             this.state.show_created_confirmation = false;
                         }, 1000);
-                        this.$emit('create', response.data);
                         break;
                     case 'INPUT_ERROR':
                         this.state.show_failure_tick = true;
@@ -1390,7 +1209,7 @@ export default {
         /**
          * Update the storable for the given form data.
          *
-         * @return void
+         * @returns {undefined}
          */
         runUpdate() {
             if (this.calling) {
@@ -1405,7 +1224,6 @@ export default {
                         this.state.show_success_tick = true;
                         this.$emit('update:calling', false);
                         this.secureFields();
-                        this.$emit('update');
                         break;
                     case 'INPUT_ERROR':
                         this.state.show_failure_tick = true;
@@ -1423,14 +1241,14 @@ export default {
          *
          * If this is not confirmed, the modal will display to confirm deletion.
          *
-         * @param confirm
-         * @return void
+         * @param {boolean} confirm - If the delete is confirmed.
+         * @returns {undefined}
          */
         runDelete(confirm = false) {
             this.resetFormFeedback();
             if (!confirm) {
+                this.delete_confirm = null;
                 this.state.show_delete_modal = true;
-                this.$emit('delete-confirm');
             } else {
                 const data = Object.assign({}, this.form, this.form_api_delete_optional_data);
                 this.$emit('update:calling', true);
@@ -1441,15 +1259,12 @@ export default {
                             this.$nextTick(() => {
                                 this.closeModals();
                                 this.showForm(false);
-                                this.clearURIState();
                                 this.secureFields();
-                                this.$emit('delete');
                             });
                             break;
                         case 'DELETE_PROTECT':
                             this.error.delete_protect = response.message;
                             this.$emit('update:calling', false);
-                            this.$emit('delete-protect');
                             break;
                         default:
                             this.error.server = true;
@@ -1461,125 +1276,126 @@ export default {
         /**
          * Close any open CRUD modal.
          *
-         * @return void
+         * @returns {undefined}
          */
         closeModals() {
             if (!this.calling) {
                 this.state.show_delete_modal = false;
             }
-            this.$emit('modals-closed');
         },
 
         /**
-         * Set the URI state for saves across reloads and linking.
+         * Handle tab changing on the form.
          *
-         * @return void
+         * @param {string} tab - the new tab.
+         * @returns {undefined}
          */
-        setURIState() {
-            const hashids = new Hashids.default(),
-                state = [
-                    this.state.show_form ? 1 : 0,
-                    !this.tab_id ? 0 : this.tab_id,
-                    !this.form[this.form_storable_key] ? 0 : this.form[this.form_storable_key]
-                ],
-                params = new URLSearchParams(window.location.search),
-                key = `_${this._uid}`,
-                value = hashids.encode(state);
-            if (!this.state.show_form) {
-                params.delete(`_${this._uid}`);
-            } else {
-                params.set(key, value);
-            }
-            const url = params.toString().length ? `?${params.toString()}` : window.location.href.split('?')[0];
-            history.pushState(value, '', url);
-        },
-
-
-        /**
-         * Clear the saved URI state.
-         *
-         * @return void
-         */
-        clearURIState() {
-            const params = new URLSearchParams(window.location.search);
-            params.delete(`_${this._uid}`);
-            const url = params.toString().length ? `?${params.toString()}` : window.location.href.split('?')[0];
-            history.replaceState(null, '', url);
+        handleTabChange(tab) {
+            this.page_state.tab_index = Object.keys(this.views).indexOf(tab);
+            this.$emit('page-state-change');
         }
 
     },
     mounted() {
 
-        /**
-         * Set initial form
-         */
-        this.initial_form = this.form;
+        // Set initial tab
+        this.tab = Object.keys(this.views)[0];
 
-        /**
-         * Update range limit.
-         */
+        // Set the initial limit
         this.list.limit = this.list_range_limit[0];
 
-        /**
-         * Handle list interactions.
-         */
+        // Handle list interactions
         this.$on('list-click', id => {
             if (this.list_can_go_to_form) {
                 this.readStorable(id);
             }
         });
 
-        /**
-         * Page state management.
-         */
-        const params = new URLSearchParams(window.location.search);
-        if (params.has(`_${this._uid}`)) {
-            const hashids = new Hashids.default();
-            const state = hashids.decode(params.get(`_${this._uid}`));
-            if (state.length === 3) {
-                this.showForm(!!state[0]);
-                this.tab_id = state[1];
-                if (state[2]) {
-                    this.tab = this.form_views[state[1]].name;
-                    this.tab_id = state[1];
-                    this.readStorable(state[2], false);
-                    this.created = true;
-                } else if (this.form_api_create_setup) {
-                    const data = Object.assign({}, this.form_api_create_setup_optional_data);
-                    this.$emit('update:calling', true);
-                    DynamicSuite.call(this.package, this.form_api_create_setup, data, response => {
-                        switch (response.status) {
-                            case 'OK':
-                                this.setForm(response.data);
-                                this.$emit('update:calling', false);
-                                this.showForm(true, true);
-                                this.$emit('create-setup');
-                                break;
-                            default:
-                                this.clearURIState();
-                                this.error.server = true;
-                        }
-                    });
-                }
+        // Resolve the current state
+        const resolveState = () => {
+            if (this.page_state.show_create) {
+                this.setupCreate();
+            } else if (this.page_state.show_storable) {
+                this.readStorable(
+                    this.page_state.show_storable,
+                    this.page_state.tab_index
+                );
             } else {
-                this.clearURIState();
-                this.readList();
+                this.showForm(false);
             }
+        }
+
+        // Set up from URL state
+        const params = new URLSearchParams(window.location.search), key = `_${this._uid}`;
+        if (params.get(key)) {
+            const hashids = new Hashids.default();
+            const decoded = hashids.decode(params.get(key));
+            this.page_state.show_create = decoded[0];
+            this.page_state.show_storable = decoded[1];
+            this.page_state.tab_index = decoded[2];
+            resolveState();
         } else {
             this.readList();
         }
+
+        // Listen for page state changes
+        this.$on('page-state-change', () => {
+
+            // The page state is saved in 3 different parts, each part is an integer. Booleans are stored as 1 or 0
+            // show_create    - If the create form should be shown
+            // show_storable  - If the update form should be shown. This saves the storable ID
+            // tab_index      - Get the tab index if editing a storable
+
+            // Initialize hashIDs
+            const hashids = new Hashids.default();
+
+            // Set up the URL parameters
+            const params = new URLSearchParams(window.location.search);
+
+            // The UID will serve as the GET key
+            const key = `_${this._uid}`;
+
+            // The actual state is an array of integers for encoding, but they are saved on the instance in
+            // an object. Just the state must be extracted
+            const state = Object.values(this.page_state);
+
+            // Encode the state for use in the URL
+            const encoded = hashids.encode(state);
+
+            // Push the encoded state
+            const pushState = (params, state) => {
+                const url = params.toString().length ? `?${params.toString()}` : window.location.href.split('?')[0];
+                history.pushState(state, '', url);
+            }
+
+            // If the sum of the state is positive, it is assumed valid (create/update view)
+            // The comparison against the encoded is so that hard reloads do not duplicate state
+            if (!!state.reduce((a, b) => a + b) && params.get(key) !== encoded) {
+                params.set(key, encoded);
+                pushState(params, encoded);
+            }
+
+            // If the sum of the state is 0 (list view) but an old key exists, remove it
+            else if (!state.reduce((a, b) => a + b) && params.has(key)) {
+                params.delete(key);
+                pushState(params, null);
+            }
+
+        });
+
+        // Popstate listener for page state changes
         window.onpopstate = event => {
             if (event.state) {
                 const hashids = new Hashids.default();
-                const state = hashids.decode(event.state);
-                this.showForm(!!state[0]);
-                this.tab = this.form_views[state[1]].name;
-                this.tab_id = state[1];
+                const decoded = hashids.decode(event.state);
+                this.page_state.show_create = decoded[0];
+                this.page_state.show_storable = decoded[1];
+                this.page_state.tab_index = decoded[2];
+                resolveState();
             } else {
                 this.showForm(false);
-                this.clearURIState();
             }
-        };
+        }
 
     }
 }
@@ -1602,14 +1418,8 @@ export default {
 
 /* CRUD container */
 .aui.crud
-    background: whitesmoke
-    border-radius: 4px
-    padding: 1rem
-    box-shadow: 0 0 12px -3px rgba(0, 0, 0, 0.47)
-
-    /* Margin reset */
-    .aui.notice h4
-        margin-bottom: 0
+    display: flex
+    flex-direction: column
 
     /* List view */
     .list
@@ -1692,7 +1502,7 @@ export default {
 
             /* Add margin to the notices */
             & > .notice
-                margin: 2rem 0
+                margin: 2rem 0 1rem 0
 
             /* Margin reset */
             .aui.list-group
@@ -1721,12 +1531,12 @@ export default {
                     white-space: nowrap
 
                     /* Hidden columns */
-                    &.hide-on-ipad
+                    &.hide_on_ipad
                         @include on-ipad-view
                             display: none
 
                     /* Hidden columns */
-                    &.hide-on-mobile
+                    &.hide_on_mobile
                         @include on-mobile-view
                             display: none
 
@@ -1765,84 +1575,9 @@ export default {
                     tr:nth-child(odd)
                         background: #fff
 
-        /* Pagination area bar */
-        .pagination
-            display: flex
-            align-items: center
-
-            /* Split range and buttons on mobile view */
-            @include on-mobile-view
-                flex-direction: column
-
-            /* Range display */
-            .range
-                color: #111
-
-                /* Lower font size for ipads and lower */
-                @include on-ipad-view
-                    font-size: 0.9rem
-
-                /* Separate from buttons on mobile view */
-                @include on-mobile-view
-                    display: flex
-                    flex-direction: column
-
-                    /* Align rows */
-                    & > *
-                        text-align: center
-                        margin-bottom: 0.5rem
-
-                /* Select for limit */
-                select
-                    height: 2rem
-                    padding: 0 0.25rem
-                    margin: 0 0.35rem
-                    border-radius: 0.25rem
-                    border: 1px solid #ced4da
-                    text-align-last: center
-
-                    /* Remove chrome outline */
-                    &:focus
-                        outline: none
-
-            /* Pagination buttons */
-            .buttons
-                display: flex
-                margin-left: auto
-
-                /* Mobile buttons */
-                @include on-mobile-view
-                    margin-left: 0
-
-                    /* Buttons on mobile */
-                    .page-button:not(.btn-primary)
-                        display: none
-
-                /* Pagination buttons */
-                .btn
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    margin: 0
-                    padding: 0.5rem
-                    font-size: 0.8rem
-                    height: 2rem
-                    min-width: 1.9rem
-
-                    /* Chevron buttons */
-                    &.chevron
-                        font-size: 1rem
-
-                    /* Remove radius for inner buttons and add separating border */
-                    &:not(:last-of-type)
-                        border-top-right-radius: 0
-                        border-bottom-right-radius: 0
-                        border-right: 1px solid rgba(0, 0, 0, 0.15)
-
-                    /* Remove radius for inner buttons */
-                    &:not(:first-of-type)
-                        border-top-left-radius: 0
-                        border-bottom-left-radius: 0
+    /* Pad delete confirm input */
+    .modal .aui.input
+        margin-bottom: 1rem
 
     /* Form view */
     .form
@@ -1859,10 +1594,6 @@ export default {
         /* Pad tabs */
         & > .aui
             margin-bottom: 1rem
-
-        /* Delete confirmation text */
-        .delete-text
-            margin-top: 0
 
         /* 2 Column grid */
         .col-2

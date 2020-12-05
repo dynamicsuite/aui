@@ -18,181 +18,247 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui btn-drop" ref="dropdown">
-        <button class="aui btn" :class="button_classes" :disabled="is_disabled" @click="toggle">
-            <span v-if="$slots.default"><slot></slot></span>
+
+        <!-- The button to toggle the dropdown -->
+        <button class="aui btn" :class="style_class" :disabled="is_disabled" @click="toggle">
+            <span v-if="text || $slots.default"><slot>{{text}}</slot></span>
             <i :class="icon_class"></i>
         </button>
+
+        <!-- The dropdown list -->
         <ul v-show="show_dropdown" class="dropdown" ref="menu" :class="list_classes">
-            <li v-for="entry in dropdown" @click="runAction(entry.action)">{{entry.label}}</li>
+            <li v-for="(text, event) in dropdown" :key="'entry-' + event" @click="handleClick(event)">{{text}}</li>
         </ul>
+
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            // The dropdown type, which determines style classes
-            type: {
-                type: String,
-                default: 'primary',
-                validator(value) {
-                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-                }
-            },
-            // The structure of dropdown options to show in the list
-            dropdown: {
-                type: Array,
-                required: true,
-                validator(value) {
-                    for (let i = 0; i < value.length; i++) {
-                        if (typeof value[i].label !== 'string') {
-                            return false;
-                        }
-                        if (typeof value[i].action !== 'function' && typeof value[i].action !== 'string') {
-                            return false;
-                        }
+export default {
+    props: {
+
+        /**
+         * The button type.
+         *
+         * This determines the style class applied.
+         */
+        type: {
+            type: String,
+            default: 'primary',
+            validator(value) {
+                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+            }
+        },
+
+        /**
+         * Button text.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        text: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * The dropdown menu entries.
+         *
+         * The key of each entry is the event name that is emitted back to the parent.
+         *
+         * The value of each entry is the name (text) that is displayed for the menu row.
+         */
+        dropdown: {
+            type: Object,
+            required: true,
+            validator(value) {
+                for (const key in value) {
+                    if (typeof value[key] !== 'string') {
+                        return false;
                     }
-                    return true;
                 }
-            },
-            // If the button is disabled and un-clickable
-            disabled: {
-                type: Boolean,
-                default: false
-            },
-            // The icon to display when the dropdown is inactive
-            icon_inactive: {
-                type: String,
-                default: 'fas fa-caret-down'
-            },
-            // The icon to display when the dropdown is active
-            icon_active: {
-                type: String,
-                default: 'fas fa-caret-up'
-            },
-            // Where to align the dropdown relative to the button
-            menu_align: {
-                type: String,
-                default: 'left',
-                validator(value) {
-                    return ['left', 'right'].indexOf(value) !== -1;
-                }
-            },
-            // Relative container for the dropdown placement
-            relative_to: {
-                type: String | null,
-                default: null
+                return true;
             }
         },
-        computed: {
-            // Style classes to apply to the button
-            button_classes() {
-                let classes = {
-                    active: this.show_dropdown
-                };
-                if (this.type !== 'none') {
-                    classes['btn-' + this.type] = true;
-                }
-                return classes;
-            },
-            // The Font Awesome class to use for the icon
-            icon_class() {
-                return this.show_dropdown ? this.icon_active : this.icon_inactive;
-            },
-            // Style classes to apply to the dropdown list
-            list_classes() {
-                let classes = {
-                    top: this.anchor_top
-                };
 
-                classes[this.menu_align_master] = !!this.menu_align_master;
-                classes[this.menu_align] = !this.menu_align_master;
+        /**
+         * If the button is disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
 
-                return classes;
-            },
-            // If the button should be disabled
-            is_disabled() {
-                return this.loading || this.disabled;
+        /**
+         * The icon classes to apply when the dropdown is inactive.
+         */
+        icon_inactive: {
+            type: String,
+            default: 'fas fa-caret-down'
+        },
+
+        /**
+         * The icon classes to apply when the dropdown is active.
+         */
+        icon_active: {
+            type: String,
+            default: 'fas fa-caret-up'
+        },
+
+        /**
+         * Where to align the dropdown relative to the button.
+         *
+         * Accepts: left, right
+         */
+        menu_align: {
+            type: String,
+            default: 'left',
+            validator(value) {
+                return ['left', 'right'].indexOf(value) !== -1;
             }
         },
-        data() {
+
+        /**
+         * Relative container for the dropdown placement.
+         *
+         * Used to avoid clipping out of parent element.
+         */
+        relative_to: {
+            type: String | null,
+            default: null
+        }
+
+    },
+    computed: {
+
+        /**
+         * Style class for the button.
+         *
+         * @returns {Object} The active style class object.
+         */
+        style_class() {
             return {
-                show_dropdown: false,
-                anchor_top: false,
-                menu_align_master: null
-            }
+                [`btn-${this.type}`]: this.type !== 'none'
+            };
         },
-        methods: {
-            // Toggle visibility state
-            toggle() {
 
-                this.show_dropdown = !this.show_dropdown;
-                this.menu_align_master = null;
-                this.anchor_top = false;
+        /**
+         * If the button is in a disabled state.
+         *
+         * @returns {boolean} The disabled state.
+         */
+        is_disabled() {
+            return this.loading || this.disabled;
+        },
 
-                Vue.nextTick(() => {
+        /**
+         * The icon class for the dropdown.
+         *
+         * @returns {String}
+         */
+        icon_class() {
+            return this.show_dropdown ? this.icon_active : this.icon_inactive;
+        },
 
-                    // Hide the element
-                    this.$refs['menu'].style.opacity = '0';
+        /**
+         * Style classes to apply to the dropdown menu.
+         *
+         * @returns {Object} The dropdown style class object.
+         */
+        list_classes() {
+            return {
+                top: !!this.anchor_top,
+                [this.menu_align_master]: !!this.menu_align_master,
+                [this.menu_align]: !this.menu_align_master
+            };
+        }
 
-                    // Get element dimensions
-                    const rect = this.$refs['menu'].getBoundingClientRect();
-                    let space_below = window.innerHeight - rect.bottom;
-                    let space_right = window.innerWidth - rect.right;
-                    if (this.relative_to) {
-                        const element = this.$refs['menu'].closest(this.relative_to);
-                        if (element) {
-                            space_below = element.offsetHeight - rect.bottom;
-                            space_right = element.offsetWidth - rect.right;
-                        }
+    },
+    data() {
+        return {
+            show_dropdown: false,
+            anchor_top: false,
+            menu_align_master: null
+        }
+    },
+    methods: {
+
+        /**
+         * Handle the dropdown menu click event.
+         *
+         * @param {string} key - The event name (key).
+         * @returns {undefined}
+         */
+        handleClick(key) {
+            this.$emit(key);
+            this.$emit('menu-click', key);
+            this.show_dropdown = false;
+        },
+
+        /**
+         * Toggle the dropdown menu.
+         *
+         * @returns {undefined}
+         */
+        toggle() {
+
+            this.show_dropdown = !this.show_dropdown;
+            this.menu_align_master = null;
+            this.anchor_top = false;
+
+            this.$nextTick(() => {
+
+                // Hide the element
+                this.$refs['menu'].style.opacity = '0';
+
+                // Get element dimensions
+                const rect = this.$refs['menu'].getBoundingClientRect();
+                let space_below = window.innerHeight - rect.bottom;
+                let space_right = window.innerWidth - rect.right;
+                if (this.relative_to) {
+                    const element = this.$refs['menu'].closest(this.relative_to);
+                    if (element) {
+                        space_below = element.offsetHeight - rect.bottom;
+                        space_right = element.offsetWidth - rect.right;
                     }
-
-                    // If the element is too close to the right edge, assign a left anchor
-                    if (space_right < 0) {
-                        this.menu_align_master = 'right';
-                    }
-
-                    // If the element is too close to the bottom edge, assign it a top anchor
-                    if (space_below < 0) {
-                        this.anchor_top = true;
-                    }
-
-                    // Un-hide the element
-                    this.$refs['menu'].style.opacity = '1';
-
-                });
-            },
-
-            // Reset the visibility state when clicking outside the element
-            outsideReset(event) {
-                // If the element isn't the menu, hide menu; aka a faux click-out/blur event
-                if (!this.$refs.dropdown.contains(event.target)) {
-                    this.show_dropdown = false;
                 }
-            },
 
-            // Run the action for the selected dropdown option
-            runAction(action) {
-                // Functions get run, otherwise treat as URL
-                if (typeof(action) === 'function') {
-                    action();
-                } else {
-                    window.open(action);
+                // If the element is too close to the right edge, assign a left anchor
+                if (space_right < 0) {
+                    this.menu_align_master = 'right';
                 }
-                // Hide the dropdown once the action is completed
+
+                // If the element is too close to the bottom edge, assign it a top anchor
+                if (space_below < 0) {
+                    this.anchor_top = true;
+                }
+
+                // Un-hide the element
+                this.$refs['menu'].style.opacity = '1';
+
+            });
+        },
+
+        /**
+         * Reset the visibility state when clicking outside the component.
+         *
+         * @param {object} event - The click event.
+         * @returns {undefined}
+         */
+        blurDropdownMenu(event) {
+            if (!this.$refs.dropdown.contains(event.target)) {
                 this.show_dropdown = false;
             }
-
-        },
-        created() {
-            // Add event listener for blur/click-out tracking
-            window.addEventListener('click', this.outsideReset);
-        },
-        beforeDestroy() {
-            // Remove the blur/click-out event listener
-            window.removeEventListener('click', this.outsideReset);
         }
+
+    },
+    created() {
+        window.addEventListener('click', this.blurDropdownMenu);
+    },
+    beforeDestroy() {
+        window.removeEventListener('click', this.blurDropdownMenu);
     }
+}
 </script>
 
 <style lang="sass">
@@ -200,7 +266,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-// Group container
+/* Button group container */
 .aui.btn-drop
     display: inline-flex
     position: relative
@@ -212,12 +278,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
     /* Slot text for the dropdown*/
     .btn > span
-        margin-right: .5rem
+        margin-right: 0.5rem
 
     /* FontAwesome icon class on the dropdown button */
     .btn > i
         margin: 0 !important
-        font-size: 0.9rem
 
     /* Dropdown menu when the button is pressed */
     .dropdown
@@ -244,10 +309,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         &.right
             right: 0
 
-        /* Bottom attached list */
+        /* Top attached list */
         &.top
             top: auto
-            bottom: 2.35rem
+            bottom: 2.45rem
 
         /* Dropdown entries */
         li

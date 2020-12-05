@@ -17,48 +17,100 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div v-if="visible" class="aui alert" :class="container_class">
+    <div v-if="show" class="aui alert" :class="style_class">
+
+        <!-- Alert content -->
         <div>
             <h3 v-if="title">{{title}}</h3>
-            <p><slot></slot></p>
+            <slot>{{text}}</slot>
         </div>
-        <i v-if="closeable" class="fa fa-times close" @click="$emit('close')"></i>
+
+        <!-- The close button -->
+        <i v-if="closeable" class="fa fa-times close" @click="handleClose"></i>
+
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            // The alert type, which determines style classes
-            type: {
-                type: String,
-                default: 'primary',
-                validator(value) {
-                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-                }
-            },
-            // Alert title, optional
-            title: {
-                type: String,
-            },
-            // If the alert is currently visible, bindable to the parent instance
-            visible: {
-                type: Boolean | String,
-                default: true
-            },
-            // If the alert is user-closeable
-            closeable: {
-                type: Boolean,
-                default: false
+export default {
+    props: {
+
+        /**
+         * The alert type.
+         *
+         * This determines the style class applied.
+         */
+        type: {
+            type: String,
+            default: 'primary',
+            validator(value) {
+                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
             }
         },
-        computed: {
-            // Class for the container
-            container_class() {
-                return this.type === 'none' ? '' : 'alert-' + this.type;
-            }
+
+        /**
+         * An optional title for the alert to display above the alert message.
+         */
+        title: {
+            type: String,
+        },
+
+        /**
+         * The body of the alert.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        text: {
+            type: String | null,
+            required: true
+        },
+
+        /**
+         * If the alert is shown and rendered on the DOM.
+         */
+        show: {
+            type: Boolean | String | null,
+            default: true
+        },
+
+        /**
+         * If the alert is closable by the user.
+         */
+        closeable: {
+            type: Boolean,
+            default: false
         }
+
+    },
+    computed: {
+
+        /**
+         * Style class for the alert container.
+         *
+         * @returns {object}
+         */
+        style_class() {
+            return {
+                [`alert-${this.type}`]: this.type !== 'none'
+            };
+        }
+
+    },
+    methods: {
+
+        /**
+         * Handle the close functionality.
+         *
+         * @returns {undefined}
+         */
+        handleClose() {
+            this.$emit('update:show', false);
+            this.$emit('close');
+        }
+
     }
+}
 </script>
 
 <style lang="sass">
@@ -71,21 +123,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     display: flex
     padding: 1rem
     border-radius: 0.25rem
-    margin: 1rem 0
-
-    /* Alert title (if any) */
-    h3
-        display: flex
-        width: 100%
-
-    /* Alert body */
-    p
-        margin: 0
-        flex-grow: 1
 
     /* Alert close button */
     .close
-        outline: none !important
         margin-left: auto
         font-size: 1rem
         cursor: pointer

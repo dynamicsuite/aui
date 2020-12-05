@@ -18,102 +18,119 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui tabs">
-        <span v-if="!collapsed" v-for="tab in tab_structure" class="tab" :class="tabClass(tab.id)" @click="tab.action">
-            {{tab.label}}
-        </span>
-        <aui-button-drop v-if="collapsed" :dropdown="tab_structure">{{tab_name}}</aui-button-drop>
+        <span
+            v-if="!collapsed"
+            v-for="(name, tab) in tabs"
+            v-html="name"
+            class="tab"
+            :class="tabClass(tab)"
+            @click="handleClick(tab)"
+        />
+        <aui-button-drop v-if="collapsed" :dropdown="tabs" :text="tabs[tab]" @menu-click="handleClick" />
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            // Tab structure to render
-            tabs: {
-                type: Object,
-                required: true
-            },
-            // Initial tab to render and set active
-            initial_tab: {
-                type: String | Number,
-                default: null
-            }
-        },
-        data() {
-            return {
-                width: 0,
-                collapsed: false,
-                tab: null
-            }
-        },
-        computed: {
-            // Format the tab structure
-            tab_structure() {
-                let structure = [];
-                let tab_keys = Object.keys(this.tabs);
-                for (let i = 0; i < tab_keys.length; i++) {
-                    let tab = tab_keys[i];
-                    structure[i] = {
-                        id: tab,
-                        label: this.tabs[tab],
-                        action: () => {
-                            this.tab = tab;
-                            this.$emit('change', this.tab);
-                        }
-                    }
-                }
-                return structure;
-            },
-            // Dropdown text for collapsed tabs
-            tab_name() {
-                return this.tabs[this.tab];
-            }
-        },
-        methods: {
-            // Check and set collapsed state on resize
-            checkIfCollapsed() {
-                window.requestAnimationFrame(() => {
-                    this.collapsed =
-                        this.$el.clientWidth <= this.width ||
-                        this.$el.clientWidth + 40 >= window.innerWidth;
-                });
-            },
-            // Style classes to apply to the tab
-            tabClass(tab) {
-                return {
-                    active: this.tab !== null ? this.tab.toString() === tab.toString() : false
-                }
-            }
-        },
-        created() {
-            window.addEventListener('resize', this.checkIfCollapsed);
-        },
-        mounted() {
-            // Check to see how wide the tabs are (in PX) and then checks if it exceeds the window width
-            for (let i = 0; i < this.$el.childNodes.length; i++) {
-                if (typeof this.$el.childNodes[i].offsetWidth !== 'number') {
-                    continue;
-                }
-                this.width += this.$el.childNodes[i].offsetWidth + 1;
-            }
-            this.width = this.width + 32;
-            this.checkIfCollapsed();
-            if (this.initial_tab !== null) {
-                this.tab = this.initial_tab;
-            } else {
-                this.tab = Object.keys(this.tabs)[0];
-            }
-        },
-        watch: {
-            initial_tab(tab) {
-                this.tab = tab;
-            }
-        },
-        beforeDestroy() {
-            window.removeEventListener('resize', this.checkIfCollapsed);
+export default {
+    props: {
+
+        /**
+         * The tabs to render. This must be a simple <string, string> key-value object where the key is the tab
+         * name and the value is the name to display.
+         */
+        tabs: {
+            type: Object,
+            required: true
         },
 
+        /**
+         * The current tab (key).
+         */
+        tab: {
+            type: String | Number,
+            required: true
+        },
+
+        /**
+         * If the tabs are disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        }
+
+    },
+    data() {
+        return {
+            width: 0,
+            collapsed: false
+        }
+    },
+    methods: {
+
+        /**
+         * Handle the clicking of tabs and update the current tab.
+         *
+         * @param {string} tab - The clicked tab.
+         * @returns {undefined}
+         */
+        handleClick(tab) {
+            if (!this.disabled) {
+                this.$emit('update:tab', tab);
+                this.$emit('change', tab);
+            }
+        },
+
+        /**
+         * Calculate which classes to use for the given tab.
+         *
+         * @param {string} tab - The given tab to calculate.
+         * @returns {
+         *     {disabled: boolean},
+         *     {active: boolean}
+         * }
+         */
+        tabClass(tab) {
+            return {
+                disabled: this.disabled,
+                active: tab === this.tab
+            };
+        },
+
+        /**
+         * Check and set the collapsed state.
+         *
+         * @returns {undefined}
+         */
+        checkIfCollapsed() {
+            window.requestAnimationFrame(() => {
+                this.collapsed =
+                    this.$el.clientWidth <= this.width ||
+                    this.width + 40 >= this.$el.parentElement.clientWidth;
+            });
+        }
+
+    },
+    mounted() {
+
+        // Listen for window resizes
+        window.addEventListener('resize', this.checkIfCollapsed);
+
+        // Check to see how wide the tabs are (in pixels) and then checks if it exceeds the window width
+        for (let i = 0; i < this.$el.childNodes.length; i++) {
+            if (typeof this.$el.childNodes[i].offsetWidth !== 'number') {
+                continue;
+            }
+            this.width += this.$el.childNodes[i].offsetWidth + 1;
+        }
+        this.width = this.width + 32;
+        this.checkIfCollapsed();
+
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.checkIfCollapsed);
     }
+}
 </script>
 
 <style lang="sass">
@@ -126,21 +143,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-// Tabs container
+/* Tabs container */
 .aui.tabs
     display: flex
     padding: calc(0.5rem - 1px) 1rem
     border-bottom: 1px solid #ced4da
 
-    @include on-mobile-view
-        .btn-drop
-            display: flex
-            justify-content: center
-            width: 100%
+    /* Collapsed tabs dropdown */
+    .btn-drop
+
+        /* Match tabs */
+        .btn
+            padding: calc(0.5rem + 2px) 1rem
+
+            /* Match tabs */
+            span
+                margin-top: 1px
 
     /* Global margin adjustment */
     & > *
-        margin-bottom: -.5rem
+        margin-bottom: -0.5rem
 
     /* Individual tabs */
     .tab

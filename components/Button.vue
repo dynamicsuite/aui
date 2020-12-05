@@ -17,91 +17,124 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <button class="aui btn" :class="(type !== 'none' ? 'btn-' + type : '')" :disabled="is_disabled" @click="$emit('click')">
-        <span v-if="isDelayed()">
+    <button class="aui btn" :class="style_class" :disabled="is_disabled" @click="$emit('click')">
+
+        <!-- Show loading if the button is delayed -->
+        <span v-if="loading">
             <i class="fa fa-spin fa-circle-notch"></i>
-            <span v-if="has_loading_text" class="loading-text">{{loading_text}}</span>
-            <slot v-else></slot>
+            <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
+            <slot v-else>{{text}}</slot>
         </span>
+
+        <!-- Show button text  -->
         <slot v-else>{{text}}</slot>
-        <aui-badge type="failure" v-if="alert" :content="alert_content"></aui-badge>
+
+        <!-- Attached badge -->
+        <aui-badge v-if="badge" :type="badge" :text="badge_text" />
+
     </button>
 </template>
 
 <script>
-    export default {
-        props: {
-            // The button type, which determines style classes
-            type: {
-                type: String,
-                default: 'primary',
-                validator(value) {
-                    return ['primary', 'secondary', 'success', 'warning', 'failure', 'none'].indexOf(value) !== -1;
-                }
-            },
-            // Button text to use. If the slot is used, it will use the slot over this value.
-            text: {
-                type: String | null,
-                default: null
-            },
-            // If the button is disabled and un-clickable
-            disabled: {
-                type: Boolean,
-                default: false
-            },
-            // If the button is in its loading state, also disables
-            loading: {
-                type: Boolean,
-                default: false
-            },
-            // Text to display on the button when in the loading state, uses old text if null
-            loading_text: {
-                type: String,
-                default: null
-            },
-            // Toggle alert icon on button
-            alert: {
-                type: Boolean,
-                default: false
-            },
-            // Custom content for alerts on buttons
-            alert_content: {
-                type: String,
-                default: '!'
+export default {
+    props: {
+
+        /**
+         * The button type.
+         *
+         * This determines the style class applied.
+         */
+        type: {
+            type: String,
+            default: 'primary',
+            validator(value) {
+                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
             }
         },
-        data() {
-            return {
-                show_spinner: false,
-                default_class: false
+
+        /**
+         * Button text.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        text: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * If the button is disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * If the button is in its loading state.
+         */
+        loading: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * Text to display on the button when in the loading state (optional).
+         */
+        loading_text: {
+            type: String,
+            default: null
+        },
+
+        /**
+         * The badge type.
+         *
+         * If this is NULL, no badge will be displayed.
+         *
+         * This determines the style class applied for the badge.
+         */
+        badge: {
+            type: String,
+            default: null,
+            validator(value) {
+                return [null, 'none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
             }
         },
-        computed: {
-            // If custom loading text was given
-            has_loading_text() {
-                return typeof this.loading_text === 'string';
-            },
-            // If the button should be disabled
-            is_disabled() {
-                return this.loading || this.disabled;
-            }
-        },
-        methods: {
-            // Set a delay to display the loading spinner so that there is not weird flickering on low latency loads
-            isDelayed() {
-                if (this.loading) {
-                    setTimeout(() => {
-                        if (this.loading) {
-                            this.show_spinner = true;
-                        }
-                    }, 100);
-                } else {
-                    this.show_spinner = false;
-                }
-                return this.show_spinner;
-            }
+
+        /**
+         * Text to display in the attached badge.
+         */
+        badge_text: {
+            type: String,
+            default: '!'
         }
+
+    },
+    computed: {
+
+        /**
+         * Style class for the button.
+         *
+         * @returns {object}
+         */
+        style_class() {
+            return {
+                [`btn-${this.type}`]: this.type !== 'none'
+            };
+        },
+
+        /**
+         * If the button is in a disabled state.
+         *
+         * @returns {boolean}
+         */
+        is_disabled() {
+            return this.loading || this.disabled;
+        }
+
     }
+}
 </script>
 
 <style lang="sass">
@@ -111,10 +144,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 /* Default button styling */
 .aui.btn
+    display: inline-flex
     padding: 0.5rem 1rem
     border: 0
     border-radius: 0.25rem
     font-size: 1rem
+    line-height: 1rem
     user-select: none
     cursor: pointer
     position: relative
@@ -126,7 +161,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     &:disabled
         cursor: not-allowed
 
-    /* Spinner when the button is on a long load */
+    /* Spinner when the button loading */
     .fa.fa-spin
         text-align: center
         margin-right: 0.25rem
@@ -134,6 +169,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
     /* Loading text displayed when a button is in the loading state */
     .loading-text
         margin: 0
+
+    /* Attached badge if present */
+    .aui.badge
+        position: absolute
+        display: flex
+        justify-content: center
+        align-items: center
+        min-width: 0.5rem
+        top: -0.5rem
+        right: -0.7rem
+        z-index: 1
+        border: 1px solid white
 
     /* Primary button theme */
     &.btn-primary
@@ -189,12 +236,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         &:disabled
             background: lighten($failure, 20%)
-
-    .aui.badge
-        position: absolute
-        top: -.75rem
-        right: -.25rem
-        z-index: 1
-        border: 1px solid white
 
 </style>

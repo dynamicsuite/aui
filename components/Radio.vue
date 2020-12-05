@@ -17,94 +17,143 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <label class="aui radio">
-        <slot>{{label}}</slot>
-        <input type="radio" :name="group" :value="data" :disabled="disabled" @change="$emit('input', $event.target.value)">
-        <span class="bubble"></span>
-    </label>
+    <aui-form-control v-bind="properties">
+        <input
+            type="radio"
+            :name="name"
+            :value="value"
+            :disabled="disabled"
+            @input="$emit('input', $event.target.value)"
+        />
+    </aui-form-control>
 </template>
 
 <script>
-    export default {
-        props: {
-            label: {
-                type: String
-            },
-            // HTML name attribute to group the radio to
-            group: {
-                type: String,
-                required: true
-            },
-            // If the checkbox is disabled
-            disabled: {
-                type: Boolean,
-                default: false
-            },
-            // HTML value attribute binding
-            data: {
-                type: String | Number | Boolean
-            }
+export default {
+    props: {
+
+        /**
+         * Radio label.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        label: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * The model binding value of the radio.
+         */
+        value: {
+            type: String | Number | Boolean | null,
+            default: null
+        },
+
+        /**
+         * The name attribute to group the radio with.
+         */
+        name: {
+            type: String,
+            required: true
+        },
+
+        /**
+         * If the radio is disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * Success subtext to display under the radio.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        success: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Failure subtext to display under the radio.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        failure: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Subtext to display under the radio.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        subtext: {
+            type: String | null,
+            default: null
         }
+
+    },
+    computed: {
+
+        /**
+         * Properties to pass down to the form control component.
+         *
+         * @returns {
+         *     {parent: string},
+         *     {label: string},
+         *     {success: string},
+         *     {failure: string},
+         *     {subtext: string}
+         * }
+         */
+        properties() {
+            return {
+                parent: 'radio',
+                label: this.$slots.default ? this.$slots.default : this.label,
+                success: this.success,
+                failure: this.failure,
+                subtext: this.subtext
+            };
+        }
+
     }
+}
 </script>
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
-
-/* Checkbox styling */
+/* Radio structure */
 .aui.radio
-    display: inline-flex
-    align-items: center
-    position: relative
-    padding-left: 35px
-    margin-bottom: 12px
-    height: 26px
-    cursor: pointer
-    -webkit-user-select: none
-    -moz-user-select: none
-    -ms-user-select: none
-    user-select: none
 
-    /* The actual input styling */
-    input
+    /* Pseudo element styling */
+    .pseudo:after
+        content: ""
         position: absolute
-        opacity: 0
-        cursor: pointer
+        display: none
+        top: 8px
+        left: 8px
+        width: 8px
+        height: 8px
+        border-radius: 50%
+        background: white
 
-        /* When the radio button is checked, add a blue background */
-        &:checked ~ .bubble
-            background-color: $primary
-
-        /* Show the indicator (dot/circle) when checked */
-        &:checked ~ .bubble:after
-            display: block
-
-    /* Create a custom radio bubble */
-    .bubble
-        position: absolute
-        top: 0
-        left: 0
-        height: 25px
-        width: 25px
-        background-color: darken(#eee, 10%)
+    /* Pseudo element styling */
+    .pseudo
         border-radius: 50%
 
-        /* Create the indicator (the dot/circle - hidden when not checked) */
-        &:after
-            content: ""
-            position: absolute
-            display: none
-            top: 9px
-            left: 9px
-            width: 8px
-            height: 8px
-            border-radius: 50%
-            background: white
-
-    /* On mouse-over, add a grey background color */
-    &:hover input ~ .radio
-        background-color: #ccc
+    /* Offset subtext */
+    .subtext
+        margin-left: 2rem
 
 </style>

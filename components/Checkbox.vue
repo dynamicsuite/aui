@@ -17,194 +17,139 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-
-    <div class="aui checkbox">
-        <label :class="classes">
-            <slot>{{label}}</slot>
-            <input type="checkbox" :checked="checked" :disabled="disabled" @change="$emit('input', $event.target.checked)">
-            <span class="checkmark"></span>
-        </label>
-        <div class="subtext" :class="classes">{{subtext_value}}</div>
-    </div>
-
+    <aui-form-control v-bind="properties">
+        <input
+            type="checkbox"
+            :value="value"
+            :checked="checked"
+            :disabled="disabled"
+            @input="$emit('input', $event.target.checked)"
+        />
+    </aui-form-control>
 </template>
 
 <script>
-    export default {
-        props: {
-            // Label alternative
-            label: {
-                type: String | null,
-                default: null
-            },
-            // If the checkbox is checked
-            checked: {
-                type: Boolean | Number,
-                default: false
-            },
-            // If the checkbox is disabled
-            disabled: {
-                type: Boolean,
-                default: false
-            },
-            // Success feedback state
-            success: {
-                type: String | Boolean,
-                default: false
-            },
-            // Failure feedback state
-            failure: {
-                type: String | Boolean,
-                default: false
-            },
-            // Checkbox subtext
-            subtext: {
-                type: String
-            }
+export default {
+    props: {
+
+        /**
+         * Checkbox label.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        label: {
+            type: String | null,
+            default: null
         },
-        computed: {
-            classes() {
-                return {
-                    disabled: this.disabled,
-                    failure: this.failure,
-                    success: this.success
-                }
-            },
-            // Value of the subtext text
-            subtext_value() {
-                if (typeof this.success === 'string') {
-                    return this.success;
-                } else if (typeof this.failure === 'string') {
-                    return this.failure;
-                } else {
-                    return this.subtext;
-                }
-            }
+
+        /**
+         * The model binding value of the checkbox.
+         */
+        value: {
+            type: String | Number | Boolean | null,
+            default: null
+        },
+
+        /**
+         * If the checkbox is checked by default.
+         */
+        checked: {
+            type: Boolean | Number,
+            default: false
+        },
+
+        /**
+         * If the checkbox is disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * Success subtext to display under the checkbox.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        success: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Failure subtext to display under the checkbox.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        failure: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Subtext to display under the checkbox.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        subtext: {
+            type: String | null,
+            default: null
         }
+
+    },
+    computed: {
+
+        /**
+         * Properties to pass down to the form control component.
+         *
+         * @returns {
+         *     {parent: string},
+         *     {label: string},
+         *     {success: string},
+         *     {failure: string},
+         *     {subtext: string}
+         * }
+         */
+        properties() {
+            return {
+                parent: 'checkbox',
+                label: this.$slots.default ? this.$slots.default : this.label,
+                success: this.success,
+                failure: this.failure,
+                subtext: this.subtext
+            };
+        }
+
     }
+}
 </script>
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
-
-/* Checkbox styling */
+/* Checkbox structure */
 .aui.checkbox
 
-    label
-        display: inline-flex
-        align-items: center
-        justify-content: center
-        position: relative
-        padding-left: 35px
-        height: 26px
-        cursor: pointer
-        -webkit-user-select: none
-        -moz-user-select: none
-        -ms-user-select: none
-        user-select: none
+    /* Pseudo element styling */
+    .pseudo:after
+        left: 8px
+        top: 4px
+        width: 5px
+        height: 10px
+        border: solid white
+        border-width: 0 3px 3px 0
+        -webkit-transform: rotate(45deg)
+        -ms-transform: rotate(45deg)
+        transform: rotate(45deg)
 
-        &.disabled
-            cursor: not-allowed !important
-
-        /* Input overrides */
-        & > input
-            position: absolute
-            opacity: 0
-            cursor: pointer
-            height: 0
-            width: 0
-
-        /* Checkmark styling */
-        & > .checkmark
-            position: absolute
-            top: 0
-            left: 0
-            height: 25px
-            width: 25px
-            background-color: darken(#eee, 10%)
-
-        /* Checkmark failure styling */
-        &.failure > .checkmark
-            background-color: lighten($failure, 20%)
-
-        /* Checkmark success styling */
-        &.success > .checkmark
-            background-color: lighten($success, 30%)
-
-        /* Swap colors when disabled */
-        &:disabled
-            background: $secondary !important
-
-        /* Checkbox hovering */
-        &:hover input ~ .checkmark
-            background: #ccc
-
-        /* Checkbox success hovering */
-        &.success:hover input ~ .checkmark
-            background-color: lighten($success, 40%)
-
-        /* Checkbox failure hovering */
-        &.failure:hover input ~ .checkmark
-            background-color: lighten($failure, 30%)
-
-        /* Swap colors when disabled */
-        &:disabled
-            background: $secondary !important
-
-        /* Checked box colors when not disabled */
-        & > input:checked:not(disabled) ~ .checkmark
-            background: $primary
-
-        /* Checked box colors when not disabled */
-        &.failure > input:checked:not(disabled) ~ .checkmark
-            background: $failure
-
-        /* Checked box colors when not disabled */
-        &.success > input:checked:not(disabled) ~ .checkmark
-            background: $success
-
-        /* Checked box colors when disabled */
-        & > input:checked:disabled ~ .checkmark
-            background: $secondary
-            cursor: not-allowed
-
-        /* Pseudo element overrides */
-        & > .checkmark:after
-            content: ""
-            position: absolute
-            display: none
-
-        /* Pseudo element overrides */
-        & > input:checked ~ .checkmark:after
-            display: block
-
-        /* Pseudo element styling */
-        & > .checkmark:after
-            left: 9px
-            top: 5px
-            width: 5px
-            height: 10px
-            border: solid white
-            border-width: 0 3px 3px 0
-            -webkit-transform: rotate(45deg)
-            -ms-transform: rotate(45deg)
-            transform: rotate(45deg)
-
+    /* Offset subtext */
     .subtext
-        margin-left: 35px
-        font-size: 0.8rem
-        color: #6c757d
-        width: 100%
-        text-align: left
-
-        &.failure
-            color: $failure
-
-        &.success
-            color: $success
-
-
+        margin-left: 2rem
 
 </style>

@@ -160,7 +160,7 @@ final class CrudRead
                 }
             }
         }
-        $this->sort = $sort;
+        $this->sort = array_replace($this->sort, $sort);
         return $this;
     }
 
@@ -220,9 +220,6 @@ final class CrudRead
         }
         $list = $list_query->limit($this->limit, $offset)->execute();
         foreach ($list as $row) {
-            if (!isset($row['id'])) {
-                throw new Exception('CRUD read must contain an "ID" column');
-            }
             if ($this->type === 'group') {
                 if (!array_key_exists('title', $row)) {
                     throw new Exception('CRUD read of the "group" type must contain a "title"');
