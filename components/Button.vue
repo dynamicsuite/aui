@@ -145,6 +145,8 @@ export default {
 /* Default button styling */
 .aui.btn
     display: inline-flex
+    justify-content: center
+    align-items: center
     padding: 0.5rem 1rem
     border: 0
     border-radius: 0.25rem
