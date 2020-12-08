@@ -1120,7 +1120,7 @@ export default {
             if (this.calling) {
                 return;
             }
-            const data = Object.assign({id: id}, this.form_api_read_optional_data);
+            const data = Object.assign({[this.form_storable_key]: id}, this.form_api_read_optional_data);
             this.$emit('update:calling', true);
             DynamicSuite.call(this.package, this.form_api_read, data, response => {
                 switch (response.status) {
