@@ -63,7 +63,7 @@ export default {
          */
         text: {
             type: String | null,
-            required: true
+            required: false
         },
 
         /**
