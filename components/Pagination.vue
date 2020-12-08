@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         </div>
 
         <!-- Pagination buttons  -->
-        <div class="buttons">
+        <div v-if="pages > 1" class="buttons">
 
             <!-- Left Chevrons -->
             <aui-button
@@ -80,6 +80,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             />
 
         </div>
+
+        <!-- Single page display -->
+        <div v-else class="single-page"><strong>1</strong> / <strong>1</strong></div>
 
     </div>
 </template>
@@ -365,5 +368,13 @@ export default {
             &:not(:first-of-type)
                 border-top-left-radius: 0
                 border-bottom-left-radius: 0
+
+    /* Single page replacement for buttons */
+    .single-page
+        display: flex
+        margin-left: auto
+
+        @include on-mobile-view
+            display: none
 
 </style>
