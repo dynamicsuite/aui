@@ -61,7 +61,7 @@ export default {
          * Key-value list of assigned options.
          */
         assigned: {
-            type: Object | null,
+            type: Object | Array | null,
             required: true
         },
 

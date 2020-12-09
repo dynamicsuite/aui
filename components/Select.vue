@@ -101,7 +101,7 @@ export default {
          * the option label.
          */
         options: {
-            type: Object,
+            type: Object | Array,
             default: () => {}
         },
 
