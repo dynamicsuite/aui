@@ -1592,7 +1592,7 @@ export default {
                 margin-top: 1rem
 
         /* Pad tabs */
-        & > .aui
+        .body > .aui
             margin-bottom: 1rem
 
         /* 2 Column grid */
