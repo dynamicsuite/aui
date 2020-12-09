@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui select-assignment">
-        <div class="aui select assigned">
+        <div class="aui select-assigned">
             <aui-select
                 :label="assigned_label"
                 :options="assigned"
@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 @click="move('assigned')"
             />
         </div>
-        <div class="aui select unassigned">
+        <div class="aui select-unassigned">
             <aui-select
                 :label="unassigned_label"
                 :options="unassigned"
@@ -157,6 +157,20 @@ export default {
     /* Select formatting */
     select:not(:disabled)
         background: #fff !important
+
+    /* Adjustments to selects */
+    .aui.select-assigned, .aui.select-unassigned
+        display: flex
+        flex-direction: column
+
+        /* For height alignment */
+        .aui.select
+            display: flex
+            flex-grow: 1
+
+            /* For height alignment */
+            .standard-container, .cap-container
+                flex-grow: 1
 
     /* Format selection buttons */
     .aui.btn
