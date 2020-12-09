@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             :size="size"
             @focus="$emit('focus', $event.target)"
             @blur="$emit('blur', $event.target)"
-            @input="$emit('input', $event.target.value)"
+            @input="handleInput($event.target)"
         >
             <option v-for="(option, key) in render_options" :key="'option-' + key" :value="key">
                 {{option}}
@@ -278,6 +278,20 @@ export default {
          */
         render_options() {
             return this.us_states ? this.states : this.options;
+        }
+
+    },
+    methods: {
+
+        /**
+         * Handle input events.
+         *
+         * @param {object} target - The select target.
+         * @returns {undefined}
+         */
+        handleInput(target) {
+            const values = Array.from(target.selectedOptions, option => option.value);
+            this.$emit('input', !this.multiple ? values[0] : values);
         }
 
     }
