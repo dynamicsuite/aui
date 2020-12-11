@@ -96,15 +96,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                     <thead>
                         <tr>
                             <th
-                                v-for="(column, key) in list_table_columns"
+                                v-for="(column, key, index) in list_table_columns"
                                 :key="'header-' + key"
                                 :class="listTableColumnClasses(key)"
-                                @click="sortList(key)"
+                                ref="table_headers"
+                                @mousedown.self="sortList(key)"
                             >
                                 {{listTableColumnName(column)}}
-                                <i v-if="isSortedAsc(key)" class="fas fa-sort-amount-down-alt"></i>
-                                <i v-else-if="isSortedDesc(key)" class="fas fa-sort-amount-down"></i>
-                                <i v-else class="fas fa-sort"></i>
+                                <i
+                                    v-if="isSortedAsc(key)"
+                                    class="fas fa-sort-amount-down-alt"
+                                    @mousedown.self="sortList(key)"
+                                ></i>
+                                <i
+                                    v-else-if="isSortedDesc(key)"
+                                    class="fas fa-sort-amount-down"
+                                    @mousedown.self="sortList(key)"></i>
+                                <i
+                                    v-else class="fas fa-sort"
+                                    @mousedown.self="sortList(key)"
+                                ></i>
+                                <div
+                                    v-if="displayDraggable(index, list_table_columns)"
+                                    class="resize-element"
+                                    @dblclick="doubleResetHeader(index)"
+                                    @mousedown="dragToResize($event, index, list_table_columns.length)"
+                                ></div>
                             </th>
                         </tr>
                     </thead>
@@ -859,6 +876,46 @@ export default {
     methods: {
 
         /**
+         * Event handler for when a user tries to resize a header column in table view
+         *
+         * @returns {undefined}
+         */
+        dragToResize(down_event, index) {
+            let dragging = true;
+            let start_x = down_event.pageX;
+            let start_width = this.$refs.table_headers[index].offsetWidth;
+
+            document.addEventListener("mousemove", event => {
+                if (dragging) {
+                    let new_width = start_width + (event.pageX - start_x);
+                    this.$refs.table_headers[index].style.minWidth = new_width + "px";
+                }
+            });
+
+            document.addEventListener("mouseup", event => {
+                dragging = false;
+            });
+        },
+
+        /**
+         * Handler to reset the header column width on double click
+         *
+         * @returns {undefined}
+         */
+        doubleResetHeader(index) {
+            this.$refs.table_headers[index].style.minWidth = '';
+        },
+
+        /**
+         * Display handler for the draggable anchors in table view
+         *
+         * @returns Boolean
+         */
+        displayDraggable(index, columns) {
+            return index < Object.keys(columns).length-1;
+        },
+
+        /**
          * Read the list using the given list read API.
          *
          * @returns {undefined}
@@ -1529,6 +1586,7 @@ export default {
                     padding: 0.75rem
                     color: #111
                     white-space: nowrap
+                    text-overflow: ellipsis
 
                     /* Hidden columns */
                     &.hide_on_ipad
@@ -1544,19 +1602,33 @@ export default {
                 th
                     user-select: none
                     border-bottom: 2px solid lighten($secondary, 40%)
+                    position: relative
+                    box-sizing: border-box
 
                     /* Grow last column */
                     &:last-of-type
                         width: 100%
 
-                    /* Sort icon */
-                    i
-                        margin-left: 0.5rem
-
                     /* Header hovering */
                     &:hover
                         cursor: pointer
                         background: darken(whitesmoke, 5%)
+
+                    /* Sort icon */
+                    i
+                        margin-left: 0.5rem
+
+                    .resize-element
+                        position: absolute
+                        right: 0
+                        top: 0
+                        bottom: 0
+                        cursor: col-resize
+                        width: .325rem
+
+                        &:hover
+                            background: darken(whitesmoke, 15%)
+
 
                 /* Table body */
                 tbody
