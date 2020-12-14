@@ -24,9 +24,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             :disabled="disabled"
             :multiple="multiple"
             :size="size"
+            v-model="selected"
             @focus="$emit('focus', $event.target)"
             @blur="$emit('blur', $event.target)"
-            @input="handleInput($event.target)"
+            @change="$emit('input', selected)"
         >
             <option v-for="(option, key) in render_options" :key="'option-' + key" :value="key">
                 {{option}}
@@ -176,6 +177,7 @@ export default {
     },
     data() {
         return {
+            selected: this.value,
             states: {
                 '0': '',
                 'AL': 'Alabama',
@@ -281,17 +283,13 @@ export default {
         }
 
     },
-    methods: {
+    watch: {
 
         /**
-         * Handle input events.
-         *
-         * @param {object} target - The select target.
-         * @returns {undefined}
+         * Watch for value changes and update the selected values to match.
          */
-        handleInput(target) {
-            const values = Array.from(target.selectedOptions, option => option.value);
-            this.$emit('input', !this.multiple ? values[0] : values);
+        value() {
+            this.selected = this.value;
         }
 
     }
