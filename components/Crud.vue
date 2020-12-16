@@ -697,12 +697,12 @@ export default {
         /**
          * List data if using "group" mode.
          *
-         * @returns [
+         * @returns [{
          *     {icon: string},
          *     {title: string},
          *     {subtext: string},
          *     {value: number}
-         * ]
+         * }]
          */
         list_group_data() {
             const list = [];
@@ -1251,6 +1251,7 @@ export default {
                         this.$emit('update:calling', false);
                         this.secureFields();
                         this.readList();
+                        this.showForm(true);
                         setTimeout(() => {
                             this.state.show_created_confirmation = false;
                         }, 1000);
