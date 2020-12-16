@@ -133,6 +133,10 @@ export default {
             }
             this.$emit('update:assigned', assigned);
             this.$emit('update:unassigned', unassigned);
+            this.$emit('update', {
+                assigned: assigned,
+                unassigned: unassigned
+            });
             this[`${from}_selected`] = [];
         }
 
