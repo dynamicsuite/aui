@@ -107,21 +107,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                                     v-if="isSortedAsc(key)"
                                     class="fas fa-sort-amount-down-alt"
                                     @mousedown.self="sortList(key)"
-                                ></i>
+                                />
                                 <i
                                     v-else-if="isSortedDesc(key)"
                                     class="fas fa-sort-amount-down"
-                                    @mousedown.self="sortList(key)"></i>
+                                    @mousedown.self="sortList(key)"
+                                />
                                 <i
                                     v-else class="fas fa-sort"
                                     @mousedown.self="sortList(key)"
-                                ></i>
+                                />
                                 <div
-                                    v-if="displayDraggable(index, list_table_columns)"
+                                    v-if="displayDraggable(index)"
                                     class="resize-element"
                                     @dblclick="doubleResetHeader(index)"
-                                    @mousedown="dragToResize($event, index, list_table_columns.length)"
-                                ></div>
+                                    @mousedown="dragToResize($event, index)"
+                                />
                             </th>
                         </tr>
                     </thead>
@@ -876,30 +877,31 @@ export default {
     methods: {
 
         /**
-         * Event handler for when a user tries to resize a header column in table view
+         * Event handler for when a user tries to resize a header column in table view.
          *
+         * @param {object} down_event - The mousedown event handler.
+         * @param {number} index - The column index.
          * @returns {undefined}
          */
         dragToResize(down_event, index) {
             let dragging = true;
             let start_x = down_event.pageX;
             let start_width = this.$refs.table_headers[index].offsetWidth;
-
-            document.addEventListener("mousemove", event => {
+            document.addEventListener('mousemove', event => {
                 if (dragging) {
                     let new_width = start_width + (event.pageX - start_x);
-                    this.$refs.table_headers[index].style.minWidth = new_width + "px";
+                    this.$refs.table_headers[index].style.minWidth = `${new_width}px`;
                 }
             });
-
-            document.addEventListener("mouseup", event => {
+            document.addEventListener('mouseup', () => {
                 dragging = false;
             });
         },
 
         /**
-         * Handler to reset the header column width on double click
+         * Handler to reset the header column width on double click.
          *
+         * @param {number} index - The column index.
          * @returns {undefined}
          */
         doubleResetHeader(index) {
@@ -907,12 +909,13 @@ export default {
         },
 
         /**
-         * Display handler for the draggable anchors in table view
+         * Display handler for the draggable anchors in table view.
          *
-         * @returns Boolean
+         * @param {number} index - The column index.
+         * @returns {boolean}
          */
-        displayDraggable(index, columns) {
-            return index < Object.keys(columns).length-1;
+        displayDraggable(index) {
+            return index < this.list_table_columns.length-1;
         },
 
         /**
