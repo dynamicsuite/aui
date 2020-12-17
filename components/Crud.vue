@@ -922,7 +922,7 @@ export default {
          * @returns {boolean}
          */
         displayDraggable(index) {
-            return index < this.list_table_columns.length-1;
+            return index < Object.keys(this.list_table_columns).length-1;
         },
 
         /**
