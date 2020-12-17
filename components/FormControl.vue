@@ -297,8 +297,9 @@ export default {
     flex-direction: column
 
     /* Add margin to the label text if present */
-    .label
-        margin-bottom: 0.25rem
+    &.input, &.select, &.textarea, &.wysiwyg
+        .label
+            margin-bottom: 0.25rem
 
     /* Standard form control */
     .standard-container
