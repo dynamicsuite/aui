@@ -196,6 +196,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                         text="Create"
                         @click="runCreate"
                     />
+                    <aui-button
+                        v-else-if="!list_show_delete_button"
+                        :loading="form_update_is_running"
+                        loading_text="Updating..."
+                        text="Update"
+                        @click="runUpdate"
+                    />
                     <div v-else class="btn-group">
                         <aui-button
                             :loading="form_update_is_running"
@@ -365,6 +372,14 @@ export default {
          * If the create button should be shown in the list view.
          */
         list_show_create_button: {
+            type: Boolean,
+            default: true
+        },
+
+        /**
+         * If the delete button should be shown in the list view.
+         */
+        list_show_delete_button: {
             type: Boolean,
             default: true
         },
