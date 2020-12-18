@@ -1680,6 +1680,10 @@ export default {
     /* Form view */
     .form
 
+        /* Add tab padding */
+        & > .aui.tabs
+            margin-bottom: 1rem
+
         /* Form headers */
         .body > h2
             padding-bottom: 0.25rem
