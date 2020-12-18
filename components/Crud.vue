@@ -898,17 +898,24 @@ export default {
          * @param {number} index - The column index.
          * @returns {undefined}
          */
+        /**
+         * Event handler for when a user tries to resize a header column in table view
+         *
+         * @returns {undefined}
+         */
         dragToResize(down_event, index) {
             let dragging = true;
             let start_x = down_event.pageX;
             let start_width = this.$refs.table_headers[index].offsetWidth;
-            document.addEventListener('mousemove', event => {
-                if (dragging) {
+            let table_width = this.$refs.table_headers[0].closest('table').offsetWidth;
+            document.addEventListener("mousemove", event => {
+                let header_width = this.$refs.table_headers[0].closest('thead').offsetWidth;
+                if (dragging && (table_width >= header_width)) {
                     let new_width = start_width + (event.pageX - start_x);
-                    this.$refs.table_headers[index].style.minWidth = `${new_width}px`;
+                    this.$refs.table_headers[index].style.minWidth = new_width + "px";
                 }
             });
-            document.addEventListener('mouseup', () => {
+            document.addEventListener("mouseup", event => {
                 dragging = false;
             });
         },
@@ -930,7 +937,7 @@ export default {
          * @returns {boolean}
          */
         displayDraggable(index) {
-            return index < this.list_table_columns.length-1;
+            return index < Object.keys(this.list_table_columns).length-1;
         },
 
         /**
