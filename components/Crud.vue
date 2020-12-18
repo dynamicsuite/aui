@@ -544,22 +544,6 @@ export default {
         },
 
         /**
-         * Fields to preload the form and form errors with.
-         */
-        fields: {
-            type: Array,
-            default: () => [],
-            validator: value => {
-                for (const field of value) {
-                    if (typeof field !== 'string') {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        },
-
-        /**
          * Secure fields such as passwords that are reset after create/update/delete actions.
          */
         secure_fields: {
