@@ -295,7 +295,10 @@ export default {
 .aui.form-control
     display: flex
     flex-direction: column
-    justify-content: center
+
+    /* Center inline items */
+    &.checkbox, &.toggle, &.radio
+        justify-content: center
 
     /* Add margin to the label text if present */
     &.input, &.select, &.textarea, &.wysiwyg
