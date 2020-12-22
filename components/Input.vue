@@ -28,15 +28,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             :tabindex="tabindex"
             :disabled="disabled"
             :step="step"
-            :min="min"
-            :max="max"
             @focus="$emit('focus', $event.target)"
             @blur="$emit('blur', $event.target)"
             @input="handleInput($event.target.value)"
             @keydown="$emit('keydown', $event)"
         />
-        <datalist v-if="!!options.length" :id="unique_id">
+        <datalist v-if="!!options.length && array_options" :id="unique_id">
             <option v-for="(value, key) in options" :key="'option-' + key" :value="value" />
+        </datalist>
+        <datalist v-if="!array_options && !!Object.keys(options).length" :id="unique_id">
+            <option v-for="(value, key) in options" :key="'option-' + key" :value="key">{{value}}</option>
         </datalist>
     </aui-form-control>
 </template>
@@ -140,7 +141,7 @@ export default {
          * model.
          */
         options: {
-            type: Array,
+            type: Array | Object,
             default: () => []
         },
 
@@ -161,17 +162,17 @@ export default {
         },
 
         /**
-         * Minimum value for numeric inputs.
+         * The maximum number of whole digits for numeric inputs.
          */
-        min: {
+        max_whole_digits: {
             type: String | Number | null,
             default: null
         },
 
         /**
-         * Maximum value for numeric inputs.
+         * The maximum number of decimal digits for numeric inputs.
          */
-        max: {
+        max_decimal_digits: {
             type: String | Number | null,
             default: null
         },
@@ -257,6 +258,15 @@ export default {
          */
         unique_id() {
             return `aui-input-${this._uid}`;
+        },
+
+        /**
+         * If the options for the datalist are an array.
+         *
+         * @returns {boolean}
+         */
+        array_options() {
+            return Array.isArray(this.options);
         }
 
     },
@@ -265,7 +275,7 @@ export default {
         /**
          * Handle input events to mask telephones.
          *
-         * @param {string} value - The input value.
+         * @param {string|number} value - The input value.
          * @returns {undefined}
          */
         handleInput(value) {
@@ -273,8 +283,30 @@ export default {
                 let x = value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
                 value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
                 this.$refs.input.value = value;
+            } else if (this.type === 'number') {
+                value = value.replace('e', '');
+                if (this.max_decimal_digits === 0) {
+                    value = value.replace('.', '');
+                }
+                const has_decimal = value.includes('.');
+                const exploded = value.split('.');
+                let new_value = '';
+                if (this.max_whole_digits > 0 && exploded[0].length > this.max_whole_digits) {
+                    new_value = exploded[0].slice(0, -1);
+                } else {
+                    new_value = exploded[0];
+                }
+                if (this.max_decimal_digits > 0 && has_decimal && exploded[1].length > this.max_decimal_digits) {
+                    new_value += '.' + exploded[1].slice(0, -1);
+                } else if (this.max_decimal_digits !== 0 && typeof exploded[1] !== 'undefined') {
+                    new_value += '.' + exploded[1]
+                }
+                if (new_value) {
+                    value = new_value;
+                }
+                this.$refs.input.value = value;
             }
-            this.$emit('input', value)
+            this.$emit('input', value);
         }
 
     }

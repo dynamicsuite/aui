@@ -1656,6 +1656,11 @@ export default {
     .modal .aui.input
         margin-bottom: 1rem
 
+    /* Header override */
+    .modal .header h2
+        border-bottom: 0
+        padding: 0
+
     /* Form view */
     .form
 
@@ -1697,7 +1702,7 @@ export default {
                 grid-template-columns: 1fr
 
         /* Action bar on the bottom, if visible */
-        .action
+        & > .action
             display: flex
 
             /* Primary action */
