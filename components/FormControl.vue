@@ -433,8 +433,9 @@ export default {
 
         /* Checkmark styling */
         .pseudo
-            height: 1.5rem
-            width: 1.5rem
+            position: relative
+            min-height: 1.5rem
+            min-width: 1.5rem
             margin-right: 0.5rem
             background: darken(#eee, 10%)
 

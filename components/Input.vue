@@ -283,7 +283,7 @@ export default {
                 let x = value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
                 value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
                 this.$refs.input.value = value;
-            } else if (this.type === 'number') {
+            } else if (this.type === 'number' && value !== '') {
                 value = value.replace('e', '');
                 if (this.max_decimal_digits === 0) {
                     value = value.replace('.', '');

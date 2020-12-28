@@ -19,6 +19,16 @@
 /* Import the core DS colors */
 @import "../../../../client/css/colors"
 
+/* Media query mixin for mobile view breakpoint */
+@mixin on-mobile-view
+  @media (max-width: 500px)
+    @content
+
+/* Media query mixin for ipad view breakpoint */
+@mixin on-ipad-view
+  @media (max-width: 768px)
+    @content
+
 /* Vue cloaking */
 [v-cloak]
   display: none !important
@@ -85,3 +95,11 @@
   /* Failure container modifier */
   &.failure
     border-bottom: 3px solid $failure
+
+  /* Mobile overrides */
+  @include on-mobile-view
+    width: 100%
+    box-shadow: none
+    border-radius: 0
+    margin: -1rem
+    border-bottom: none !important
