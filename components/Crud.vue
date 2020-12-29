@@ -1149,7 +1149,6 @@ export default {
                             this.showForm(true);
                             break;
                         default:
-                            this.clearURIState();
                             this.error.server = true;
                     }
                 });
