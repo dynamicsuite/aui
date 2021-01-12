@@ -46,8 +46,7 @@ export default {
          * required.
          */
         text: {
-            type: String | Number,
-            required: true
+            type: String | Number
         }
 
     },
