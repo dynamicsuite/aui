@@ -30,6 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             :step="step"
             @focus="$emit('focus', $event.target)"
             @blur="$emit('blur', $event.target)"
+            @change="$emit('change', $event.target)"
             @input="handleInput($event.target.value)"
             @keydown="$emit('keydown', $event)"
         />
