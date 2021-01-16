@@ -18,13 +18,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 <template>
     <div class="aui select-assignment">
-        <div class="aui select assigned">
-            <label>
-                <span class="label-text">{{assigned_label}}</span>
-                <select multiple :disabled="disabled" v-model="assigned_selected">
-                    <option v-for="(label, value) in assigned" :value="value">{{label}}</option>
-                </select>
-            </label>
+        <div class="aui select-assigned">
+            <aui-select
+                :label="assigned_label"
+                :options="assigned"
+                multiple
+                :size="size"
+                :disabled="disabled"
+                v-model="assigned_selected"
+            />
             <aui-button
                 :text="'Move to &quot;' + unassigned_label + '&quot; list'"
                 type="secondary"
@@ -32,13 +34,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
                 @click="move('assigned')"
             />
         </div>
-        <div class="aui select unassigned">
-            <label>
-                <span class="label-text">{{unassigned_label}}</span>
-                <select multiple :disabled="disabled" v-model="unassigned_selected">
-                    <option v-for="(label, value) in unassigned" :value="value">{{label}}</option>
-                </select>
-            </label>
+        <div class="aui select-unassigned">
+            <aui-select
+                :label="unassigned_label"
+                :options="unassigned"
+                multiple
+                :size="size"
+                :disabled="disabled"
+                v-model="unassigned_selected"
+            />
             <aui-button
                 :text="'Move to &quot;' + assigned_label + '&quot; list'"
                 type="secondary"
@@ -54,10 +58,10 @@ export default {
     props: {
 
         /**
-         * List of assigned options.
+         * Key-value list of assigned options.
          */
         assigned: {
-            type: Object | null,
+            type: Object | Array | null,
             required: true
         },
 
@@ -70,7 +74,7 @@ export default {
         },
 
         /**
-         * List of unassigned options.
+         * Key-value list of unassigned options.
          */
         unassigned: {
             type: Object | null,
@@ -86,11 +90,19 @@ export default {
         },
 
         /**
-         * If all selects are disabled
+         * If all selects and buttons are disabled non-interactive.
          */
         disabled: {
             type: Boolean,
             default: false
+        },
+
+        /**
+         * The number of visible options.
+         */
+        size: {
+            type: String | Number | null,
+            default: 5
         }
 
     },
@@ -103,9 +115,10 @@ export default {
     methods: {
 
         /**
-         * Move one list "from" to another.
+         * Move one list "from" to the other.
          *
-         * @param from
+         * @param {string} from - The original list (assigned | unassigned).
+         * @returns {undefined}
          */
         move(from) {
             const assigned = Object.assign({}, this.assigned), unassigned = Object.assign({}, this.unassigned);
@@ -120,6 +133,10 @@ export default {
             }
             this.$emit('update:assigned', assigned);
             this.$emit('update:unassigned', unassigned);
+            this.$emit('update', {
+                assigned: assigned,
+                unassigned: unassigned
+            });
             this[`${from}_selected`] = [];
         }
 
@@ -140,17 +157,32 @@ export default {
     display: grid
     grid-template-columns: 1fr 1fr
     grid-gap: 1rem
-    margin-bottom: 1rem
-
-    /* Assignment groups */
-    .assigned, .unassigned
-        margin-bottom: 0 !important
 
     /* Select formatting */
-    select
-        min-height: 10rem
+    select:not(:disabled)
         background: #fff !important
-        margin-bottom: 1rem
+
+    /* Adjustments to selects */
+    .aui.select-assigned, .aui.select-unassigned
+        display: flex
+        flex-direction: column
+
+        /* For height alignment */
+        .aui.select
+            display: flex
+            flex-grow: 1
+
+            /* For height alignment */
+            .standard-container, .cap-container
+                flex-grow: 1
+
+    /* Format selection buttons */
+    .aui.btn
+        display: flex
+        justify-content: center
+        align-items: center
+        width: 100%
+        margin-top: 1rem
 
     /* Changes for mobile view */
     @include on-mobile-view

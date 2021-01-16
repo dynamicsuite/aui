@@ -17,14 +17,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div class="aui wysiwyg">
-        <label>{{label}}</label>
-        <div>
-            <div v-if="disabled" class="overlay"></div>
-            <div ref="editor" :class="editor_classes"></div>
-        </div>
-        <div v-if="subtext_value" :class="subtext_classes">{{subtext_value}}</div>
-    </div>
+  <aui-form-control v-bind="properties">
+      <div ref="editor" />
+  </aui-form-control>
 </template>
 
 <script>
@@ -32,17 +27,14 @@ export default {
     props: {
 
         /**
-         * Editor value.
-         */
-        value: {
-            type: String
-        },
-
-        /**
-         * Editor form label.
+         * WYSIWYG label.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
          */
         label: {
-            type: String
+          type: String | null,
+          default: null
         },
 
         /**
@@ -85,7 +77,23 @@ export default {
         },
 
         /**
-         * If the editor is disabled.
+         * The model binding value of the WYSIWYG.
+         */
+        value: {
+            type: String | Number | Boolean | null,
+            default: null
+        },
+
+        /**
+         * WYSIWYG placeholder text.
+         */
+        placeholder: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * If the WYSIWYG is disabled and non-interactive.
          */
         disabled: {
             type: Boolean,
@@ -93,77 +101,68 @@ export default {
         },
 
         /**
-         * Success feedback state.
+         * Success subtext to display under the WYSIWYG.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
          */
         success: {
-            type: String | Boolean,
-            default: false
+            type: String | null,
+            default: null
         },
 
         /**
-         * Failure feedback state.
+         * Failure subtext to display under the WYSIWYG.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
          */
         failure: {
-            type: String | Boolean,
-            default: false
+            type: String | null,
+            default: null
         },
 
         /**
-         * Editor subtext
+         * Subtext to display under the WYSIWYG.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
          */
         subtext: {
-            type: String
+            type: String | null,
+            default: null
         }
 
     },
     data() {
         return {
             editor: null
-        }
+        };
     },
     computed: {
 
         /**
-         * Style classes for the editor.
+         * Properties to pass down to the form control component.
+         *
+         * @returns {
+         *     {parent: string},
+         *     {label: string},
+         *     {success: string},
+         *     {failure: string},
+         *     {subtext: string}
+         * }
          */
-        editor_classes() {
+        properties() {
             return {
-                'border-success': this.success,
-                'border-failure': this.failure
-            }
-        },
-
-        /**
-         * Style classes for the subtext.
-         */
-        subtext_classes() {
-            return {
-                'subtext': true,
-                'text-success': this.success,
-                'text-failure': this.failure
-            }
-        },
-
-        /**
-         * Value of the subtext text.
-         */
-        subtext_value() {
-            if (typeof this.success === 'string') {
-                return this.success;
-            } else if (typeof this.failure === 'string') {
-                return this.failure;
-            } else {
-                return this.subtext;
-            }
-        },
-
-        /**
-         * Disabled input classes.
-         */
-        disabled_classes() {
-            return {
-                disabled: this.disabled
-            }
+                parent: 'wysiwyg',
+                label: this.$slots.default ? this.$slots.default : this.label,
+                success: this.success,
+                failure: this.failure,
+                subtext: this.subtext
+            };
         }
 
     },
@@ -172,12 +171,25 @@ export default {
         /**
          * Update the value on model changes.
          *
-         * @param value
+         * @param {string} value - The new value.
+         * @returns {undefined}
          */
         value: function (value) {
             if (this.editor.content.innerHTML !== value) {
                 this.editor.content.innerHTML = value;
             }
+        },
+
+        /**
+         * Adjust the disabled state.
+         *
+         * @param {string} value - The new disabled state.
+         * @returns {undefined}
+         */
+        disabled: function (value) {
+            this.$refs.editor
+                .querySelector('.pell-content')
+                .setAttribute('contenteditable', value ? 'false' : 'true');
         }
 
     },
@@ -192,6 +204,9 @@ export default {
                 this.$emit('input', html);
             }
         });
+        this.$refs.editor
+            .querySelector('.pell-content')
+            .setAttribute('contenteditable', this.disabled ? 'false' : 'true');
         if (this.value) {
             this.editor.content.innerHTML = this.value;
         }
@@ -204,53 +219,12 @@ export default {
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-// Input container
+/* WYSIWYG structure */
 .aui.wysiwyg
-    margin: 1rem 0
-    position: relative
-
-    /* Editor label */
-    label
-        display: block
-        margin-bottom: 0.5rem
-
-    /* Disabled overlay */
-    .overlay
-        position: absolute
-        width: 100%
-        height: calc(100% - 1.6rem)
-        border-radius: 0.25rem
-        background: rgba(189, 198, 207, 0.6)
-        cursor: not-allowed
-
-    /* Editor subtext */
-    .subtext
-        font-size: 0.8rem
-        margin-top: 0.25rem
-        color: #6c757d
-        text-align: left
-
-        /* Success feedback */
-        &.text-success
-            color: $success
-
-        /* Failure feedback */
-        &.text-failure
-            color: $failure
 
     /* Success feedback */
-    & > .border-success
-        .pell-actionbar, .pell-content
-            border: 1px solid $success
-        .pell-actionbar
-            border-bottom: none
-
-    /* Failure feedback */
-    & > .border-failure
-        .pell-actionbar, .pell-content
-            border: 1px solid $failure
-        .pell-actionbar
-            border-bottom: none
+    &.success .pell-actionbar, &.failure .pell-actionbar
+        border-bottom: none !important
 
     /* Editor action bar area */
     .pell-actionbar
@@ -288,6 +262,11 @@ export default {
         border-radius: 0 0 0.25rem 0.25rem
         background: white
         overflow-y: scroll
+
+        /* Disabled editor */
+        &[contenteditable="false"]
+            cursor: not-allowed !important
+            background: darken(#e9ecef, 15%) !important
 
         /* Editor focus */
         &:focus

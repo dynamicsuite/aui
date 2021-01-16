@@ -1,7 +1,7 @@
 {
   "name": "Advanced User Interface",
   "author": "Dynamic Suite Team",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "description": "Additional components and styling for DynamicSuite",
   "license": "GPLv3",
   "global": {

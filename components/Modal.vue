@@ -17,98 +17,158 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div v-if="show" class="aui modal-container" @mousedown.self="runClose">
+    <div v-if="show" class="aui modal-container" @mousedown.self="handleClose">
         <div class="modal">
             <div v-if="title" class="header" :class="modal_class">
                 <h2>{{title}}</h2>
-                <i v-if="closeable" class="fas fa-times" @click.self="runClose"></i>
+                <i v-if="closeable" class="fas fa-times" @click.self="handleClose"></i>
             </div>
             <div class="body">
-                <slot></slot>
+                <slot>
+                    <section class="content">
+                        <slot name="content" />
+                    </section>
+                    <footer>
+                        <div v-if="$slots.left" class="left">
+                            <slot name="left" />
+                        </div>
+                        <div v-if="$slots.right" class="right">
+                            <slot name="right" />
+                        </div>
+                    </footer>
+                </slot>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            // The modal type, which determines style classes
-            type: {
-                type: String,
-                default: 'primary',
-                validator(value) {
-                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-                }
-            },
-            // If the modal should be shown
-            show: {
-                type: Boolean,
-                required: true
-            },
-            // Modal title
-            title: {
-                type: String
-            },
-            // If the modal is closeable
-            closeable: {
-                type: Boolean,
-                default: true
+export default {
+    props: {
+
+        /**
+         * The modal type.
+         *
+         * This determines the style class applied.
+         */
+        type: {
+            type: String,
+            default: 'primary',
+            validator(value) {
+                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
             }
         },
-        computed: {
-            // Class for the modal
-            modal_class() {
-                return this.type === 'none' ? '' : 'modal-' + this.type;
+
+        /**
+         * If the modal should be shown.
+         */
+        show: {
+            type: Boolean,
+            required: true
+        },
+
+        /**
+         * The title bar text of the modal.
+         */
+        title: {
+            type: String | Number | null,
+            default: null
+        },
+
+        /**
+         * If the modal is closeable.
+         */
+        closeable: {
+            type: Boolean,
+            default: true
+        }
+
+    },
+    computed: {
+
+        /**
+         * The style class of the modal.
+         *
+         * @returns {string}
+         */
+        modal_class() {
+            return this.type === 'none' ? '' : 'modal-' + this.type;
+        }
+
+    },
+    methods: {
+
+        /**
+         * Run close binding for the escape key press.
+         *
+         * @param {object} event - The keydown event.
+         * @returns {undefined}
+         */
+        escapeClose(event) {
+            if (event.key === 'Escape') {
+                this.handleClose();
             }
         },
-        methods: {
-            // Run close binding for the escape key press
-            escapeClose(event) {
-                if (event.key === 'Escape') {
-                    this.runClose();
-                }
-            },
-            // Actually close the modal (if possible)
-            runClose() {
-                if (!this.closeable) {
-                    return false;
-                }
+
+        /**
+         * Actually close the modal (if possible).
+         *
+         * @returns {undefined}
+         */
+        handleClose() {
+            if (this.closeable) {
                 this.$emit('close');
+                this.$emit('update:show', false);
             }
         },
-        watch: {
-            // Do some style overrides to make the container escape the Dynamic Suite bounds
-            show() {
-                if (
-                    this.show && document.getElementById('ds-nav-container') &&
-                    document.getElementById('ds-view-header')
-                ) {
-                    document.getElementById('ds-nav-container').style.zIndex = '0';
-                    document.getElementById('ds-view-header').style.zIndex = '-1';
-                    document.getElementById('ds-nav-container').classList.remove('ds-nav-show-mobile')
-                    document.getElementById('ds-view').style.overflowY = 'hidden';
-                } else if (
-                    !this.show && document.getElementById('ds-nav-container') &&
-                    document.getElementById('ds-view-header')
-                ) {
-                    document.getElementById('ds-nav-container').style.zIndex = '1';
-                    document.getElementById('ds-view-header').style.zIndex = '0';
-                    document.getElementById('ds-view').style.overflowY = 'auto';
-                }
-            }
-        },
-        created() {
-            if (this.closeable) {
-                document.addEventListener('keyup', this.escapeClose);
-            }
-        },
-        beforeDestroy() {
-            if (this.closeable) {
-                document.removeEventListener('keyup', this.escapeClose);
+
+        /**
+         * Dynamic Suite overrides.
+         *
+         * @returns {undefined}
+         */
+        overrides() {
+            if (
+                this.show && document.getElementById('ds-nav-container') &&
+                document.getElementById('ds-view-header')
+            ) {
+                document.getElementById('ds-nav-container').style.zIndex = '0';
+                document.getElementById('ds-view-header').style.zIndex = '-1';
+                document.getElementById('ds-nav-container').classList.remove('ds-nav-show-mobile')
+                document.getElementById('ds-view').style.overflowY = 'hidden';
+            } else if (
+                !this.show && document.getElementById('ds-nav-container') &&
+                document.getElementById('ds-view-header')
+            ) {
+                document.getElementById('ds-nav-container').style.zIndex = '1';
+                document.getElementById('ds-view-header').style.zIndex = '0';
+                document.getElementById('ds-view').style.overflowY = 'auto';
             }
         }
+
+    },
+    watch: {
+
+        /**
+         * Do some style overrides to make the container escape the Dynamic Suite bounds.
+         */
+        show() {
+            this.overrides();
+        }
+
+    },
+    mounted() {
+        this.overrides();
+        if (this.closeable) {
+            document.addEventListener('keyup', this.escapeClose);
+        }
+    },
+    beforeDestroy() {
+        if (this.closeable) {
+            document.removeEventListener('keyup', this.escapeClose);
+        }
     }
+}
 </script>
 
 <style lang="sass">
@@ -153,22 +213,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             border-bottom: 1px solid #ced4da
             border-radius: .25rem .25rem 0 0
 
-            /* Header theme */
+            /* Header theme - Primary */
             &.modal-primary
                 color: white
                 background: $primary
 
+            /* Header theme - Secondary */
             &.modal-secondary
                 color: white
                 background: $secondary
 
-            &.modal-warning
-                background: $warning
-
+            /* Header theme - Success */
             &.modal-success
                 color: white
                 background: $success
 
+            /* Header theme - Warning */
+            &.modal-warning
+                background: $warning
+
+            /* Header theme - Failure */
             &.modal-failure
                 color: white
                 background: $failure
@@ -197,8 +261,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             border-radius: 0 0 0.25rem 0.25rem
             overflow-y: auto
 
+            /* Strip common margins */
+            .content > *:first-child
+                margin-top: 0
+
+            /* Strip common margins */
+            .content > *:last-child
+                margin-bottom: 0
+
         /* Borders for when no header is present */
         .body:only-child
             border-radius: 0.25rem
+
+        /* Footer bar*/
+        footer
+            display: flex
+            border-top: 1px solid #ced4da
+            padding-top: 1rem
+            margin-top: 1rem
+
+            /* Justify right content */
+            .right
+                margin-left: auto
 
 </style>

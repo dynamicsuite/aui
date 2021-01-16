@@ -27,7 +27,7 @@ export default {
     props: {
 
         /**
-         * If the number should be rendered as currency
+         * If the number should be rendered as currency.
          */
         is_currency: {
             type: Boolean,
@@ -35,7 +35,7 @@ export default {
         },
 
         /**
-         * The currency symbol to use if the number is defined as currency
+         * The currency symbol to use if the number is defined as currency.
          */
         currency_symbol: {
             type: String,
@@ -43,7 +43,7 @@ export default {
         },
 
         /**
-         * The number of zeros that should pad the number to the right of the decimal place
+         * The number of zeros that should pad the number to the right of the decimal place.
          */
         padding: {
             type: Number | null,
@@ -54,10 +54,10 @@ export default {
         },
 
         /**
-         * The number to format and display
+         * The number to format and display.
          */
         number: {
-            type: Number | String,
+            type: Number | String | null,
             required: true
         }
 
@@ -65,9 +65,11 @@ export default {
     computed: {
 
         /**
-         * If the value in the slot is negative, apply negative styling
+         * If the value in the slot is negative, apply negative styling.
          *
-         * @returns {object}
+         * @returns {
+         *     {negative: boolean}
+         * }
          */
         negative_class() {
             return {
@@ -76,7 +78,7 @@ export default {
         },
 
         /**
-         * Convert a value to fixed decimal format with optional currency symbols
+         * Convert a value to fixed decimal format with optional currency symbols.
          *
          * @returns {string}
          */
@@ -125,8 +127,8 @@ export default {
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-.aui.number
-    &.negative
-        color: $failure
+/* Make negative numbers red */
+.aui.number.negative
+    color: $failure
 
 </style>

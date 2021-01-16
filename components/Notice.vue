@@ -29,7 +29,7 @@ export default {
     props: {
 
         /**
-         * Notice type which defined the color of the notice
+         * Notice type which defined the color of the notice.
          */
         type: {
             type: String,
@@ -40,7 +40,7 @@ export default {
         },
 
         /**
-         * The icon to display for the notice
+         * The Font Awesome icon to display for the notice.
          */
         icon: {
             type: String,
@@ -53,15 +53,15 @@ export default {
          * This can be set with this property or using the default slot.
          */
         text: {
-            type: String | null,
+            type: String | Number | null,
             default: null
         },
 
         /**
-         * Subtext to display under the notice text
+         * Subtext to display under the notice text.
          */
         subtext: {
-            type: String | null,
+            type: String | Number | null,
             default: null
         }
 
@@ -69,13 +69,15 @@ export default {
     computed: {
 
         /**
-         * Classes to apply to the icon
+         * Classes to apply to the icon.
+         *
+         * @returns {object}
          */
         icon_classes() {
-            let classes = {};
-            classes[this.icon] = true;
-            classes[this.type] = true;
-            return classes;
+            return {
+                [this.icon]: true,
+                [this.type]: true
+            };
         }
 
     }
@@ -103,7 +105,7 @@ export default {
             color: $primary
 
         &.secondary
-            color: lighten($secondary, 10%)
+            color: lighten($secondary, 20%)
 
         &.success
             color: $success
@@ -117,6 +119,9 @@ export default {
     /* Text */
     h4
         color: lighten(#000, 35%)
+
+        &:last-child
+            margin-bottom: 0
 
     /* Subtext */
     span

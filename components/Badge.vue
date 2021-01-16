@@ -17,33 +17,54 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <span class="aui badge" :class="badge_class" v-html="content"></span>
+    <span class="aui badge" :class="style_class">
+        <slot>{{text}}</slot>
+    </span>
 </template>
 
 <script>
-    export default {
-        props: {
-            // The badge type, which determines style classes
-            type: {
-                type: String,
-                default: 'primary',
-                validator(value) {
-                    return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-                }
-            },
-            // Text content of the badge
-            content: {
-                type: String | Number,
-                required: true
+export default {
+    props: {
+
+        /**
+         * The badge type.
+         *
+         * This determines the style class applied.
+         */
+        type: {
+            type: String,
+            default: 'primary',
+            validator(value) {
+                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
             }
         },
-        computed: {
-            // Class for the badge
-            badge_class() {
-                return this.type === 'none' ? '' : 'badge-' + this.type;
-            }
+
+        /**
+         * Badge text.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        text: {
+            type: String | Number
         }
+
+    },
+    computed: {
+
+        /**
+         * Style class for the badge.
+         *
+         * @returns {object}
+         */
+        style_class() {
+            return {
+                [`badge-${this.type}`]: this.type !== 'none'
+            };
+        }
+
     }
+}
 </script>
 
 <style lang="sass">
@@ -51,35 +72,37 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 /* Import the core DS colors */
 @import "../../../client/css/colors"
 
-// Badge Styling
+/* Badge Styling */
 .aui.badge
-    font-size: .75rem
+    display: inline-flex
+    font-size: 0.75rem
     font-weight: bold
-    padding: .125rem .4rem
+    padding: 0.125rem 0.4rem
     border-radius: 1rem
     text-align: center
+    white-space: nowrap
 
-    // Primary Badge Styling
+    /* Primary Badge Styling */
     &.badge-primary
         background: $primary
         color: white
 
-    // Secondary Badge Styling
+    /* Secondary Badge Styling */
     &.badge-secondary
         background: $secondary
         color: white
 
-    // Success Badge Styling
+    /* Success Badge Styling */
     &.badge-success
         background: $success
         color: white
 
-    // Warning Badge Styling
+    /* Warning Badge Styling */
     &.badge-warning
         background: $warning
         border: 1px solid lighten($warning, 30%)
 
-    // Failure/Danger Badge Styling
+    /* Failure Badge Styling */
     &.badge-failure
         background: $failure
         color: white

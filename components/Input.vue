@@ -17,400 +17,299 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 -->
 
 <template>
-    <div :id="container_id" class="aui input">
-        <label>
-            <span v-if="label" class="label-text" v-html="label"></span>
-            <span class="input-parent">
-
-                <span v-if="leading_cap" class="leading-cap" :class="input_classes" v-html="leading_cap"></span>
-                <span v-if="trailing_cap" class="trailing-cap" :class="input_classes" v-html="trailing_cap"></span>
-                <input
-                    :id="id"
-                    :class="input_classes"
-                    :name="name_computed"
-                    :type="type"
-                    :placeholder="placeholder"
-                    :tabindex="tabindex"
-                    :disabled="disabled"
-                    :value="value"
-                    :step="step"
-                    :min="min"
-                    :max="max"
-                    :autocomplete="autocomplete_computed"
-                    ref="input"
-                    @keydown="$emit('keydown', $event)"
-                    @change="$emit('change', $event.target)"
-                    @select="$emit('select', $event.target)"
-                    @focus="$emit('focus', $event.target)"
-                    @blur="$emit('blur', $event.target)"
-                    @input="$emit('input', $event.target.value)"
-                />
-            </span>
-        </label>
-        <div v-if="subtext_value" class="subtext" :class="subtext_classes">{{subtext_value}}</div>
-    </div>
+    <aui-form-control v-bind="properties">
+        <input
+            ref="input"
+            :value="value"
+            :type="type"
+            :list="unique_id"
+            :autocomplete="autocomplete"
+            :placeholder="placeholder"
+            :tabindex="tabindex"
+            :disabled="disabled"
+            :step="step"
+            @focus="$emit('focus', $event.target)"
+            @blur="$emit('blur', $event.target)"
+            @change="$emit('change', $event.target)"
+            @input="handleInput($event.target.value)"
+            @keydown="$emit('keydown', $event)"
+        />
+        <datalist v-if="!!options.length && array_options" :id="unique_id">
+            <option v-for="(value, key) in options" :key="'option-' + key" :value="value" />
+        </datalist>
+        <datalist v-if="!array_options && !!Object.keys(options).length" :id="unique_id">
+            <option v-for="(value, key) in options" :key="'option-' + key" :value="key">{{value}}</option>
+        </datalist>
+    </aui-form-control>
 </template>
 
 <script>
-    export default {
-        props: {
-            // Unique HTML ID for the input and container
-            id: {
-                type: String
-            },
-            // Label to display before the input
-            label: {
-                type: String
-            },
-            // Leading cap content, if any
-            leading_cap: {
-                type: String
-            },
-            // Trailing cap content, if any
-            trailing_cap: {
-                type: String
-            },
-            // Input HTML name
-            name: {
-                type: String
-            },
-            // Input HTML type
-            type: {
-                type: String,
-                default: 'text',
-                validator(value) {
-                    return ['color',
-                        'date',
-                        'datetime-local',
-                        'email',
-                        'file',
-                        'number',
-                        'password',
-                        'range',
-                        'search',
-                        'tel',
-                        'text',
-                        'time',
-                        'url',
-                        'week'
-                    ].indexOf(value) !== -1;
-                }
-            },
-            // Placeholder text for input
-            placeholder: {
-                type: String
-            },
-            // HTML tab index for the input
-            tabindex: {
-                type: String | Number
-            },
-            // If the input id disabled
-            disabled: {
-                type: Boolean,
-                default: false
-            },
-            // Initial value of the input
-            value: {
-                type: String | Number | Boolean
-            },
-            // Numeric input step factor
-            step: {
-                type: String | Number
-            },
-            // Numeric input minimum value
-            min: {
-                type: String | Number
-            },
-            // Numeric input maximum value
-            max: {
-                type: String | Number
-            },
-            // HTML autocomplete value
-            autocomplete: {
-                type: String,
-                default: 'on',
-                validator(value) {
-                    return ['on', 'off'].indexOf(value) !== -1;
-                }
-            },
-            // Success feedback state
-            success: {
-                type: String | Boolean,
-                default: false
-            },
-            // Failure feedback state
-            failure: {
-                type: String | Boolean,
-                default: false
-            },
-            // Input subtext
-            subtext: {
-                type: String
-            },
-            // If no icon should trail the input on feedback, for use in short length inputs
-            no_feedback_icon: {
-                type: Boolean,
-                default: false
-            },
-            // Disable autofill
-            disable_autofill: {
-                type: Boolean,
-                default: true
+export default {
+    props: {
+
+        /**
+         * Input label.
+         *
+         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+         * required.
+         */
+        label: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Content to display in the leading input cap.
+         *
+         * Free-form HTML.
+         */
+        leading_cap: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Content to display in the trailing input cap.
+         *
+         * Free-form HTML.
+         */
+        trailing_cap: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * The model binding value of the input.
+         */
+        value: {
+            type: String | Number | Boolean | null,
+            default: null
+        },
+
+        /**
+         * Input type.
+         */
+        type: {
+            type: String,
+            default: 'text',
+            validator(value) {
+                return ['color',
+                    'date',
+                    'datetime-local',
+                    'email',
+                    'file',
+                    'number',
+                    'password',
+                    'range',
+                    'search',
+                    'tel',
+                    'text',
+                    'time',
+                    'url',
+                    'week'
+                ].indexOf(value) !== -1;
             }
         },
-        computed: {
-            // Style classes for the input
-            input_classes() {
-                return {
-                    'border-success': this.success,
-                    'border-failure': this.failure,
-                    'no-feedback-icon': this.no_feedback_icon,
-                    'right-cap': this.trailing_cap,
-                    'left-cap': this.leading_cap
-                }
-            },
-            // Style classes for the subtext
-            subtext_classes() {
-                return {
-                    'text-success': this.success,
-                    'text-failure': this.failure
-                }
-            },
-            // Value of the subtext text
-            subtext_value() {
-                if (typeof this.success === 'string') {
-                    return this.success;
-                } else if (typeof this.failure === 'string') {
-                    return this.failure;
-                } else {
-                    return this.subtext;
-                }
-            },
-            // Value of the container ID
-            container_id() {
-                return this.id ? this.id + '-container' : '';
-            },
-            // Autocomplete prop calculation
-            autocomplete_computed() {
-                if (this.disable_autofill || this.autocomplete === 'off') {
-                    return 'new-password';
-                } else {
-                    return 'on';
-                }
-            },
-            // Name calc for autocomplete disabling
-            name_computed() {
-                if (this.disable_autofill) {
-                    return 'autofill-disabled-' +
-                        Math.random().toString(36).substring(2, 15) +
-                        Math.random().toString(36).substring(2, 15);
-                } else {
-                    return this.name;
-                }
-            },
+
+        /**
+         * Input autocomplete value.
+         */
+        autocomplete: {
+            type: String | null,
+            default: null
         },
-        watch: {
-            failure() {
-                const scroll_callback = () => {
-                    let view = document.getElementById('ds-view');
-                    if (!view) {
-                        return;
-                    }
-                    let el = document.querySelectorAll('.aui .border-failure')[0]
-                    if (el) {
-                        let box = el.getBoundingClientRect()
-                        let scroll_position = box.top - box.height - 100
-                        view.scrollBy({
-                            top: scroll_position,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-                clearTimeout(window.aui_failure_timeout);
-                window.aui_failure_timeout = setTimeout(scroll_callback, 99);
-            }
+
+        /**
+         * Input placeholder text.
+         */
+        placeholder: {
+            type: String | null,
+            default: null
         },
-        methods: {
-            // Force focus
-            focus() {
-                this.$refs.input.focus();
-            },
-            // Force select
-            select() {
-                this.$refs.input.select();
-            }
+
+        /**
+         * If the input is disabled and non-interactive.
+         */
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        /**
+         * Options if a datalist is used.
+         *
+         * This must be an array of string/numeric values that should be used to generate the datalist and bind to the
+         * model.
+         */
+        options: {
+            type: Array | Object,
+            default: () => []
+        },
+
+        /**
+         * Input tab index.
+         */
+        tabindex: {
+            type: String | Number | null,
+            default: null
+        },
+
+        /**
+         * Input step for numeric inputs.
+         */
+        step: {
+            type: String | Number | null,
+            default: null
+        },
+
+        /**
+         * The maximum number of whole digits for numeric inputs.
+         */
+        max_whole_digits: {
+            type: String | Number | null,
+            default: null
+        },
+
+        /**
+         * The maximum number of decimal digits for numeric inputs.
+         */
+        max_decimal_digits: {
+            type: String | Number | null,
+            default: null
+        },
+
+        /**
+         * Success subtext to display under the input.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        success: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Failure subtext to display under the input.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        failure: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * Subtext to display under the input.
+         *
+         * Subtext values override each other in the following order, only one may be present at a time:
+         *
+         * success > failure > subtext
+         */
+        subtext: {
+            type: String | null,
+            default: null
+        },
+
+        /**
+         * If no icon should trail the input on feedback, for use in short length inputs.
+         */
+        no_feedback_icon: {
+            type: Boolean,
+            default: false
         }
+
+    },
+    computed: {
+
+        /**
+         * Properties to pass down to the form control component.
+         *
+         * @returns {
+         *     {parent: string},
+         *     {label: string},
+         *     {leading_cap: string},
+         *     {trailing_cap: string},
+         *     {success: string},
+         *     {failure: string},
+         *     {subtext: string},
+         *     {no_feedback_icon: boolean}
+         * }
+         */
+        properties() {
+            return {
+                parent: 'input',
+                label: this.$slots.default ? this.$slots.default : this.label,
+                leading_cap: this.leading_cap,
+                trailing_cap: this.trailing_cap,
+                success: this.success,
+                failure: this.failure,
+                subtext: this.subtext,
+                no_feedback_icon: this.no_feedback_icon
+            };
+        },
+
+        /**
+         * A unique ID for the datalist to bind to the input.
+         *
+         * @returns {string}
+         */
+        unique_id() {
+            return `aui-input-${this._uid}`;
+        },
+
+        /**
+         * If the options for the datalist are an array.
+         *
+         * @returns {boolean}
+         */
+        array_options() {
+            return Array.isArray(this.options);
+        }
+
+    },
+    methods: {
+
+        /**
+         * Handle input events to mask telephones.
+         *
+         * @param {string|number} value - The input value.
+         * @returns {undefined}
+         */
+        handleInput(value) {
+            if (this.type === 'tel') {
+                let x = value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+                value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+                this.$refs.input.value = value;
+            } else if (this.type === 'number' && value !== '') {
+                value = value.replace('e', '');
+                if (this.max_decimal_digits === 0) {
+                    value = value.replace('.', '');
+                }
+                const has_decimal = value.includes('.');
+                const exploded = value.split('.');
+                let new_value = '';
+                if (this.max_whole_digits > 0 && exploded[0].length > this.max_whole_digits) {
+                    new_value = exploded[0].slice(0, -1);
+                } else {
+                    new_value = exploded[0];
+                }
+                if (this.max_decimal_digits > 0 && has_decimal && exploded[1].length > this.max_decimal_digits) {
+                    new_value += '.' + exploded[1].slice(0, -1);
+                } else if (this.max_decimal_digits !== 0 && typeof exploded[1] !== 'undefined') {
+                    new_value += '.' + exploded[1]
+                }
+                if (new_value) {
+                    value = new_value;
+                }
+                this.$refs.input.value = value;
+            }
+            this.$emit('input', value);
+        }
+
     }
+}
 </script>
-
-<style lang="sass">
-
-/* Import the core DS colors */
-@import "../../../client/css/colors"
-
-// Input container
-.aui.input
-    display: flex
-    flex-direction: column
-    position: relative
-
-    /* Input label */
-    label
-        display: flex
-        flex-direction: column
-        justify-content: center
-        margin-bottom: 0
-
-        /* Input group separators */
-        span
-            display: flex
-
-        .input-parent
-            display: grid
-            grid-template-columns: auto 1fr auto
-            grid-auto-flow: dense
-
-        .label-text
-            margin-bottom: .25rem
-
-        /* Leading and trailing input group caps (if any) */
-        .leading-cap, .trailing-cap
-            display: flex
-            justify-content: center
-            align-items: center
-            font-size: 0.9rem
-            padding: 0.45rem 0.5rem
-            color: #495057
-            background: #e9ecef
-            border: 1px solid #ced4da
-            white-space: nowrap
-
-        /* Leading input group cap (if present) */
-        .leading-cap
-            grid-column: 1
-            justify-self: flex-start
-            border-radius: 0.25rem 0 0 0.25rem
-            margin-right: -2px
-
-            /* Success feedback */
-            &.border-success
-                border: 1px solid $success
-
-            /* Failure feedback*/
-            &.border-failure
-                border: 1px solid $failure
-
-        /* Trailing input group cap (if present) */
-        .trailing-cap
-            grid-column: 3
-            justify-self: flex-end
-            border-radius: 0 0.25rem 0.25rem 0
-            margin-left: -2px
-
-            /* Success feedback */
-            &.border-success
-                border: 1px solid $success
-
-            /* Failure feedback */
-            &.border-failure
-                border: 1px solid $failure
-
-        /* The input itself */
-        input
-            grid-column: 2
-            display: flex
-            flex: 1
-            font-size: 1rem
-            padding: 0.5rem
-            border-radius: 0.25rem
-            border: 1px solid #ced4da
-            width: 100%
-            -webkit-box-sizing: border-box
-            -moz-box-sizing: border-box
-            box-sizing: border-box
-            background: #fff
-            margin: 0 // Mandatory for iOS rendering and caps
-
-            /* Where the input meets the leading cap (if any) */
-            &.left-cap
-                border-top-left-radius: 0
-                border-bottom-left-radius: 0
-                padding-left: calc(0.5rem + 1px)
-
-            /* Where the input meets the trailing cap (if any) */
-            &.right-cap
-                border-top-right-radius: 0
-                border-bottom-right-radius: 0
-                padding-right: calc(0.5rem + 1px)
-
-            /* Clear focus */
-            &:focus
-                outline: none
-                box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.8)
-
-            /* Disabled flag */
-            &:disabled
-                background: darken(#e9ecef, 15%)
-
-            /* Success feedback */
-            &.border-success
-                border: 1px solid $success
-
-                /* The leading input group cap (if any) */
-                .leading-cap
-                    border-left: 1px solid $success
-                    border-top: 1px solid $success
-                    border-bottom: 1px solid $success
-
-                /* The trailing input group cap (if any) */
-                .trailing-cap
-                    border-right: 1px solid $success
-                    border-top: 1px solid $success
-                    border-bottom: 1px solid $success
-
-                /* Feedback icon if not disabled */
-                &:not(.no-feedback-icon)
-                    padding-right: 2.5rem !important
-                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
-                    background-repeat: no-repeat
-                    background-position: right .5rem center
-                    background-size: 1.5rem
-
-            /* Failure feedback */
-            &.border-failure
-                border: 1px solid $failure
-
-                /* The leading input group cap (if any) */
-                .leading-cap
-                    border-left: 1px solid $failure
-                    border-top: 1px solid $failure
-                    border-bottom: 1px solid $failure
-
-                /* The trailing input group cap (if any) */
-                .trailing-cap
-                    border-right: 1px solid $failure
-                    border-top: 1px solid $failure
-                    border-bottom: 1px solid $failure
-
-                /* Feedback icon if not disabled */
-                &:not(.no-feedback-icon)
-                    padding-right: 2.5rem !important
-                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
-                    background-repeat: no-repeat
-                    background-position: right 0.5rem center
-                    background-size: 1.5rem
-
-    /* Input subtext */
-    .subtext
-        font-size: .8rem
-        margin-top: .25rem
-        color: #6c757d
-        text-align: left
-
-        &.text-success
-            color: $success
-
-        &.text-failure
-            color: $failure
-
-</style>

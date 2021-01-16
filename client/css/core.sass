@@ -16,7 +16,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-/* Clue cloaking */
+/* Import the core DS colors */
+@import "../../../../client/css/colors"
+
+/* Media query mixin for mobile view breakpoint */
+@mixin on-mobile-view
+  @media (max-width: 500px)
+    @content
+
+/* Media query mixin for ipad view breakpoint */
+@mixin on-ipad-view
+  @media (max-width: 768px)
+    @content
+
+/* Vue cloaking */
 [v-cloak]
   display: none !important
 
@@ -34,25 +47,59 @@
   align-items: start
 
   /* Buttons and dropdowns within the group */
-  > *:not(:first-child)
+  *:not(:first-child)
     border-left: 1px solid rgba(0, 0, 0, 0.15) !important
     margin: 0 -1px
 
-  > .btn:not(:first-of-type), > .btn:not(:last-of-type)
+  .btn:not(:first-of-type), .btn:not(:last-of-type)
     border-radius: 0
 
   /* First button in the group */
-  > .btn:first-of-type
+  & > .btn:first-of-type
     border-radius: 0.25rem 0 0 0.25rem
     border: 0
     margin: 0
 
   /* Last button in the group */
-  > .btn:last-of-type:not(:first-of-type)
+  & > .btn:last-child
     border-radius: 0 0.25rem 0.25rem 0
     margin: 0
 
-  /* Button dropdown if attached */
-  > .btn-drop > .btn
+  & > .btn-drop:not(:first-child) .btn
     border-radius: 0 0.25rem 0.25rem 0
-    margin: 0
+
+/* Standard AUI container */
+.aui-container
+  background: whitesmoke
+  box-shadow: 0 0 12px -3px rgba(0, 0, 0, 0.47)
+  border-radius: 3px
+  padding: 1rem
+  margin-bottom: 1rem
+
+  /* Primary container modifier */
+  &.primary
+    border-bottom: 3px solid $primary
+
+  /* Secondary container modifier */
+  &.secondary
+    border-bottom: 3px solid $secondary
+
+  /* Success container modifier */
+  &.success
+    border-bottom: 3px solid $secondary
+
+  /* Warning container modifier */
+  &.warning
+    border-bottom: 3px solid $warning
+
+  /* Failure container modifier */
+  &.failure
+    border-bottom: 3px solid $failure
+
+  /* Mobile overrides */
+  @include on-mobile-view
+    width: 100%
+    box-shadow: none
+    border-radius: 0
+    margin: -1rem
+    border-bottom: none !important

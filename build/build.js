@@ -35,6 +35,10 @@ let output_js = (
 
 // File CSS output
 let output_css = fs.readFileSync(path.join(dir, '../client/css/core.sass')).toString()
+output_css = output_css.replace(
+    '@import "../../../../client/css/colors"',
+    '@import "../../../client/css/colors"'
+);
 
 // Load the component files
 let files = fs.readdirSync(dir);
