@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
         <input
             type="radio"
             :name="name"
-            :value="value"
+            :value="data"
             :disabled="disabled"
             @input="$emit('input', $event.target.value)"
         />
@@ -40,6 +40,14 @@ export default {
          */
         label: {
             type: String | null,
+            default: null
+        },
+
+        /**
+         * Data value of the radio.
+         */
+        data: {
+            type: String | Number | Boolean | null,
             default: null
         },
 
