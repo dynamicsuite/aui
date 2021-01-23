@@ -179,10 +179,10 @@ export default {
         justify-content: center
         align-items: center
         min-width: 0.5rem
-        top: -0.5rem
-        right: -0.7rem
+        top: -0.6rem
+        right: -0.55rem
         z-index: 1
-        border: 1px solid white
+        border: 1px solid white !important
 
     /* Primary button theme */
     &.btn-primary
