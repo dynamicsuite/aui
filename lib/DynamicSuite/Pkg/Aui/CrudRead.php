@@ -208,13 +208,13 @@ final class CrudRead
         /**
          * Get the total of all possible records for the list
          */
-        $total_query = clone $query;
+        $total_query = unserialize(serialize($query));
         $total = $total_query->select(['COUNT(*)'])->execute(true);
 
         /**
          * Read and verify the list
          */
-        $list_query = clone $query;
+        $list_query = unserialize(serialize($query));
         if ($offset > $total) {
             $offset = $total - $this->limit;
         }
