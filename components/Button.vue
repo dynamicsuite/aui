@@ -146,12 +146,13 @@ export default {
 .aui.btn
     display: inline-flex
     justify-content: center
+    align-self: flex-start
     align-items: center
     padding: 0.5rem 1rem
+    min-height: calc(1rem + 1rem + 2px + 2px)
     border: 0
     border-radius: 0.25rem
     font-size: 1rem
-    line-height: 1rem
     user-select: none
     cursor: pointer
     position: relative

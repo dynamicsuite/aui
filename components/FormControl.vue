@@ -310,6 +310,9 @@ export default {
         display: flex
         flex-direction: column
         margin-bottom: 0
+        box-sizing: border-box
+        -webkit-box-sizing: border-box
+        -moz-box-sizing: border-box
 
         /* Form control components that can have caps */
         .cap-container
@@ -365,11 +368,13 @@ export default {
                 border-radius: 0.25rem
                 border: 1px solid #ced4da
                 width: 100%
+                box-sizing: border-box
                 -webkit-box-sizing: border-box
                 -moz-box-sizing: border-box
+                vertical-align: top
+                min-height: calc(1rem + 1rem + 2px + 2px) // Font size + padding + border + chrome offset
                 -webkit-appearance: none
                 -moz-appearance: none
-                box-sizing: border-box
                 background: #fff
                 margin: 0
                 text-overflow: ellipsis

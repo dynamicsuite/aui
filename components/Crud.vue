@@ -1533,10 +1533,8 @@ export default {
                     display: flex
                     justify-content: center
                     align-items: center
-                    font-size: 0.8rem
+                    font-size: 0.9rem
                     margin-right: 0.5rem
-                    height: 2rem
-                    width: 1.9rem
 
         /* Data container */
         .data
