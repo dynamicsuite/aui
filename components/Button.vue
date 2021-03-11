@@ -146,7 +146,6 @@ export default {
 .aui.btn
     display: inline-flex
     justify-content: center
-    align-self: flex-start
     align-items: center
     padding: 0.5rem 1rem
     min-height: calc(1rem + 1rem + 2px + 2px)
