@@ -379,6 +379,10 @@ export default {
                 margin: 0
                 text-overflow: ellipsis
 
+                /* Unify date height */
+                &[type="date"]
+                    padding: calc(0.5rem - 1px) 0.5rem
+
                 /* Clear chrome outline */
                 &:focus
                     outline: none
