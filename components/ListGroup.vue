@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             <span v-if="row.icon" class="leading-icon"><i :class="row.icon"></i></span>
             <div class="text">
                 <div class="title">{{row.title}}</div>
-                <div v-if="row.subtext" class="subtext">{{row.subtext}}</div>
+                <div v-if="row.subtext" class="subtext" v-html="row.subtext" />
             </div>
             <span class="trailing-icon"></span>
         </li>

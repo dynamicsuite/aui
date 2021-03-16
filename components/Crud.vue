@@ -1182,21 +1182,27 @@ export default {
             }
             const data = Object.assign({[this.form_storable_key]: id}, this.form_api_read_optional_data);
             this.$emit('update:calling', true);
-            DynamicSuite.call(this.package, this.form_api_read, data, response => {
-                switch (response.status) {
-                    case 'OK':
-                        this.setForm(response.data);
-                        this.showForm(true, tab);
-                        this.$emit('update:calling', false);
-                        break;
-                    case 'NOT_FOUND':
-                        this.showForm(false);
-                        this.$emit('update:calling', false);
-                        break;
-                    default:
-                        this.error.server = true;
-                }
-            });
+            if (this.form_api_read) {
+                DynamicSuite.call(this.package, this.form_api_read, data, response => {
+                    switch (response.status) {
+                        case 'OK':
+                            this.setForm(response.data);
+                            this.showForm(true, tab);
+                            this.$emit('update:calling', false);
+                            break;
+                        case 'NOT_FOUND':
+                            this.showForm(false);
+                            this.$emit('update:calling', false);
+                            break;
+                        default:
+                            this.error.server = true;
+                    }
+                });
+            } else {
+                this.setForm({[this.form_storable_key]: id});
+                this.showForm(true, tab);
+                this.$emit('update:calling', false);
+            }
         },
 
         /**
@@ -1527,10 +1533,8 @@ export default {
                     display: flex
                     justify-content: center
                     align-items: center
-                    font-size: 0.8rem
+                    font-size: 0.9rem
                     margin-right: 0.5rem
-                    height: 2rem
-                    width: 1.9rem
 
         /* Data container */
         .data

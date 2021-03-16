@@ -21,7 +21,7 @@
 
 /* Media query mixin for mobile view breakpoint */
 @mixin on-mobile-view
-  @media (max-width: 500px)
+  @media (max-width: 541px)
     @content
 
 /* Media query mixin for ipad view breakpoint */
@@ -98,8 +98,6 @@
 
   /* Mobile overrides */
   @include on-mobile-view
-    width: 100%
     box-shadow: none
     border-radius: 0
-    margin: -1rem
     border-bottom: none !important
