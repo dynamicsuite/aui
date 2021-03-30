@@ -209,6 +209,7 @@ final class CrudRead
          * Get the total of all possible records for the list
          */
         $total_query = unserialize(serialize($query));
+        $total_query->clearOrderBy();
         $total = $total_query->select(['COUNT(*)'])->execute(true);
 
         /**
