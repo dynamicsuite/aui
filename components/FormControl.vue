@@ -19,6 +19,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 <template>
     <div class="aui form-control" :class="container_classes">
 
+        <!-- Custom label -->
+        <slot name="label"></slot>
+
         <!-- Standard form control -->
         <label v-if="can_have_caps" class="standard-container">
 
@@ -55,9 +58,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
         </label>
 
-        <!-- WYSIWYG form control -->
+        <!-- WYSIWYG and slider form control -->
         <label v-if="is_wysiwyg && label" class="label" v-html="label" />
         <slot v-if="is_wysiwyg" />
+
+        <!-- Slider form control -->
+        <slot v-if="is_slider"></slot>
 
         <!-- Input subtext -->
         <span v-if="subtext_value" class="subtext">{{subtext_value}}</span>
@@ -76,7 +82,7 @@ export default {
             type: String,
             required: true,
             validator(value) {
-                return ['checkbox', 'input', 'radio', 'select', 'textarea', 'toggle', 'wysiwyg'].indexOf(value) !== -1;
+                return ['checkbox', 'input', 'radio', 'select', 'textarea', 'toggle', 'wysiwyg', 'slider', 'range'].indexOf(value) !== -1;
             }
         },
 
@@ -181,6 +187,15 @@ export default {
          */
         is_wysiwyg() {
             return this.parent === 'wysiwyg';
+        },
+
+        /**
+         * If the form control is a container for a slider.
+         *
+         * @returns {boolean}
+         */
+        is_slider() {
+            return this.parent === 'slider' || this.parent === 'range';
         },
 
         /**
@@ -301,7 +316,7 @@ export default {
         justify-content: center
 
     /* Add margin to the label text if present */
-    &.input, &.select, &.textarea, &.wysiwyg
+    &.input, &.select, &.textarea, &.wysiwyg, &.slider
         .label
             margin-bottom: 0.25rem
 
