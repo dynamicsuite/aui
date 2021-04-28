@@ -216,8 +216,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* WYSIWYG structure */
 .aui.wysiwyg

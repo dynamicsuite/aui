@@ -268,18 +268,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
-
-/* Media query mixin for mobile view breakpoint */
-@mixin on-mobile-view
-    @media (max-width: 540px)
-        @content
-
-/* Media query mixin for ipad view breakpoint */
-@mixin on-ipad-view
-    @media (max-width: 768px)
-        @content
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* Pagination container */
 .aui.pagination

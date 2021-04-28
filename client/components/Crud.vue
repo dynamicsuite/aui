@@ -1470,18 +1470,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
-
-/* Media query mixin for mobile view breakpoint */
-@mixin on-mobile-view
-    @media (max-width: 500px)
-        @content
-
-/* Media query mixin for ipad view breakpoint */
-@mixin on-ipad-view
-    @media (max-width: 768px)
-        @content
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* CRUD container */
 .aui.crud
@@ -1496,7 +1486,7 @@ export default {
             display: flex
             align-items: center
             padding-bottom: 0.5rem
-            border-bottom: 1px solid lighten($secondary, 40%)
+            border-bottom: 1px solid lighten($color-secondary, 40%)
             margin-bottom: 0.5rem
 
             @include on-mobile-view
@@ -1609,7 +1599,7 @@ export default {
                 /* Header styling */
                 th
                     user-select: none
-                    border-bottom: 2px solid lighten($secondary, 40%)
+                    border-bottom: 2px solid lighten($color-secondary, 40%)
                     position: relative
                     box-sizing: border-box
 
@@ -1649,7 +1639,7 @@ export default {
 
                     /* Add border to all but last cells */
                     tr:not(:last-of-type) td
-                        border-bottom: 1px solid lighten($secondary, 40%)
+                        border-bottom: 1px solid lighten($color-secondary, 40%)
 
                     /* Zebra striping */
                     tr:nth-child(odd)
@@ -1718,10 +1708,10 @@ export default {
 
                     /* Failure */
                     &.fa-times
-                        color: $failure
+                        color: $color-failure
 
                     /* Success */
                     &.fa-check
-                        color: $success
+                        color: $color-success
 
 </style>

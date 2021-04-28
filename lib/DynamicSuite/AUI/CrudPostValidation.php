@@ -1,33 +1,23 @@
 <?php
 /**
- * CRUD post validation.
+ * This file is part of the Dynamic Suite AUI package.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation version 3.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
- *
- * @package AUI
+ * @package DynamicSuite\AUI
  * @author Grant Martin <commgdog@gmail.com>
- * @copyright  2020 Dynamic Suite Team
+ * @copyright 2021 Dynamic Suite Team
  * @noinspection PhpUnused
  */
 
-namespace DynamicSuite\Pkg\Aui;
+namespace DynamicSuite\AUI;
 use Exception;
 
 /**
  * Class CrudPostValidation.
  *
- * @package DynamicSuite\Pkg\Aui
+ * @package DynamicSuite\AUI
  * @property int[] $minimums
  * @property string[] $cast
  * @property int[] $limits

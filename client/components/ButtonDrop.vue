@@ -263,8 +263,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* Button group container */
 .aui.btn-drop
@@ -325,6 +325,6 @@ export default {
             /* List selection styling */
             &:hover
                 text-decoration: underline
-                color: $primary
+                color: $color-primary
 
 </style>

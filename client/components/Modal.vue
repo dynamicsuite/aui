@@ -173,8 +173,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* The modal container */
 .aui.modal-container
@@ -216,26 +216,26 @@ export default {
             /* Header theme - Primary */
             &.modal-primary
                 color: white
-                background: $primary
+                background: $color-primary
 
             /* Header theme - Secondary */
             &.modal-secondary
                 color: white
-                background: $secondary
+                background: $color-secondary
 
             /* Header theme - Success */
             &.modal-success
                 color: white
-                background: $success
+                background: $color-success
 
             /* Header theme - Warning */
             &.modal-warning
-                background: $warning
+                background: $color-warning
 
             /* Header theme - Failure */
             &.modal-failure
                 color: white
-                background: $failure
+                background: $color-failure
 
             /* Modal header title */
             h2

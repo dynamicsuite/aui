@@ -1,20 +1,18 @@
 {
   "name": "Advanced User Interface",
   "author": "Dynamic Suite Team",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Additional components and styling for DynamicSuite",
   "license": "GPLv3",
-  "global": {
-    "autoload": [
-      "lib/"
-    ],
-    "css": [
-      "css/aui.min.css"
-    ],
-    "js": [
-      "js/pell.min.js",
-      "js/hashids.min.js",
-      "js/aui.min.js"
-    ]
-  }
+  "autoload": [
+    "lib/"
+  ],
+  "css": [
+    "css/aui.min.css"
+  ],
+  "js": [
+    "js/pell.min.js",
+    "js/hashids.min.js",
+    "js/aui.min.js"
+  ]
 }

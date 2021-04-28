@@ -86,8 +86,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* Notice container */
 .aui.notice
@@ -102,19 +102,19 @@ export default {
         margin-bottom: 0.5rem
 
         &.primary
-            color: $primary
+            color: $color-primary
 
         &.secondary
-            color: lighten($secondary, 20%)
+            color: lighten($color-secondary, 20%)
 
         &.success
-            color: $success
+            color: $color-success
 
         &.warning
-            color: $warning
+            color: $color-warning
 
         &.failure
-            color: $failure
+            color: $color-failure
 
     /* Text */
     h4

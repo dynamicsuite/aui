@@ -139,8 +139,8 @@ export default {
 
 <style lang="sass">
 
-/* Import the core DS colors */
-@import "../../../client/css/colors"
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* Default button styling */
 .aui.btn
@@ -186,57 +186,57 @@ export default {
 
     /* Primary button theme */
     &.btn-primary
-        background: $primary
+        background: $color-primary
         color: white
 
         &:hover, &.active
-            background: lighten($primary, 10%)
+            background: lighten($color-primary, 10%)
 
         &:disabled
-            background: lighten($primary, 30%)
+            background: lighten($color-primary, 30%)
 
     /* Secondary button theme */
     &.btn-secondary
-        background: $secondary
+        background: $color-secondary
         color: white
 
         &:hover, &.active
-            background: lighten($secondary, 10%)
+            background: lighten($color-secondary, 10%)
 
         &:disabled
-            background: lighten($secondary, 30%)
+            background: lighten($color-secondary, 30%)
 
     /* Success button theme */
     &.btn-success
-        background: $success
+        background: $color-success
         color: white
 
         &:hover, &.active
-            background: lighten($success, 10%)
+            background: lighten($color-success, 10%)
 
         &:disabled
-            background: lighten($success, 20%)
+            background: lighten($color-success, 20%)
 
     /* Warning button theme */
     &.btn-warning
-        background: $warning
-        border: 1px solid lighten($warning, 30%)
+        background: $color-warning
+        border: 1px solid lighten($color-warning, 30%)
 
         &:hover, &.active
-            background: lighten($warning, 10%)
+            background: lighten($color-warning, 10%)
 
         &:disabled
-            background: lighten($warning, 20%)
+            background: lighten($color-warning, 20%)
 
     /* Failure button theme */
     &.btn-failure
-        background: $failure
+        background: $color-failure
         color: white
 
         &:hover, &.active
-            background: lighten($failure, 10%)
+            background: lighten($color-failure, 10%)
 
         &:disabled
-            background: lighten($failure, 20%)
+            background: lighten($color-failure, 20%)
 
 </style>

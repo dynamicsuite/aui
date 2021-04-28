@@ -147,10 +147,8 @@ export default {
 
 <style lang="sass">
 
-/* Media query mixin for mobile view breakpoint */
-@mixin on-mobile-view
-    @media (max-width: 500px)
-        @content
+/* Import AUI Core */
+@import "../sass/aui"
 
 /* Select assignment component */
 .aui.select-assignment
