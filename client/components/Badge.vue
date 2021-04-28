@@ -73,9 +73,10 @@ export default {
 /* Badge Styling */
 .aui.badge
   display: inline-flex
-  font-size: 0.75rem
+  line-height: 0.8rem
+  font-size: 0.8rem
   font-weight: bold
-  padding: 0.125rem 0.4rem
+  padding: 0.25rem 0.4rem
   border-radius: 1rem
   text-align: center
   white-space: nowrap
