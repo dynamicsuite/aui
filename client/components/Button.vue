@@ -1,139 +1,143 @@
 <!--
-Aui Package
-Copyright (C) 2020 Dynamic Suite Team
+This file is part of the Dynamic Suite AUI package.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation version 3.
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+@package DynamicSuite\AUI
+@author Grant Martin <commgdog@gmail.com>
+@author Michael Ryan <hatduck@gmail.com>
+@copyright 2021 Dynamic Suite Team
 -->
 
 <template>
-    <button class="aui btn" :class="style_class" :disabled="is_disabled" @click="$emit('click')">
+  <button class="aui btn" :class="style_class" :disabled="is_disabled" @click="$emit('click')">
 
-        <!-- Show loading if the button is delayed -->
-        <span v-if="loading">
-            <i class="fa fa-spin fa-circle-notch"></i>
-            <span v-if="loading_text" class="loading-text">{{loading_text}}</span>
-            <slot v-else>{{text}}</slot>
-        </span>
+    <!-- Button content -->
+    <i v-if="loading" class="fa fa-spin fa-circle-notch" />
+    <template v-if="loading && loading_text">{{loading_text}}</template>
+    <template v-else><slot>{{text}}</slot></template>
 
-        <!-- Show button text  -->
-        <slot v-else>{{text}}</slot>
+    <!-- Attached badge -->
+    <aui-badge v-if="badge" :type="badge" :text="badge_text" />
 
-        <!-- Attached badge -->
-        <aui-badge v-if="badge" :type="badge" :text="badge_text" />
-
-    </button>
+  </button>
 </template>
 
 <script>
+// noinspection JSValidateTypes
 export default {
-    props: {
+  props: {
 
-        /**
-         * The button type.
-         *
-         * This determines the style class applied.
-         */
-        type: {
-            type: String,
-            default: 'primary',
-            validator(value) {
-                return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-            }
-        },
-
-        /**
-         * Button text.
-         *
-         * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
-         * required.
-         */
-        text: {
-            type: String | null,
-            default: null
-        },
-
-        /**
-         * If the button is disabled and non-interactive.
-         */
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-
-        /**
-         * If the button is in its loading state.
-         */
-        loading: {
-            type: Boolean,
-            default: false
-        },
-
-        /**
-         * Text to display on the button when in the loading state (optional).
-         */
-        loading_text: {
-            type: String,
-            default: null
-        },
-
-        /**
-         * The badge type.
-         *
-         * If this is NULL, no badge will be displayed.
-         *
-         * This determines the style class applied for the badge.
-         */
-        badge: {
-            type: String,
-            default: null,
-            validator(value) {
-                return [null, 'none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
-            }
-        },
-
-        /**
-         * Text to display in the attached badge.
-         */
-        badge_text: {
-            type: String,
-            default: '!'
-        }
-
+    /**
+     * The button type.
+     *
+     * This determines the style class applied.
+     *
+     * @type {string}
+     */
+    type: {
+      type: String,
+      default: 'primary',
+      validator(value) {
+        return ['none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+      }
     },
-    computed: {
 
-        /**
-         * Style class for the button.
-         *
-         * @returns {object}
-         */
-        style_class() {
-            return {
-                [`btn-${this.type}`]: this.type !== 'none'
-            };
-        },
+    /**
+     * Button text.
+     *
+     * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is
+     * required.
+     *
+     * @type {string | null}
+     */
+    text: {
+      type: String | null,
+      default: null
+    },
 
-        /**
-         * If the button is in a disabled state.
-         *
-         * @returns {boolean}
-         */
-        is_disabled() {
-            return this.loading || this.disabled;
-        }
+    /**
+     * If the button is disabled and non-interactive.
+     *
+     * @type {boolean}
+     */
+    disabled: {
+      type: Boolean,
+      default: false
+    },
 
+    /**
+     * If the button is in its loading state.
+     *
+     * @type {boolean}
+     */
+    loading: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
+     * Text to display on the button when in the loading state (optional).
+     *
+     * @type {string}
+     */
+    loading_text: {
+      type: String,
+      default: null
+    },
+
+    /**
+     * The badge type.
+     *
+     * If this is NULL, no badge will be displayed.
+     *
+     * This determines the style class applied for the badge.
+     *
+     * @type {string | null}
+     */
+    badge: {
+      type: String | null,
+      default: null,
+      validator(value) {
+        return [null, 'none', 'primary', 'secondary', 'success', 'warning', 'failure'].indexOf(value) !== -1;
+      }
+    },
+
+    /**
+     * Text to display in the attached badge.
+     *
+     * @type {string}
+     */
+    badge_text: {
+      type: String,
+      default: '!'
     }
+
+  },
+  computed: {
+
+    /**
+     * Style class for the button.
+     *
+     * @returns {object}
+     */
+    style_class() {
+      return {
+        [this.type]: this.type !== 'none'
+      };
+    },
+
+    /**
+     * If the button is in a disabled state.
+     *
+     * @returns {boolean}
+     */
+    is_disabled() {
+      return this.loading || this.disabled;
+    }
+
+  }
 }
 </script>
 
@@ -144,99 +148,90 @@ export default {
 
 /* Default button styling */
 .aui.btn
-    display: inline-flex
-    justify-content: center
-    align-items: center
-    padding: 0.5rem 1rem
-    min-height: calc(1rem + 1rem + 2px + 2px)
-    border: 0
-    border-radius: 0.25rem
-    font-size: 1rem
-    user-select: none
-    cursor: pointer
-    position: relative
+  border: none
+  text-align: center
+  border-radius: 0.25rem
+  padding: 0.5rem 0.75rem
+  font-size: 1rem
+  line-height: 1rem
+  user-select: none
+  cursor: pointer
+  position: relative
 
-    /* Remove browser focus */
-    &:focus
-        outline: none !important
+  /* Remove browser focus */
+  &:focus
+    outline: none !important
+
+  &:disabled
+    cursor: not-allowed
+
+  /* Space spinner */
+  i.fa-spin
+    margin-right: 0.25rem
+    font-size: 0.9rem
+
+  /* Attached badge if present */
+  .aui.badge
+    display: inline-block
+    position: absolute
+    min-width: 0.5rem
+    top: -0.6rem
+    right: -0.68rem
+    z-index: 1
+    border: 1px solid white !important
+
+  /* Primary button theme */
+  &.primary
+    background: $color-primary
+    color: white
+
+    &:hover, &.active
+      background: lighten($color-primary, 10%)
 
     &:disabled
-        cursor: not-allowed
+      background: lighten($color-primary, 30%)
 
-    /* Spinner when the button loading */
-    .fa.fa-spin
-        text-align: center
-        margin-right: 0.25rem
+  /* Secondary button theme */
+  &.secondary
+    background: $color-secondary
+    color: white
 
-    /* Loading text displayed when a button is in the loading state */
-    .loading-text
-        margin: 0
+    &:hover, &.active
+      background: lighten($color-secondary, 10%)
 
-    /* Attached badge if present */
-    .aui.badge
-        position: absolute
-        display: flex
-        justify-content: center
-        align-items: center
-        min-width: 0.5rem
-        top: -0.6rem
-        right: -0.55rem
-        z-index: 1
-        border: 1px solid white !important
+    &:disabled
+      background: lighten($color-secondary, 30%)
 
-    /* Primary button theme */
-    &.btn-primary
-        background: $color-primary
-        color: white
+  /* Success button theme */
+  &.success
+    background: $color-success
+    color: white
 
-        &:hover, &.active
-            background: lighten($color-primary, 10%)
+    &:hover, &.active
+      background: lighten($color-success, 10%)
 
-        &:disabled
-            background: lighten($color-primary, 30%)
+    &:disabled
+      background: lighten($color-success, 20%)
 
-    /* Secondary button theme */
-    &.btn-secondary
-        background: $color-secondary
-        color: white
+  /* Warning button theme */
+  &.warning
+    background: $color-warning
 
-        &:hover, &.active
-            background: lighten($color-secondary, 10%)
+    &:hover, &.active
+      background: lighten($color-warning, 10%)
 
-        &:disabled
-            background: lighten($color-secondary, 30%)
+    &:disabled
+      background: lighten($color-warning, 20%)
 
-    /* Success button theme */
-    &.btn-success
-        background: $color-success
-        color: white
+  /* Failure button theme */
+  &.failure
+    background: $color-failure
+    color: white
 
-        &:hover, &.active
-            background: lighten($color-success, 10%)
+    &:hover, &.active
+      background: lighten($color-failure, 10%)
 
-        &:disabled
-            background: lighten($color-success, 20%)
-
-    /* Warning button theme */
-    &.btn-warning
-        background: $color-warning
-        border: 1px solid lighten($color-warning, 30%)
-
-        &:hover, &.active
-            background: lighten($color-warning, 10%)
-
-        &:disabled
-            background: lighten($color-warning, 20%)
-
-    /* Failure button theme */
-    &.btn-failure
-        background: $color-failure
-        color: white
-
-        &:hover, &.active
-            background: lighten($color-failure, 10%)
-
-        &:disabled
-            background: lighten($color-failure, 20%)
+    &:disabled
+      background: lighten($color-failure, 20%)
 
 </style>
