@@ -39,7 +39,9 @@ export default {
     /**
      * Badge text.
      *
-     * This is an alias for the slot content when using plaintext. Slot should be used if custom HTML is required.
+     * This is an alias for the slot content when using plaintext.
+     *
+     * Slot should be used if custom HTML is required.
      *
      * @type {string | Number}
      */
