@@ -13,20 +13,20 @@ file that was distributed with this source code.
 <template>
   <aui-form-control v-bind="properties">
     <input
-        ref="input"
-        :value="value"
-        :type="type"
-        :list="unique_id"
-        :autocomplete="autocomplete"
-        :placeholder="placeholder"
-        :tabindex="tabindex"
-        :disabled="disabled"
-        :step="step"
-        @focus="$emit('focus', $event.target)"
-        @blur="$emit('blur', $event.target)"
-        @change="$emit('change', $event.target)"
-        @input="handleInput($event.target.value)"
-        @keydown="$emit('keydown', $event)"
+      ref="input"
+      :value="value"
+      :type="type"
+      :list="unique_id"
+      :autocomplete="autocomplete"
+      :placeholder="placeholder"
+      :tabindex="tabindex"
+      :disabled="disabled"
+      :step="step"
+      @focus="$emit('focus', $event.target)"
+      @blur="$emit('blur', $event.target)"
+      @change="$emit('change', $event.target)"
+      @input="handleInput($event.target.value)"
+      @keydown="$emit('keydown', $event)"
     />
     <datalist v-if="!!options.length && array_options" :id="unique_id">
       <option v-for="(value, key) in options" :key="'option-' + key" :value="value" />
