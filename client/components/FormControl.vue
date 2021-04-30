@@ -332,115 +332,83 @@ export default {
   display: flex
   flex-direction: column
 
-  /* Center inline items */
-  &.checkbox, &.toggle, &.radio
-    justify-content: center
+  /* Form control components that can have caps */
+  .cap-container
+    display: grid
+    grid-template-columns: auto 1fr auto
+    grid-auto-flow: dense
 
-  /* Add margin to the label text if present */
-  &.input, &.select, &.textarea, &.wysiwyg, &.slider
-    .label
-      margin-bottom: 0.25rem
+    /* Form control input caps */
+    .leading-cap, .trailing-cap
+      display: flex
+      justify-content: center
+      align-items: center
+      font-size: 0.9rem
+      padding: 0 0.5rem
+      background: lighten($color-border, 10%)
+      border: 1px solid $color-border
+      white-space: nowrap
 
-  /* Standard form control */
-  .standard-container
-    display: flex
-    flex-direction: column
-    margin-bottom: 0
-    box-sizing: border-box
-    -webkit-box-sizing: border-box
-    -moz-box-sizing: border-box
+    /* Leading form control input cap */
+    .leading-cap
+      grid-column: 1
+      justify-self: flex-start
+      border-radius: 0.25rem 0 0 0.25rem
+      margin-right: -2px
 
-    /* Form control components that can have caps */
-    .cap-container
-      display: grid
-      grid-template-columns: auto 1fr auto
-      grid-auto-flow: dense
+      /* Clear border radius against inputs */
+      & ~ input, & ~ select, & ~ textarea
+        border-top-left-radius: 0
+        border-bottom-left-radius: 0
+        padding-left: calc(0.5rem + 1px)
 
-      /* Form control input caps */
-      .leading-cap, .trailing-cap
-        display: flex
-        justify-content: center
-        align-items: center
-        font-size: 0.9rem
-        padding: 0.5rem
-        color: #495057
-        background: #e9ecef
-        border: 1px solid $color-border
-        white-space: nowrap
+    /* Trailing form control input cap */
+    .trailing-cap
+      grid-column: 3
+      justify-self: flex-end
+      border-radius: 0 0.25rem 0.25rem 0
+      margin-left: -2px
 
-      /* Leading form control input cap */
-      .leading-cap
-        grid-column: 1
-        justify-self: flex-start
-        border-radius: 0.25rem 0 0 0.25rem
-        margin-right: -2px
+      /* Clear border radius against inputs */
+      & ~ input, & ~ select, & ~ textarea
+        border-top-right-radius: 0
+        border-bottom-right-radius: 0
+        padding-right: calc(0.5rem + 1px)
 
-        /* Clear border radius against inputs */
-        & ~ input, & ~ select, & ~ textarea
-          border-top-left-radius: 0
-          border-bottom-left-radius: 0
-          padding-left: calc(0.5rem + 1px)
+    /* The actual form control inputs */
+    input, select, textarea
+      grid-column: 2
+      font-size: 1rem
+      padding: 0.5rem
+      border-radius: 0.25rem
+      border: 1px solid $color-border
+      background: $color-text-inverted
+      text-overflow: ellipsis
+      margin: 0 // Required for iOS
+      -moz-box-sizing: content-box
+      -webkit-box-sizing: content-box
+      box-sizing: content-box
+      height: calc(1rem + 1px)
 
-      /* Trailing form control input cap */
-      .trailing-cap
-        grid-column: 3
-        justify-self: flex-end
-        border-radius: 0 0.25rem 0.25rem 0
-        margin-left: -2px
+      /* Clear chrome outline */
+      &:focus
+        outline: none
+        box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.8)
 
-        /* Clear border radius against inputs */
-        & ~ input, & ~ select, & ~ textarea
-          border-top-right-radius: 0
-          border-bottom-right-radius: 0
-          padding-right: calc(0.5rem + 1px)
-
-      /* The actual form control inputs */
-      input, select, textarea
-        grid-column: 2
-        display: flex
-        flex: 1
-        font-size: 1rem
-        padding: 0.5rem
-        border-radius: 0.25rem
-        border: 1px solid $color-border
-        width: 100%
-        box-sizing: border-box
-        -webkit-box-sizing: border-box
-        -moz-box-sizing: border-box
-        vertical-align: top
-        min-height: calc(1rem + 1rem + 2px + 2px) // Font size + padding + border + chrome offset
-        -webkit-appearance: none
-        -moz-appearance: none
-        background: #fff
-        margin: 0
-        text-overflow: ellipsis
-
-        /* Unify date height */
-        &[type="date"]
-          padding: calc(0.5rem - 1px) 0.5rem
-
-        /* Clear chrome outline */
-        &:focus
-          outline: none
-          box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.8)
-
-        /* Darken background when disabled */
-        &:disabled
-          cursor: not-allowed
-          background: darken(#e9ecef, 15%)
+      /* Darken background when disabled */
+      &:disabled
+        cursor: not-allowed
+        background-color: darken($color-border, 5%) !important
 
   /* Form control components that use a pseudo element */
   .pseudo-container
     display: flex
-    flex-direction: row
-    position: relative
-    align-items: center
     cursor: pointer
     user-select: none
 
     /* Darken on hover */
     &:hover .pseudo
-      background: darken(#eee, 20%)
+      background: darken($color-border, 10%)
 
     /* Checkmark/circle */
     & > .pseudo:after
@@ -456,9 +424,6 @@ export default {
     input
       position: absolute
       opacity: 0
-      cursor: pointer
-      height: 0
-      width: 0
 
       /* Disabled overrides */
       &:disabled ~ .pseudo, &:disabled ~ .label
@@ -466,7 +431,7 @@ export default {
 
       /* Disabled overrides */
       &:disabled ~ .pseudo
-        background: darken(#e9ecef, 20%)
+        background: darken($color-border, 5%)
 
       /* Background when checked and not disabled */
       &:checked:not(:disabled) ~ .pseudo
@@ -482,13 +447,12 @@ export default {
       min-height: 1.5rem
       min-width: 1.5rem
       margin-right: 0.5rem
-      background: darken(#eee, 10%)
+      background: $color-border
 
   /* Subtext styling */
   .subtext
     font-size: 0.8rem
-    margin-top: 0.25rem
-    color: #6c757d
+    color: $color-text-soft
     text-align: left
 
   /* Background icon when not blocked */
@@ -499,14 +463,14 @@ export default {
     padding-right: 2.5rem
     background-repeat: no-repeat
     background-position: right 0.5rem center
-    background-size: 1.5rem
+    background-size: 1.25rem
 
   /* Success feedback overrides */
   &.success
-    @include feedback($color-success, "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+    @include feedback($color-success, "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%2338af47' d='M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001'/%3e%3c/svg%3e")
 
   /* Failure feedback overrides */
   &.failure
-    @include feedback($color-failure, "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e")
+    @include feedback($color-failure, "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23e24848' d='M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z'/%3e%3c/svg%3e")
 
 </style>

@@ -301,9 +301,12 @@ export default {
 /* Select structure */
 .aui.select
 
-    /* Add select dropdown icon */
-    &:not(.success):not(.failure) select
-        background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ced4da'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat calc(100% - 10px) 65%
-        background-size: 12px
+  /* Add select dropdown icon */
+  &:not(.success):not(.failure) select
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23444444' d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'/%3e%3c/svg%3e")
+    padding-right: 2.5rem
+    background-repeat: no-repeat
+    background-position: right 0.25rem center
+    background-size: 1.25rem
 
 </style>
