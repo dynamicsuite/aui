@@ -158,8 +158,4 @@ export default {
     -ms-transform: rotate(45deg)
     transform: rotate(45deg)
 
-  /* Offset subtext */
-  .subtext
-    margin-left: 2rem
-
 </style>

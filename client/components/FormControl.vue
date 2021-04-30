@@ -449,6 +449,10 @@ export default {
       margin-right: 0.5rem
       background: $color-border
 
+  /* Subtext override */
+  &.radio .subtext, &.checkbox .subtext
+    margin-left: 2rem
+
   /* Subtext styling */
   .subtext
     font-size: 0.8rem
