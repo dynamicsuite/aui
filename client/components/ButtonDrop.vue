@@ -333,6 +333,9 @@ export default {
       word-break: break-all
       cursor: pointer
 
+      &:not(:only-child):not(:last-child)
+        margin-bottom: 0.5rem
+
       /* List selection styling */
       &:hover
         text-decoration: underline
