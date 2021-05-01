@@ -1558,7 +1558,6 @@ export default {
 
         /* Margin reset */
         h2
-          color: #111
           margin: 0
 
       /* List actions */
@@ -1632,7 +1631,7 @@ export default {
           /* Interactive hover */
           tbody tr:hover
             cursor: pointer
-            background: darken(whitesmoke, 10%)
+            background: darken($color-container, 10%)
 
         /* Cell global styling */
         th, td
@@ -1666,7 +1665,7 @@ export default {
           /* Header hovering */
           &:hover
             cursor: pointer
-            background: darken(whitesmoke, 5%)
+            background: darken($color-container, 5%)
 
           /* Sort icon */
           i
@@ -1699,7 +1698,7 @@ export default {
 
           /* Zebra striping */
           tr:nth-child(odd)
-            background: #fff
+            background: $color-text-inverted
 
   /* Pad delete confirm input */
   .modal .aui.input
@@ -1720,7 +1719,7 @@ export default {
     /* Form headers */
     h2
       padding-bottom: 0.25rem
-      border-bottom: 1px solid #ced4da
+      border-bottom: 1px solid $color-border
 
       /* Section separators */
       &:not(:first-child)
