@@ -392,7 +392,6 @@ export default {
       -moz-box-sizing: content-box
       -webkit-box-sizing: content-box
       box-sizing: content-box
-      height: 1.25rem
 
       /* Clear chrome outline */
       &:focus
@@ -403,6 +402,14 @@ export default {
       &:disabled
         cursor: not-allowed
         background-color: darken($color-border, 5%) !important
+
+    /* Height normalization */
+    input
+      height: 1.25rem
+
+    /* Height normalization */
+    select
+      min-height: 1.25rem
 
   /* Form control components that use a pseudo element */
   .pseudo-container
