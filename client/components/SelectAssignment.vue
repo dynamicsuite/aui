@@ -11,131 +11,143 @@ file that was distributed with this source code.
 -->
 
 <template>
-    <div class="aui select-assignment">
-        <div class="aui select-assigned">
-            <aui-select
-                :label="assigned_label"
-                :options="assigned"
-                multiple
-                :size="size"
-                :disabled="disabled"
-                v-model="assigned_selected"
-            />
-            <aui-button
-                :text="'Move to &quot;' + unassigned_label + '&quot; list'"
-                type="secondary"
-                :disabled="disabled"
-                @click="move('assigned')"
-            />
-        </div>
-        <div class="aui select-unassigned">
-            <aui-select
-                :label="unassigned_label"
-                :options="unassigned"
-                multiple
-                :size="size"
-                :disabled="disabled"
-                v-model="unassigned_selected"
-            />
-            <aui-button
-                :text="'Move to &quot;' + assigned_label + '&quot; list'"
-                type="secondary"
-                :disabled="disabled"
-                @click="move('unassigned')"
-            />
-        </div>
+  <div class="aui select-assignment">
+    <div class="select-assigned">
+      <aui-select
+        :label="assigned_label"
+        :options="assigned"
+        multiple
+        :size="size"
+        :disabled="disabled"
+        v-model="assigned_selected"
+      />
+      <aui-button
+        :text="'Move to &quot;' + unassigned_label + '&quot; list'"
+        type="secondary"
+        :disabled="disabled"
+        @click="move('assigned')"
+      />
     </div>
+    <div class="select-unassigned">
+      <aui-select
+        :label="unassigned_label"
+        :options="unassigned"
+        multiple
+        :size="size"
+        :disabled="disabled"
+        v-model="unassigned_selected"
+      />
+      <aui-button
+        :text="'Move to &quot;' + assigned_label + '&quot; list'"
+        type="secondary"
+        :disabled="disabled"
+        @click="move('unassigned')"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
 // noinspection JSValidateTypes
 export default {
-    props: {
+  props: {
 
-        /**
-         * Key-value list of assigned options.
-         */
-        assigned: {
-            type: Object | Array | null,
-            required: true
-        },
-
-        /**
-         * Label for the "assigned" list.
-         */
-        assigned_label: {
-            type: String,
-            default: 'Assigned'
-        },
-
-        /**
-         * Key-value list of unassigned options.
-         */
-        unassigned: {
-            type: Object | null,
-            required: true
-        },
-
-        /**
-         * Label for the "unassigned" list.
-         */
-        unassigned_label: {
-            type: String,
-            default: 'Unassigned'
-        },
-
-        /**
-         * If all selects and buttons are disabled non-interactive.
-         */
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-
-        /**
-         * The number of visible options.
-         */
-        size: {
-            type: String | Number | null,
-            default: 5
-        }
-
+    /**
+     * Key-value list of assigned options.
+     *
+     * @type {object | array | null}
+     */
+    assigned: {
+      type: Object | Array | null,
+      required: true
     },
-    data() {
-        return {
-            assigned_selected: [],
-            unassigned_selected: []
-        }
+
+    /**
+     * Label for the "assigned" list.
+     *
+     * @type {string}
+     */
+    assigned_label: {
+      type: String,
+      default: 'Assigned'
     },
-    methods: {
 
-        /**
-         * Move one list "from" to the other.
-         *
-         * @param {string} from - The original list (assigned | unassigned).
-         * @returns {undefined}
-         */
-        move(from) {
-            const assigned = Object.assign({}, this.assigned), unassigned = Object.assign({}, this.unassigned);
-            for (const key of this[`${from}_selected`]) {
-                if (from === 'assigned') {
-                    unassigned[key] = assigned[key]
-                    delete assigned[key];
-                } else {
-                    assigned[key] = unassigned[key];
-                    delete unassigned[key];
-                }
-            }
-            this.$emit('update:assigned', assigned);
-            this.$emit('update:unassigned', unassigned);
-            this.$emit('update', {
-                assigned: assigned,
-                unassigned: unassigned
-            });
-            this[`${from}_selected`] = [];
-        }
+    /**
+     * Key-value list of unassigned options.
+     *
+     * @type {object | null}
+     */
+    unassigned: {
+      type: Object | null,
+      required: true
+    },
 
+    /**
+     * Label for the "unassigned" list.
+     *
+     * @type {string}
+     */
+    unassigned_label: {
+      type: String,
+      default: 'Unassigned'
+    },
+
+    /**
+     * If all selects and buttons are disabled non-interactive.
+     *
+     * @type {boolean}
+     */
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
+     * The number of visible options.
+     *
+     * @type {string | number | null}
+     */
+    size: {
+      type: String | Number | null,
+      default: 5
     }
+
+  },
+  data() {
+    return {
+      assigned_selected: [],
+      unassigned_selected: []
+    }
+  },
+  methods: {
+
+    /**
+     * Move one list "from" to the other.
+     *
+     * @param {string} from - The original list (assigned | unassigned).
+     * @returns {undefined}
+     */
+    move(from) {
+      const assigned = Object.assign({}, this.assigned), unassigned = Object.assign({}, this.unassigned);
+      for (const key of this[`${from}_selected`]) {
+        if (from === 'assigned') {
+          unassigned[key] = assigned[key]
+          delete assigned[key];
+        } else {
+          assigned[key] = unassigned[key];
+          delete unassigned[key];
+        }
+      }
+      this.$emit('update:assigned', assigned);
+      this.$emit('update:unassigned', unassigned);
+      this.$emit('update', {
+        assigned: assigned,
+        unassigned: unassigned
+      });
+      this[`${from}_selected`] = [];
+    }
+
+  }
 
 }
 </script>
@@ -147,38 +159,26 @@ export default {
 
 /* Select assignment component */
 .aui.select-assignment
-    display: grid
-    grid-template-columns: 1fr 1fr
-    grid-gap: 1rem
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-gap: 1rem
 
-    /* Select formatting */
-    select:not(:disabled)
-        background: #fff !important
+  /* Hide select caret */
+  select
+    background: #fff !important
 
-    /* Adjustments to selects */
-    .aui.select-assigned, .aui.select-unassigned
-        display: flex
-        flex-direction: column
+  /* Adjustments to selects */
+  .select-assigned,
+  .select-unassigned
+    display: flex
+    flex-direction: column
 
-        /* For height alignment */
-        .aui.select
-            display: flex
-            flex-grow: 1
+  /* Format selection buttons */
+  .aui.btn
+    margin-top: 1rem
 
-            /* For height alignment */
-            .standard-container, .cap-container
-                flex-grow: 1
-
-    /* Format selection buttons */
-    .aui.btn
-        display: flex
-        justify-content: center
-        align-items: center
-        width: 100%
-        margin-top: 1rem
-
-    /* Changes for mobile view */
-    @include on-mobile-view
-        grid-template-columns: 1fr
+  /* Changes for mobile view */
+  @include on-mobile-view
+    grid-template-columns: 1fr
 
 </style>
