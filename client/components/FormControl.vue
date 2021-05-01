@@ -400,6 +400,7 @@ export default {
 
       /* Darken background when disabled */
       &:disabled
+        opacity: 1
         cursor: not-allowed
         background-color: darken($color-border, 5%) !important
 
