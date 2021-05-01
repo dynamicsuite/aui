@@ -392,7 +392,7 @@ export default {
       -moz-box-sizing: content-box
       -webkit-box-sizing: content-box
       box-sizing: content-box
-      height: 1rem
+      height: 1.25rem
 
       /* Clear chrome outline */
       &:focus

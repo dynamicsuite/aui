@@ -160,7 +160,7 @@ export default {
   -moz-box-sizing: content-box
   -webkit-box-sizing: content-box
   box-sizing: content-box
-  height: calc(1rem + 2px)
+  height: calc(1.25rem + 2px)
 
   /* Remove browser focus */
   &:focus

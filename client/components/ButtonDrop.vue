@@ -294,12 +294,12 @@ export default {
     margin: 0 !important
 
   .btn > span
-      margin-right: 0.25rem
+      margin-right: 0.5rem
 
   /* Dropdown menu when the button is pressed */
   .dropdown
     position: absolute
-    top: 2.25rem
+    top: 2.5rem
     margin: 0
     padding: 0.5rem 1rem
     background: white
@@ -314,16 +314,17 @@ export default {
 
     /* Left aligned list */
     &.left
-      left: 1px
+      left: 0
 
     /* Right aligned list */
     &.right
-      right: 1px
+      right: 0
 
     /* Top attached list */
     &.top
       top: auto
-      bottom: 2.25rem
+      right: 0
+      bottom: 2.5rem
 
     /* Dropdown entries */
     li
