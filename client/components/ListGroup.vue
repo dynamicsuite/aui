@@ -92,16 +92,13 @@ export default {
       display: flex
       justify-content: center
       align-items: center
+      margin-right: 0.75rem
 
       /* Icon centering */
       i
         display: flex
         justify-content: center
         align-items: center
-
-      /* Padding when icon present */
-      & + .text
-        margin-left: 1rem
 
     /* Vertical align text */
     .text
@@ -112,6 +109,9 @@ export default {
     /* Entry title */
     .title
       font-weight: bold
+
+      &:not(:only-child)
+        margin-bottom: 0.25rem
 
     /* Entry subtext*/
     .subtext
