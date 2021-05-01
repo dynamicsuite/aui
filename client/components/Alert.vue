@@ -132,7 +132,7 @@ export default {
 
   /* Margin override */
   & > div:first-of-type > h3:first-of-type
-    margin: 0
+    margin: 0 0 0.25rem 0
 
   /* Alert close button */
   .close
