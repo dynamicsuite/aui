@@ -410,6 +410,11 @@ export default {
     cursor: pointer
     user-select: none
 
+    /* Label alignment */
+    .label
+      display: flex
+      align-items: center
+
     /* Darken on hover */
     &:hover .pseudo
       background: darken($color-border, 10%)
