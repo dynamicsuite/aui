@@ -163,10 +163,6 @@ export default {
   grid-template-columns: 1fr 1fr
   grid-gap: 1rem
 
-  /* Hide select caret */
-  select
-    background: #fff !important
-
   /* Adjustments to selects */
   .select-assigned,
   .select-unassigned
