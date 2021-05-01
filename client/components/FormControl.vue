@@ -338,6 +338,10 @@ export default {
     grid-template-columns: auto 1fr auto
     grid-auto-flow: dense
 
+    /* Space label */
+    &:not(:only-child)
+      margin-top: 0.25rem
+
     /* Form control input caps */
     .leading-cap, .trailing-cap
       display: flex
@@ -388,7 +392,7 @@ export default {
       -moz-box-sizing: content-box
       -webkit-box-sizing: content-box
       box-sizing: content-box
-      height: calc(1rem + 1px)
+      height: 1rem
 
       /* Clear chrome outline */
       &:focus
@@ -455,6 +459,7 @@ export default {
 
   /* Subtext styling */
   .subtext
+    margin-top: 0.25rem
     font-size: 0.8rem
     color: $color-text-soft
     text-align: left

@@ -154,10 +154,13 @@ export default {
   border-radius: 0.25rem
   padding: 0.5rem 0.75rem
   font-size: 1rem
-  line-height: 1rem
   user-select: none
   cursor: pointer
   position: relative
+  -moz-box-sizing: content-box
+  -webkit-box-sizing: content-box
+  box-sizing: content-box
+  height: calc(1rem + 2px)
 
   /* Remove browser focus */
   &:focus
