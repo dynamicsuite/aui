@@ -244,6 +244,10 @@ export default {
   &.success .pell-actionbar, &.failure .pell-actionbar
     border-bottom: none !important
 
+  /* Form control label */
+  .label
+    margin-bottom: 0.25rem
+
   /* Editor action bar area */
   .pell-actionbar
     display: flex
