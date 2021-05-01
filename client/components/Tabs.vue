@@ -12,14 +12,14 @@ file that was distributed with this source code.
 
 <template>
   <div class="aui tabs">
-      <span
-        v-if="!collapsed"
-        v-for="(name, tab) in tabs"
-        v-html="name"
-        class="tab"
-        :class="tabClass(tab)"
-        @click="handleClick(tab)"
-      />
+    <span
+      v-if="!collapsed"
+      v-for="(name, tab) in tabs"
+      v-html="name"
+      class="tab"
+      :class="tabClass(tab)"
+      @click="handleClick(tab)"
+    />
     <aui-button-drop
       v-if="collapsed"
       :dropdown="tabs"
