@@ -8,7 +8,7 @@
  * @package DynamicSuite\AUI
  * @author Grant Martin <commgdog@gmail.com>
  * @copyright 2021 Dynamic Suite Team
- * @noinspection PhpUnused
+ * @noinspection ALL
  */
 
 namespace DynamicSuite\AUI;
@@ -19,8 +19,8 @@ use Exception;
  *
  * @package DynamicSuite\AUI
  * @property int[] $minimums
+ * @property int[] $maximums
  * @property string[] $cast
- * @property int[] $limits
  * @property string[] $prefix_map
  */
 final class CrudPostValidation
@@ -34,18 +34,18 @@ final class CrudPostValidation
     private array $minimums = [];
 
     /**
+     * Maximum post value lengths.
+     *
+     * @var int[]
+     */
+    private array $maximums = [];
+
+    /**
      * Type casting overrides.
      *
      * @var array
      */
     private array $cast = [];
-
-    /**
-     * Maximum post value lengths.
-     *
-     * @var int[]
-     */
-    private array $limits = [];
 
     /**
      * Column prefix map.
@@ -91,20 +91,20 @@ final class CrudPostValidation
     }
 
     /**
-     * Set the limits.
+     * Set the maximums.
      *
-     * @param int[] $limits
+     * @param int[] $maximums
      * @return CrudPostValidation
      * @throws Exception
      */
-    public function limits(array $limits): CrudPostValidation
+    public function maximums(array $maximums): CrudPostValidation
     {
-        foreach ($limits as $key => $value) {
+        foreach ($maximums as $key => $value) {
             if (!is_string($key) || !is_int($value)) {
                 throw new Exception('Limits must be an array of integers with string keys');
             }
         }
-        $this->limits = $limits;
+        $this->maximums = $maximums;
         return $this;
     }
 
@@ -143,9 +143,9 @@ final class CrudPostValidation
                 ? $this->prefix_map[$key]
                 : ucfirst(str_replace('_', ' ', $key));
             if (isset($this->cast[$key]) && $this->cast[$key] === 'number') {
-                if (array_key_exists($key, $this->limits)) {
-                    if ($value > $this->limits[$key]) {
-                        $errors[$key] = "$column cannot exceed {$this->limits[$key]}";
+                if (array_key_exists($key, $this->maximums)) {
+                    if ($value > $this->maximums[$key]) {
+                        $errors[$key] = "$column cannot exceed {$this->maximums[$key]}";
                     }
                 }
                 if (array_key_exists($key, $this->minimums)) {
@@ -158,9 +158,9 @@ final class CrudPostValidation
                 (is_string($value) && !isset($this->cast[$key])) ||
                 (isset($this->cast[$key]) && $this->cast[$key] === 'string')
             ) {
-                if (array_key_exists($key, $this->limits)) {
-                    if (mb_strlen($value) > $this->limits[$key]) {
-                        $errors[$key] = "$column cannot exceed {$this->limits[$key]} characters";
+                if (array_key_exists($key, $this->maximums)) {
+                    if (mb_strlen($value) > $this->maximums[$key]) {
+                        $errors[$key] = "$column cannot exceed {$this->maximums[$key]} characters";
                     }
                 }
                 if (array_key_exists($key, $this->minimums)) {
