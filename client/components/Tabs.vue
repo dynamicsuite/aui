@@ -175,6 +175,7 @@ export default {
     user-select: none
     -webkit-touch-callout: none
     -webkit-user-select: none
+    position: relative
 
     /* Non-active tabs */
     &:not(.active)
@@ -186,9 +187,18 @@ export default {
     &.active
       border-bottom: 1px solid $color-container
       border-left: 1px solid $color-border
-      border-top: 1px solid $color-border
+      border-top: 1px solid transparent
       border-right: 1px solid $color-border
-      border-radius: 0.25rem 0.25rem 0 0
+
+      /* Active border */
+      &::before
+        content: ''
+        position: absolute
+        left: -1px
+        top: -3px
+        width: calc(100% + 2px)
+        height: 3px
+        background: $color-primary
 
     /* Disabled tabs */
     &.disabled
