@@ -79,7 +79,7 @@ export default {
     display: flex
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23888888' d='M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z'/%3e%3c/svg%3e")
     background-repeat: no-repeat
-    background-position: right 0.5rem center
+    background-position: right center
     background-size: 1.5rem
     cursor: pointer
     user-select: none
@@ -87,7 +87,7 @@ export default {
     /* Leading icon if present */
     .leading-icon
       font-size: 2rem
-      color: darken($color-border, 10%)
+      color: #888888
       width: 2.5rem
       display: flex
       justify-content: center

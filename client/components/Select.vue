@@ -113,7 +113,7 @@ export default {
      */
     options: {
       type: Object | Array,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
