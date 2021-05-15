@@ -8,7 +8,7 @@
  * @package DynamicSuite\AUI
  * @author Grant Martin <commgdog@gmail.com>
  * @copyright 2021 Dynamic Suite Team
- * @noinspection PhpUnused
+ * @noinspection PhpUnused PhpUnusedPrivateFieldInspection
  */
 
 namespace DynamicSuite\AUI;
@@ -21,7 +21,6 @@ use PDOException;
  *
  * @package DynamicSuite\AUI
  * @property Query $query
- * @property string $type
  * @property int $page
  * @property int $limit
  * @property string|null $search
@@ -40,15 +39,6 @@ final class CrudRead
      * @var Query
      */
     public Query $query;
-
-    /**
-     * Set the CRUD return type.
-     *
-     * Currently supports "group" or "table"
-     *
-     * @var string
-     */
-    public string $type = 'group';
 
     /**
      * The page offset.
@@ -74,18 +64,11 @@ final class CrudRead
     /**
      * Array of columns and orders for sorting the dataset.
      *
-     * The key is the column, and the value is the sort direction (ASC/DESC).
+     * The key is the column and the value is the sort direction (ASC/DESC).
      *
      * @var array
      */
     public array $sort = [];
-
-    /**
-     * The order (column names) that the sort columns will be added to the read.
-     *
-     * @var string[]
-     */
-    public array $sort_order = [];
 
     /**
      * Search columns for the given search (if any).
@@ -104,7 +87,7 @@ final class CrudRead
     {
         $this->query = $query;
         foreach ($_POST as $key => $value) {
-            if (in_array($key, ['type', 'page', 'limit', 'search', 'sort', 'sort_order'])) {
+            if (in_array($key, ['page', 'limit', 'search', 'sort'])) {
                 $this->$key = $value;
             }
         }
@@ -125,32 +108,6 @@ final class CrudRead
             }
             $this->search_columns[] = $column;
         }
-        return $this;
-    }
-
-    /**
-     * Map sort columns to their actual column names.
-     *
-     * $columns is an array of strings for mapping the columns.
-     *
-     * The key of each entry, should be the actual column name, and the value is given sort column ID from the client.
-     *
-     * @param array $columns
-     * @return CrudRead
-     * @throws Exception
-     */
-    public function sortMap(array $columns): CrudRead
-    {
-        $sort = [];
-        foreach ($columns as $column => $given) {
-            if (isset($this->sort[$given])) {
-                $sort[$column] = $this->sort[$given];
-                if (in_array($given, $this->sort_order)) {
-                    $this->sort_order[array_search($given, $this->sort_order)] = $column;
-                }
-            }
-        }
-        $this->sort = array_replace($this->sort, $sort);
         return $this;
     }
 
@@ -178,19 +135,16 @@ final class CrudRead
          * Add the search clause to the query
          */
         $query = clone $this->query;
-        if ($this->sort_order) {
+        if ($this->sort) {
             $query->clearOrderBy();
         }
-        foreach ($this->sort_order as $column) {
-            if (!isset($this->sort[$column])) {
-                throw new Exception('Sort column not found in sort order');
-            }
-            $query->orderBy($column, $this->sort[$column]);
+        foreach ($this->sort as $column => $direction) {
+            $query->orderBy($column, $direction);
         }
         if ($this->search && $this->search_columns) {
             $query->where(function ($query) {
                 foreach ($this->search_columns as $column) {
-                    $query->orWhere($column, 'LIKE', "%{$this->search}%");
+                    $query->orWhere($column, 'LIKE', "%$this->search%");
                 }
             });
         }
@@ -210,13 +164,6 @@ final class CrudRead
             $offset = $total - $this->limit;
         }
         $list = $list_query->limit($this->limit, $offset)->execute();
-        foreach ($list as $row) {
-            if ($this->type === 'group') {
-                if (!array_key_exists('title', $row)) {
-                    throw new Exception('CRUD read of the "group" type must contain a "title"');
-                }
-            }
-        }
 
         /**
          * Return the list with the total
