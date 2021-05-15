@@ -14,7 +14,7 @@ file that was distributed with this source code.
   <div class="aui table">
 
     <!-- Icon for showing the modal for selecting which columns to view -->
-    <div class="options">
+    <div v-if="interactive" class="options">
       <i
         class="fas fa-columns"
         title="Select Columns To View"
@@ -70,11 +70,9 @@ file that was distributed with this source code.
             ref="header"
             @mousedown.self="runSort(column)"
           >
-            <template>{{columnName(column)}}</template>
+            {{columnName(column)}}
             <i v-if="sortable" :class="sortIcon(column)" />
-            <div
-              @mousedown="handleResizeColumn($event, id)"
-            />
+            <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
           </th>
         </tr>
       </thead>
@@ -96,7 +94,7 @@ export default {
   props: {
 
     /**
-     * Data for the table.
+     * The table data to render in the form of a raw array of rows of data where each row is an object.
      *
      * @type {array}
      */
@@ -112,7 +110,7 @@ export default {
      */
     interactive: {
       type: Boolean,
-      default: true
+      default: false
     },
 
     /**
