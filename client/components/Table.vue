@@ -623,11 +623,18 @@ export default {
         background: darken($color-container, 5%)
 
     /* Interactive tables */
-    &.interactive tbody
-      user-select: none
+    &.interactive
 
-      tr:hover
-        cursor: pointer
-        background: lighten($color-warning, 35%)
+      /* Options offset */
+      th:last-of-type
+        padding-right: 2.5rem
+
+      /* No table selection */
+      tbody
+        user-select: none
+
+        tr:hover
+          cursor: pointer
+          background: lighten($color-warning, 35%)
 
 </style>
