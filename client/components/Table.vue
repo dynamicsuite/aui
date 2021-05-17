@@ -227,13 +227,18 @@ export default {
     },
 
     /**
-     * Local storage key for when saving the table layout on the client.
+     * Storage key for when saving the table layout for the client.
+     *
+     * Saving the layout will be set on in local storage and then broadcast to the root instance for
+     * handling saving via external source.
+     *
+     * Layouts saved on the server may go in window.dynamicsuite['custom']['aui_table'][storage_key].
      *
      * If not set or NULL, the layout will not be saved across refreshes.
      *
      * @type {string | null}
      */
-    local_storage_key: {
+    storage_key: {
       type: String | null,
       default: null
     },
@@ -423,8 +428,9 @@ export default {
         this.columns = this.default_columns;
       }
       this.show_columns_modal = false;
-      if (this.local_storage_key) {
-        localStorage.removeItem(this.local_storage_key);
+      if (this.storage_key) {
+        localStorage.removeItem(this.storage_key);
+        this.$root.$emit('aui-table-reset');
       }
     },
 
@@ -472,32 +478,39 @@ export default {
         return;
       }
       this.$set(this, 'columns', columns);
-      this.saveToLocalStorage();
+      this.saveLayout();
       this.hideColumnsModal();
     },
 
     /**
-     * Save the column layout to local storage.
+     * Save the column layout.
      *
      * @returns {undefined}
      */
-    saveToLocalStorage() {
-      if (!this.local_storage_key) {
+    saveLayout() {
+      if (!this.storage_key) {
         return;
       }
-      localStorage.setItem(this.local_storage_key, JSON.stringify(this.columns));
+      localStorage.setItem(this.storage_key, JSON.stringify(this.columns));
+      this.$root.$emit('aui-table-save', this.columns);
     },
 
     /**
-     * Get the saved layout from local storage.
+     * Get the saved column layout.
      *
      * @returns {array|boolean}
      */
-    getFromLocalStorage() {
-      if (!this.local_storage_key) {
+    getSavedLayout() {
+      if (!this.storage_key) {
         return false;
       }
-      const columns = localStorage.getItem(this.local_storage_key);
+      let columns = null;
+      let server_columns = DynamicSuite.readCustomData('aui_table');
+      if (server_columns && server_columns.hasOwnProperty(this.storage_key)) {
+        columns = server_columns[this.storage_key];
+      } else {
+        columns = localStorage.getItem(this.storage_key);
+      }
       if (columns) {
         return JSON.parse(columns);
       } else {
@@ -509,7 +522,7 @@ export default {
   mounted() {
 
     // Set the columns to view on load
-    const columns = this.getFromLocalStorage();
+    const columns = this.getSavedLayout();
     if (!columns) {
       this.resetColumns();
     } else {
