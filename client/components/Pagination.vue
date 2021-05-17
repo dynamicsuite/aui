@@ -16,7 +16,7 @@ file that was distributed with this source code.
     <!-- Display range text -->
     <div class="range">
       <label>Showing</label>
-      <select :disabled="disabled" @change="updateLimit" v-model="limit">
+      <select :disabled="disabled" @change="updateLimit" :value="limit">
         <option
           v-for="range_limit in list_range_limit"
           :key="'page-limit-' + range_limit"
