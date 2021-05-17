@@ -16,12 +16,12 @@ file that was distributed with this source code.
     <!-- Display range text -->
     <div class="range">
       <label>Showing</label>
-      <select :disabled="disabled" @change="updateLimit">
+      <select :disabled="disabled" @change="updateLimit" v-model="limit">
         <option
-          v-for="limit in list_range_limit"
-          :key="'page-limit-' + limit"
-          :value="limit"
-          v-html="limit"
+          v-for="range_limit in list_range_limit"
+          :key="'page-limit-' + range_limit"
+          :value="range_limit"
+          v-html="range_limit"
         />
       </select>
       <span>from {{from.toLocaleString()}} to {{to.toLocaleString()}} of {{total.toLocaleString()}}</span>
