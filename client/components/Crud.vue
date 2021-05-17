@@ -11,237 +11,137 @@ file that was distributed with this source code.
 -->
 
 <template>
-  <div class="aui crud aui-container primary">
+  <div class="aui crud">
 
-    <!-- Fatal error notice -->
+    <!-- Error notice -->
     <aui-notice
-      v-if="show_error"
+      v-if="error"
       type="failure"
-      icon="fas fa-exclamation-triangle"
-      text="A server error has occurred"
-      subtext="Please reload the page"
+      :icon="error_icon"
+      :text="error_text"
+      :subtext="error_subtext"
     />
 
     <!-- Created confirmation notice -->
     <aui-notice
-      v-if="show_created_confirmation"
+      v-else-if="created"
       type="success"
-      icon="fas fa-check-circle"
+      :icon="form_created_confirmation_icon"
       :text="form_created_confirmation_text"
     />
 
-    <!-- List view (default)  -->
-    <div v-if="show_list" class="list">
+    <!-- Initial list read -->
+    <aui-notice
+      v-else-if="form_loading && overlay"
+      :icon="form_loading_icon"
+      :text="form_loading_text"
+    />
 
-      <!-- List header area -->
-      <div class="header">
+    <!-- CRUD list -->
+    <aui-crud-list
+      v-else-if="!show_form && !setup"
+      :title="list_title"
+      :show_create="list_show_create"
+      :create_icon="list_create_icon"
+      :show_search="list_show_search"
+      :search_placeholder="list_search_placeholder"
+      :no_data_icon="list_no_data_icon"
+      :no_data_text="list_no_data_text"
+      :loading_icon="list_loading_icon"
+      :loading_text="list_loading_text"
+      :calling="calling"
+      :overlay="overlay"
+      :type="list_type"
+      :storable_key="storable_key"
+      :group_icon_key="list_group_icon_key"
+      :group_title_key="list_group_title_key"
+      :group_subtext_key="list_group_subtext_key"
+      :table_default_columns="list_table_default_columns"
+      :table_column_names="list_table_column_names"
+      :table_column_format="list_table_column_format"
+      :table_storage_key="list_table_storage_key"
+      :read_api="list_read_api"
+      :read_optional_data="list_read_optional_data"
+      :range_limit="list_range_limit"
+      :search_delay="list_search_delay"
+      :refresh_interval="list_refresh_interval"
+      :get_key_limit="list_get_key_limit"
+      :get_key_page="list_get_key_page"
+      :get_key_search="list_get_key_search"
+      :get_key_sort="list_get_key_sort"
+      @update:calling="$emit('update:calling', $event)"
+      @error="handleError"
+      @show-create="handleFormCreate"
+      @list-interaction="handleFormUpdate"
+    >
+      <template #actions>
+        <slot name="list-actions" :overlay="overlay" />
+      </template>
+    </aui-crud-list>
 
-        <!-- List title area -->
-        <div class="title">
-          <h2><slot name="list-title">CRUD List</slot></h2>
-        </div>
-
-        <!-- List action area -->
-        <div class="action">
-          <slot name="list-buttons" :readList="readList" />
-          <aui-button
-            v-if="list_show_create_button"
-            :disabled="state.overlay"
-            @click="setupCreate"
-          >
-            <i class="fas fa-plus"></i>
-          </aui-button>
-          <aui-input
-            v-if="list_show_search"
-            placeholder="Search"
-            :disabled="state.overlay"
-            v-model="list.search"
-            @input="runSearch"
-          />
-        </div>
-
-      </div>
-
-      <!-- The actual data display area for the list -->
-      <div class="data">
-
-        <!-- No data in list -->
-        <aui-notice
-          v-if="!has_list_data && !calling"
-          :icon="list_empty_icon"
-          :text="list_empty_text"
-          :subtext="list_empty_subtext"
-        />
-
-        <!-- The overlay to display when the list is loading -->
-        <div v-if="state.overlay" :class="list_overlay_classes">
-          <aui-notice
-            :icon="list_overlay_icon"
-            :text="list_overlay_text"
-            :subtext="list_overlay_subtext"
-          />
-        </div>
-
-        <!-- Group mode -->
-        <aui-list-group v-if="list_is_group" :list="list_group_data" @click="emitListClick" />
-
-        <!-- Table mode -->
-        <table v-if="list_is_table" :class="list_table_classes">
-          <thead>
-          <tr>
-            <th
-              v-for="(column, key, index) in list_table_columns"
-              :key="'header-' + key"
-              :class="listTableColumnClasses(key)"
-              ref="table_headers"
-              @mousedown.self="sortList(key)"
-            >
-              {{listTableColumnName(column)}}
-              <i
-                v-if="isSortedAsc(key)"
-                class="fas fa-sort-amount-down-alt"
-                @mousedown.self="sortList(key)"
-              />
-              <i
-                v-else-if="isSortedDesc(key)"
-                class="fas fa-sort-amount-down"
-                @mousedown.self="sortList(key)"
-              />
-              <i
-                v-else class="fas fa-sort"
-                @mousedown.self="sortList(key)"
-              />
-              <div
-                v-if="displayDraggable(index)"
-                class="resize-element"
-                @dblclick="doubleResetHeader(index)"
-                @mousedown="dragToResize($event, index)"
-              />
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(row, key) in list_table_data" :key="'row-' + key" @click="emitListClick(row.id)">
-            <td
-              v-for="(value, column) in row.data"
-              :key="'column-' + column"
-              :class="listTableColumnClasses(column)"
-              v-html="listTableColumnFormat(column, value)"
-            />
-          </tr>
-          </tbody>
-        </table>
-
-      </div>
-
-      <!-- Pagination range and buttons -->
-      <aui-pagination
-        v-if="has_list_data"
-        :disabled="state.overlay"
-        :page.sync="list.page"
-        :total="list.total"
-        :limit.sync="list.limit"
-        :list_range_limit="list_range_limit"
-        @paginate="readList"
-      />
-
-    </div>
-
-    <!-- Form view -->
-    <div v-if="show_form" class="form">
-
-      <!-- Form tabs if multiple views -->
-      <aui-tabs v-if="view_show_tabs" :tabs="view_tabs" :tab.sync="tab" @change="handleTabChange" />
-
-      <!-- Build form slots -->
-      <div class="body" v-for="(form, key) in form_views" :key="'view-' + key">
-        <slot
-          v-if="isActiveTab(key)"
-          :form="form"
-          :name="key"
-          :overlay="state.overlay"
-          :showForm="showForm"
-          :runCreate="runCreate"
-          :runUpdate="runUpdate"
-          :runDelete="runDelete"
-          :closeModals="closeModals"
-        />
-      </div>
-
-      <!-- Form bottom action bar -->
-      <div v-if="view_show_action_bar" class="action">
-
-        <!-- Back button -->
+    <!-- CRUD form -->
+    <div v-else-if="!setup" class="form">
+      <slot name="form" :overlay="overlay" />
+      <div class="actions">
         <aui-button
+          v-if="form_show_back_button"
           type="secondary"
-          :disabled="state.overlay"
-          text="Back"
-          @click="showForm(false)"
+          :disabled="overlay"
+          :text="form_action_back_text"
+          @click="runBack"
         />
-
-        <!-- Primary action area -->
-        <div class="primary">
-          <i v-if="state.show_failure_tick" class="tic fas fa-times" />
-          <i v-if="state.show_success_tick" class="tic fas fa-check" />
+        <div v-if="!form_for_create && form_update_api && !form_loading" class="btn-group">
+          <i v-if="show_tick" :class="tick_classes" />
           <aui-button
-            v-if="!is_valid"
-            :loading="state.overlay"
-            loading_text="Creating..."
-            text="Create"
-            @click="runCreate"
-          />
-          <aui-button
-            v-else-if="!list_show_delete_button"
-            :loading="form_update_is_running"
-            loading_text="Updating..."
-            text="Update"
+            :text="form_action_update_text"
+            :loading="overlay"
+            :loading_text="form_action_update_loading_text"
             @click="runUpdate"
           />
-          <div v-else class="btn-group">
-            <aui-button
-              :loading="form_update_is_running"
-              loading_text="Updating..."
-              text="Update"
-              @click="runUpdate"
-            />
-            <aui-button-drop
-              :dropdown="form_delete_dropdown"
-              :disabled="state.overlay"
-              @delete="runDelete"
-            />
-          </div>
+          <aui-button-drop
+            v-if="form_delete_api"
+            relative_to=".form"
+            :disabled="overlay"
+            :dropdown="{delete: this.form_action_delete_text}"
+            @delete="promptDelete"
+          />
         </div>
-
+        <aui-button
+          v-if="form_for_create && form_create_api && !form_loading"
+          :text="form_action_create_text"
+          :loading="overlay"
+          :loading_text="form_action_create_loading_text"
+          @click="runCreate"
+        />
       </div>
-
-      <!-- Delete confirm modal -->
-      <aui-modal type="failure" title="Confirm Delete" :show.sync="state.show_delete_modal">
-        <template #content>
-          <p>{{form_delete_text}}</p>
-          <aui-input label="Type DELETE to confirm" v-model="delete_confirm" />
-          <aui-alert v-if="error.delete_protect" type="failure" :text="error.delete_protect" />
-        </template>
-        <template #left>
-          <aui-button
-            type="secondary"
-            :disabled="state.overlay"
-            text="Cancel"
-            @click="closeModals"
-          />
-        </template>
-        <template #right>
-          <aui-button
-            type="failure"
-            :disabled="form_delete_disabled"
-            :loading="state.overlay"
-            loading_text="Deleting..."
-            text="Delete"
-            @click="runDelete(true)"
-          />
-        </template>
-      </aui-modal>
-
     </div>
+
+    <!-- Delete confirm modal -->
+    <aui-modal type="failure" :title="form_action_delete_title" :show.sync="show_delete_modal">
+      <template #content>
+        <slot name="delete-prompt"><p>{{form_action_delete_prompt}}</p></slot>
+        <aui-input label="Type DELETE to confirm" class="delete-confirm-input" v-model="delete_confirm" />
+        <aui-alert v-if="delete_protect" type="failure" :text="delete_protect" />
+      </template>
+      <template #left>
+        <aui-button
+          type="secondary"
+          :disabled="overlay"
+          :text="form_action_delete_cancel_text"
+          @click="runCancelDelete"
+        />
+      </template>
+      <template #right>
+        <aui-button
+          type="failure"
+          :disabled="!delete_confirmed"
+          :loading="overlay"
+          :loading_text="form_action_delete_loading_text"
+          :text="form_action_delete_text"
+          @click="runDelete"
+        />
+      </template>
+    </aui-modal>
 
   </div>
 </template>
@@ -252,155 +152,284 @@ export default {
   props: {
 
     /**
-     * The type of the list (group or table supported currently).
+     * FontAwesome icon class to display for the error notice.
      *
      * @type {string}
      */
-    list_type: {
+    error_icon: {
       type: String,
-      default: 'group',
-      validator: value => {
-        return ['group', 'table'].indexOf(value) !== -1;
-      }
+      default: 'fas fa-exclamation-triangle'
     },
 
     /**
-     * If the related data presented in the list is editable.
-     *
-     * If the list is editable, clicking on rows will change the view to the edit view.
-     *
-     * @type {boolean}
-     */
-    list_can_go_to_form: {
-      type: Boolean,
-      default: true
-    },
-
-    /**
-     * If the list is interactive.
-     *
-     * If TRUE, hover and cursor effects will be added to the table.
-     *
-     * @type {boolean}
-     */
-    list_interactive: {
-      type: Boolean,
-      default: true
-    },
-
-    /**
-     * Columns to display when using table mode. The key must be the column name and the value is a sub-object
-     * with a label key which will display as the label on the column, and an optional format key to define a
-     * value formatter.
-     *
-     * @type {object}
-     */
-    list_table_columns: {
-      type: Object,
-      default: () => {},
-      validator: value => {
-        for (const key in value) {
-          if (typeof value[key] === 'object') {
-            if (typeof value[key]['label'] !== 'string') {
-              return false;
-            }
-            if (typeof value[key]['format'] !== 'undefined' && typeof value[key]['format'] !== 'function') {
-              return false;
-            }
-          }
-        }
-        return true;
-      }
-    },
-
-    /**
-     * The FontAwesome icon class to display with the notice when no data is in the list in the list view.
+     * Text to display for the error notice.
      *
      * @type {string}
      */
-    list_empty_icon: {
+    error_text: {
       type: String,
-      default: 'fas fa-ban'
+      default: 'A server error has occurred'
     },
 
     /**
-     * The text to display with the notice when no data is in the list in the list view.
-     *
-     * @type {string | null}
-     */
-    list_empty_text: {
-      type: String | null,
-      default: 'No data found'
-    },
-
-    /**
-     * The subtext to display with the notice when no data is in the list in the list view.
-     *
-     * @type {string | null}
-     */
-    list_empty_subtext: {
-      type: String | null,
-      default: null
-    },
-
-    /**
-     * The FontAwesome icon class to display with the notice when the loading overlay is present in the list view.
+     * Subtext to display for the error notice.
      *
      * @type {string}
      */
-    list_overlay_icon: {
+    error_subtext: {
       type: String,
-      default: 'fas fa-circle-notch fa-spin'
+      default: 'Please reload the page'
     },
 
     /**
-     * The text to display with the notice when the loading overlay is present in the list view.
+     * Storable key for entries.
      *
-     * @type {string | null}
+     * @type {string}
      */
-    list_overlay_text: {
-      type: String | null,
-      default: null
+    storable_key: {
+      type: String,
+      default: 'id'
     },
 
     /**
-     * The subtext to display with the notice when the loading overlay is present in the list view.
+     * URL GET key for which view CRUD is on.
      *
-     * @type {string | null}
+     * A value of 0 means "show create" where as any other value will read the storable of that value and show the
+     * update page.
+     *
+     * @type {string}
      */
-    list_overlay_subtext: {
-      type: String | null,
-      default: null
+    get_key_id: {
+      type: String,
+      default: 'crud'
     },
 
     /**
-     * If the create button should be shown in the list view.
+     * Calling state of any APIs.
+     *
+     * Must be synced to parent.
      *
      * @type {boolean}
      */
-    list_show_create_button: {
+    calling: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
+     * Title of the list.
+     *
+     * @type {string}
+     */
+    list_title: {
+      type: String,
+      default: 'CRUD List'
+    },
+
+    /**
+     * If the create button should be shown on the list.
+     *
+     * @type {boolean}
+     */
+    list_show_create: {
       type: Boolean,
       default: true
     },
 
     /**
-     * If the delete button should be shown in the list view.
+     * The FontAwesome icon class to show on the list create button (if visible).
      *
-     * @type {boolean}
+     * @type {string}
      */
-    list_show_delete_button: {
-      type: Boolean,
-      default: true
+    list_create_icon: {
+      type: String,
+      default: 'fas fa-plus'
     },
 
     /**
-     * If the search should be shown in the list view.
+     * If the search should be shown on the list.
      *
      * @type {boolean}
      */
     list_show_search: {
       type: Boolean,
       default: true
+    },
+
+    /**
+     * Placeholder for the list search input (if visible).
+     *
+     * @type {string}
+     */
+    list_search_placeholder: {
+      type: String,
+      default: 'Search'
+    },
+
+    /**
+     * The FontAwesome icon class to show when there is no data in the list.
+     *
+     * @type {string}
+     */
+    list_no_data_icon: {
+      type: String,
+      default: 'fas fa-ban'
+    },
+
+    /**
+     * The text to display under the icon when there is no data in the list.
+     *
+     * @type {string}
+     */
+    list_no_data_text: {
+      type: String,
+      default: 'No data'
+    },
+
+    /**
+     * The FontAwesome icon class to show when the list is loading.
+     *
+     * @type {string}
+     */
+    list_loading_icon: {
+      type: String,
+      default: 'fas fa-circle-notch fa-spin'
+    },
+
+    /**
+     * The text to display under the icon when the list is loading.
+     *
+     * @type {string|null}
+     */
+    list_loading_text: {
+      type: String | null,
+      default: 'Loading...'
+    },
+
+    /**
+     * The type of the list.
+     *
+     * Supports "group" or "table".
+     *
+     * @type {string}
+     */
+    list_type: {
+      type: String,
+      default: 'table',
+      validator: value => {
+        return ['group', 'table'].indexOf(value) !== -1;
+      }
+    },
+
+    /**
+     * Icon column to use in the data when the list in group mode.
+     *
+     * @type {string}
+     */
+    list_group_icon_key: {
+      type: String,
+      default: 'icon'
+    },
+
+    /**
+     * Title column to use in the data when the list is in group mode.
+     *
+     * @type {string}
+     */
+    list_group_title_key: {
+      type: String,
+      default: 'title'
+    },
+
+    /**
+     * Subtext column to use in the data when the list is in group mode.
+     *
+     * @type {string}
+     */
+    list_group_subtext_key: {
+      type: String,
+      default: 'subtext'
+    },
+
+    /**
+     * The default columns to show on the table when the list is in table mode.
+     *
+     * @type {string[]}
+     */
+    list_table_default_columns: {
+      type: Array,
+      default: () => []
+    },
+
+    /**
+     * Column name map when the list is in table mode.
+     *
+     * This is an object where each key is the true column name and the value is the displayed value.
+     *
+     * @type {object}
+     */
+    list_table_column_names: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Column value format map when the list is in table mode.
+     *
+     * This is an object where each key is the true column name and the value is a function.
+     *
+     * The function may take one "value" where this is the true value, and returns the displayed value.
+     *
+     * Example:
+     *
+     * {
+     *   column_1: value => {
+     *     return 'formatted-${value}';
+     *   }
+     * }
+     *
+     * @type {object}
+     */
+    list_table_column_format: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Storage key for when saving the table layout for the client.
+     *
+     * Saving the layout will be set on in local storage and then broadcast to the root instance for
+     * handling saving via external source.
+     *
+     * Layouts saved on the server may go in window.dynamicsuite['custom']['aui_table'][storage_key].
+     *
+     * If not set or NULL, the layout will not be saved across refreshes.
+     *
+     * @type {string | null}
+     */
+    list_table_storage_key: {
+      type: String | null,
+      default: null
+    },
+
+    /**
+     * Read API for reading the list data.
+     *
+     * @type {string}
+     */
+    list_read_api: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * Optional data to send along with the list read API.
+     *
+     * @type {object}
+     */
+    list_read_optional_data: {
+      type: Object,
+      default: () => ({})
     },
 
     /**
@@ -416,495 +445,431 @@ export default {
     },
 
     /**
-     * The API called to read the list.
+     * The delay from inactivity in the search box until the list refreshes (in milliseconds).
      *
-     * The API must return data in the standard CRUD format.
+     * @type {number}
+     */
+    list_search_delay: {
+      type: Number,
+      default: 300
+    },
+
+    /**
+     * List refresh interval for refreshing the list automatically (re-runs the read API).
+     *
+     * Given in seconds, a value of NULL will never refresh.
+     */
+    list_refresh_interval: {
+      type: Number | null,
+      default: null
+    },
+
+    /**
+     * URL GET key for list limit.
      *
      * @type {string}
      */
-    list_api_read: {
+    list_get_key_limit: {
       type: String,
-      required: true
+      default: 'limit'
     },
 
     /**
-     * Optional data to send to the read list API when called.
+     * URL GET key for list page.
      *
-     * @type {object}
+     * @type {string}
      */
-    list_api_read_optional_data: {
-      type: Object,
-      default: () => {}
+    list_get_key_page: {
+      type: String,
+      default: 'page'
     },
 
     /**
-     * Form data container.
+     * URL GET key for list search.
+     *
+     * @type {string}
+     */
+    list_get_key_search: {
+      type: String,
+      default: 'search'
+    },
+
+    /**
+     * URL GET key for list sort.
+     *
+     * @type {string}
+     */
+    list_get_key_sort: {
+      type: String,
+      default: 'sort'
+    },
+
+    /**
+     * The actual form data sent to APIs.
      *
      * @type {object}
      */
     form: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
-     * Input feedback container.
+     * Secure fields that are cleared after API calls (such as passwords).
      *
-     * @type {object}
+     * This is an array of "field" names.
+     *
+     * @type {array}
+     */
+    form_secure_fields: {
+      type: Array,
+      default: () => []
+    },
+
+    /**
+     * Form feedback.
      */
     feedback: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
-     * If a calling state is preset.
+     * The FontAwesome icon class to show when the form is loading.
      *
-     * @type {boolean}
+     * @type {string}
      */
-    calling: {
-      type: Boolean,
+    form_loading_icon: {
+      type: String,
+      default: 'fas fa-circle-notch fa-spin'
+    },
+
+    /**
+     * The text to display under the icon when the form is loading.
+     *
+     * @type {string|null}
+     */
+    form_loading_text: {
+      type: String | null,
+      default: 'Loading...'
+    },
+
+    /**
+     * API to call to pre-fill the form when creating a new storable.
+     *
+     * @type {string|null}
+     */
+    form_create_setup_api: {
+      type: String | null,
+      default: null
+    },
+
+    /**
+     * Additional data to send along with the form create setup API.
+     *
+     * @type {object}
+     */
+    form_create_setup_api_data: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * API to call to create a new storable.
+     *
+     * @type {string|null}
+     */
+    form_create_api: {
+      type: String | null,
+      default: null
+    },
+
+    /**
+     * Additional data to send along with the form create API.
+     *
+     * @type {object}
+     */
+    form_create_api_data: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * API to call to read a storable to pre-fill the form when editing/viewing.
+     *
+     * @type {string}
+     */
+    form_read_api: {
+      type: String,
       required: true
     },
 
     /**
-     * The API called to read the form for the interacted row ID.
-     *
-     * @type {string}
-     */
-    form_api_read: {
-      type: String
-    },
-
-    /**
-     * Optional data to send to the read form API when called.
+     * Additional data to send along with the form read API.
      *
      * @type {object}
      */
-    form_api_read_optional_data: {
+    form_read_api_data: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
-     * The API called to setup the create form.
+     * API to call to update the active storable.
      *
-     * @type {string}
+     * @type {string|null}
      */
-    form_api_create_setup: {
-      type: String
+    form_update_api: {
+      type: String | null,
+      default: null
     },
 
     /**
-     * Optional data to send to the create setup API when called.
+     * Additional data to send along with the form update API.
      *
      * @type {object}
      */
-    form_api_create_setup_optional_data: {
+    form_update_api_data: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
-     * The API called to create the storable.
+     * API to call to delete the active storable.
      *
-     * @type {string}
+     * @type {string|null}
      */
-    form_api_create: {
-      type: String
+    form_delete_api: {
+      type: String | null,
+      default: null
     },
 
     /**
-     * Optional data to send to the create API when called.
+     * Additional data to send along with the form delete API.
      *
      * @type {object}
      */
-    form_api_create_optional_data: {
+    form_delete_api_data: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
 
     /**
-     * The API called to update the form for the interacted row ID.
+     * If the form actions should be shown.
+     *
+     * @type {boolean}
+     */
+    form_show_actions: {
+      type: Boolean,
+      default: true
+    },
+
+    /**
+     * If the back button should be show on the form actions.
+     *
+     * @type {boolean}
+     */
+    form_show_back_button: {
+      type: Boolean,
+      default: true
+    },
+
+    /**
+     * Text to display on the form action for "Back".
      *
      * @type {string}
      */
-    form_api_update: {
-      type: String
+    form_action_back_text: {
+      type: String,
+      default: 'Back'
     },
 
     /**
-     * Optional data to send to the update form API when called.
-     *
-     * @type {object}
-     */
-    form_api_update_optional_data: {
-      type: Object,
-      default: () => {}
-    },
-
-    /**
-     * The API called to delete the form for the interacted row ID.
+     * Text to display on the form action for "Update".
      *
      * @type {string}
      */
-    form_api_delete: {
-      type: String
+    form_action_update_text: {
+      type: String,
+      default: 'Update'
     },
 
     /**
-     * Optional data to send to the delete form API when called.
+     * Text to display on the form action for "Update" when loading.
      *
-     * @type {object}
+     * @type {string}
      */
-    form_api_delete_optional_data: {
-      type: Object,
-      default: () => {}
+    form_action_update_loading_text: {
+      type: String,
+      default: 'Updating...'
     },
 
     /**
-     * Confirmation text when a new storable is created.
+     * Text to display on the form action for "Create".
+     *
+     * @type {string}
+     */
+    form_action_create_text: {
+      type: String,
+      default: 'Create'
+    },
+
+    /**
+     * Text to display on the form action for "Create" when loading.
+     *
+     * @type {string}
+     */
+    form_action_create_loading_text: {
+      type: String,
+      default: 'Creating...'
+    },
+
+    /**
+     * FontAwesome icon class to display on the created confirmation splash screen.
+     *
+     * @type {string}
+     */
+    form_created_confirmation_icon: {
+      type: String,
+      default: 'fas fa-check-circle'
+    },
+
+    /**
+     * Text to display on the created confirmation splash screen.
      *
      * @type {string}
      */
     form_created_confirmation_text: {
       type: String,
-      default: 'Created'
+      default: 'Created!'
     },
 
     /**
-     * Storable key for mapping the create return ID to the form ID.
+     * Text to display on the form action for "Delete" when canceling.
      *
      * @type {string}
      */
-    form_storable_key: {
+    form_action_delete_cancel_text: {
       type: String,
-      default: 'id'
+      default: 'Cancel'
     },
 
     /**
-     * Text to display when deleting a storable (shows in the modal).
+     * Text to display on the form action for "Delete".
      *
      * @type {string}
      */
-    form_delete_text: {
+    form_action_delete_text: {
+      type: String,
+      default: 'Delete'
+    },
+
+    /**
+     * Text to display on the form action for "Delete" when loading.
+     *
+     * @type {string}
+     */
+    form_action_delete_loading_text: {
+      type: String,
+      default: 'Deleting...'
+    },
+
+    /**
+     * Text to display on the title of the modal when deleting a storable.
+     *
+     * @type {string}
+     */
+    form_action_delete_title: {
+      type: String,
+      default: 'Confirm Delete'
+    },
+
+    /**
+     * Text to display on the modal body when deleting a storable.
+     *
+     * @type {string}
+     */
+    form_action_delete_prompt: {
       type: String,
       default: 'Are you sure you want to delete?'
     },
 
     /**
-     * Secure fields such as passwords that are reset after create/update/delete actions.
+     * FontAwesome icon class to show on the "success" feedback tick.
      *
-     * @type {string[]}
+     * @type {string}
      */
-    secure_fields: {
-      type: Array,
-      default: () => [],
-      validator: value => {
-        for (const field of value) {
-          if (typeof field !== 'string') {
-            return false;
-          }
-        }
-        return true;
-      }
+    form_feedback_success_tick_icon: {
+      type: String,
+      default: 'fas fa-check'
     },
 
     /**
-     * Views for the form view.
+     * FontAwesome icon class to show on the "failure" feedback tick.
      *
-     * The key of each entry is the view ID that is used for the slot name and tab name. If the value is a string,
-     * the string will be the name of the view that is rendered. If the value is an object, you can define extra
-     * parameters such as show_action_bar. This sub-object MUST contain a name property as well to define the
-     * rendered name.
-     *
-     * @type {object}
+     * @type {string}
      */
-    views: {
-      type: Object,
-      default: () => {},
-      validator: value => {
-        for (const view in value) {
-          if (typeof value[view] !== 'object' && typeof value[view] !== 'string') {
-            return false;
-          }
-          if (typeof value[view] === 'object') {
-            if (typeof value[view].name !== 'string') {
-              return false;
-            }
-            if (
-                typeof value[view].show_action_bar !== 'undefined' &&
-                typeof value[view].show_action_bar !== 'boolean'
-            ) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }
+    form_feedback_failure_tick_icon: {
+      type: String,
+      default: 'fas fa-times'
     }
 
   },
   data() {
     return {
-      list: {
-        data: [],
-        limit: 0,
-        total: 0,
-        page: 1,
-        search_timer: null,
-        search: null,
-        sort: {},
-        sort_order: []
-      },
-      tab: null,
-      form_delete_dropdown: {
-        delete: 'Delete'
-      },
+      setup: true,
+      show_form: false,
+      form_loading: false,
+      error: false,
+      created: false,
+      overlay: false,
+      show_delete_modal: false,
       delete_confirm: null,
-      state: {
-        overlay: false,
-        show_form: false,
-        show_delete_modal: false,
-        show_failure_tick: false,
-        show_success_tick: false,
-        show_created_confirmation: false
-      },
-      error: {
-        server: false,
-        delete_protect: null
-      },
-      page_state: {
-        show_create: 0,
-        show_storable: 0,
-        tab_index: 0
-      }
+      delete_protect: null,
+      show_success_tick: false,
+      show_failure_tick: false
     }
   },
   computed: {
 
     /**
-     * If the error notice should be shown (fatal error).
+     * If the form is for creating (or updating if false).
      *
      * @returns {boolean}
      */
-    show_error() {
-      return this.error.server;
+    form_for_create() {
+      return !this.form[this.storable_key];
     },
 
     /**
-     * If the list should be shown.
+     * If the delete is confirmed.
      *
      * @returns {boolean}
      */
-    show_list() {
-      return !this.error.server && !this.state.show_form && !this.state.show_created_confirmation;
+    delete_confirmed() {
+      return this.delete_confirm === 'DELETE';
     },
 
     /**
-     * If the form should be shown.
+     * If either tick mark should be shown on the form.
      *
      * @returns {boolean}
      */
-    show_form() {
-      return !this.error.server && this.state.show_form && !this.state.show_created_confirmation;
+    show_tick() {
+      return this.show_success_tick || this.show_failure_tick;
     },
 
     /**
-     * If the created confirmation notice should be shown.
+     * Classes to apply to the form feedback ticks.
      *
-     * @returns {boolean}
+     * @returns {undefined}
      */
-    show_created_confirmation() {
-      return !this.error.server && this.state.show_created_confirmation;
-    },
-
-    /**
-     * If there is data in the list.
-     *
-     * @returns {boolean}
-     */
-    has_list_data() {
-      return this.list.data.length > 0;
-    },
-
-    /**
-     * If the list is in group mode.
-     *
-     * @returns {boolean}
-     */
-    list_is_group() {
-      return this.has_list_data && this.list_type === 'group';
-    },
-
-    /**
-     * If the list is in table mode.
-     *
-     * @returns {boolean}
-     */
-    list_is_table() {
-      return this.has_list_data && this.list_type === 'table';
-    },
-
-    /**
-     * List data if using "group" mode.
-     *
-     * @returns [{
-     *   {icon: string},
-     *   {title: string},
-     *   {subtext: string},
-     *   {value: number}
-     * }]
-     */
-    list_group_data() {
-      const list = [];
-      if (this.list_type !== 'group') {
-        return list;
-      }
-      for (const entry of this.list.data) {
-        list.push({
-          icon: entry.icon ? entry.icon : '',
-          title: entry.title,
-          subtext: entry.subtext,
-          value: entry[this.form_storable_key]
-        });
-      }
-      return list;
-    },
-
-    /**
-     * List data if using "table" mode.
-     *
-     * @returns {{
-     *   {id: number},
-     *   {data: object}
-     * }}
-     */
-    list_table_data() {
-      const list = [];
-      if (this.list_type !== 'table') {
-        return list;
-      }
-      for (const entry of this.list.data) {
-        const row = {
-          id: entry[this.form_storable_key],
-          data: {}
-        };
-        for (const column in this.list_table_columns) {
-          if (typeof entry[column] !== 'undefined') {
-            row.data[column] = entry[column];
-          }
-        }
-        list.push(row);
-      }
-      return list;
-    },
-
-    /**
-     * Classes for the loader/overlay when in the list view.
-     *
-     * @returns {
-     *   {overlay: boolean},
-     *   {empty: boolean}
-     * }
-     */
-    list_overlay_classes() {
+    tick_classes() {
       return {
-        overlay: true,
-        empty: this.list.data.length <= 0
-      };
-    },
-
-    /**
-     * Classes for the table.
-     *
-     * @returns {
-     *     {interactive: boolean}
-     * }
-     */
-    list_table_classes() {
-      return {
-        interactive: this.list_interactive || this.list_can_go_to_form
-      };
-    },
-
-    /**
-     * If the update call is running into an overlay state and not the delete running.
-     *
-     * @returns {boolean}
-     */
-    form_update_is_running() {
-      return this.state.overlay && !this.state.show_delete_modal;
-    },
-
-    /**
-     * Formatted views for use in rendering.
-     *
-     * @returns {{
-     *   {name: string},
-     *   {show_action_bar: boolean}
-     * }}
-     */
-    form_views() {
-      const views = {};
-      for (const view in this.views) {
-        views[view] = {
-          name: typeof this.views[view] === 'string' ? this.views[view] : this.views[view].name,
-          show_action_bar: typeof this.views[view].show_action_bar === 'boolean'
-              ? this.views[view].show_action_bar
-              : true
-        };
+        'feedback-tick': true,
+        [this.form_feedback_success_tick_icon]: this.show_success_tick,
+        [this.form_feedback_failure_tick_icon]: this.show_failure_tick
       }
-      return views;
-    },
-
-    /**
-     * If the actual delete button is disabled due to not matching the confirm input.
-     *
-     * @returns {boolean}
-     */
-    form_delete_disabled() {
-      return this.delete_confirm !== 'DELETE';
-    },
-
-    /**
-     * If the tabs should be shown.
-     *
-     * @returns {boolean}
-     */
-    view_show_tabs() {
-      return Object.keys(this.views).length > 1 && this.is_valid;
-    },
-
-    /**
-     * Get the AUI tab options object for when tabs are present.
-     *
-     * @returns {object}
-     */
-    view_tabs() {
-      const tabs = {};
-      for (const view in this.form_views) {
-        tabs[view] = this.form_views[view].name;
-      }
-      return tabs;
-    },
-
-    /**
-     * If the action bar should be shown.
-     *
-     * @returns {boolean}
-     */
-    view_show_action_bar() {
-      return this.form_views[this.tab].show_action_bar;
-    },
-
-    /**
-     * If the storable is valid (has ID).
-     *
-     * @returns {boolean}
-     */
-    is_valid() {
-      return !!this.form[this.form_storable_key];
     }
 
   },
@@ -917,11 +882,11 @@ export default {
       if (value) {
         setTimeout(() => {
           if (this.calling) {
-            this.state.overlay = true;
+            this.overlay = true;
           }
         }, 100);
       } else {
-        this.state.overlay = false;
+        this.overlay = false;
       }
     }
 
@@ -929,243 +894,12 @@ export default {
   methods: {
 
     /**
-     * Event handler for when a user tries to resize a header column in table view.
-     *
-     * @param {object} down_event - The mousedown event handler.
-     * @param {number} index - The column index.
-     * @returns {undefined}
-     */
-    dragToResize(down_event, index) {
-      let dragging = true;
-      let start_x = down_event.pageX;
-      let start_width = this.$refs.table_headers[index].offsetWidth;
-      let table_width = this.$refs.table_headers[0].closest('table').offsetWidth;
-      document.addEventListener('mousemove', event => {
-        let header_width = this.$refs.table_headers[0].closest('thead').offsetWidth;
-        if (dragging && (table_width >= header_width)) {
-          let new_width = start_width + (event.pageX - start_x);
-          this.$refs.table_headers[index].style.minWidth = `${new_width}px`;
-        }
-      });
-      document.addEventListener('mouseup', () => {
-        dragging = false;
-      });
-    },
-
-    /**
-     * Handler to reset the header column width on double click.
-     *
-     * @param {number} index - The column index.
-     * @returns {undefined}
-     */
-    doubleResetHeader(index) {
-      this.$refs.table_headers[index].style.minWidth = '';
-    },
-
-    /**
-     * Display handler for the draggable anchors in table view.
-     *
-     * @param {number} index - The column index.
-     * @returns {boolean}
-     */
-    displayDraggable(index) {
-      return index < Object.keys(this.list_table_columns).length - 1;
-    },
-
-    /**
-     * Read the list using the given list read API.
-     *
-     * @returns {undefined}
-     */
-    readList() {
-      if (this.calling) {
-        return;
-      }
-      const data = Object.assign({
-        type: this.list_type,
-        page: this.list.page,
-        limit: this.list.limit,
-        search: this.list.search,
-        sort: this.list.sort,
-        sort_order: this.list.sort_order
-      }, this.list_api_read_optional_data);
-      this.$emit('update:calling', true);
-      DynamicSuite.call(this.list_api_read, data, response => {
-        switch (response.status) {
-          case 'OK':
-            this.list.data = response.data.list;
-            this.list.total = response.data.total;
-            this.$emit('update:calling', false);
-            break;
-          default:
-            this.error.server = true;
-        }
-      });
-    },
-
-    /**
-     * Run the search for the list.
-     *
-     * @returns {undefined}
-     */
-    runSearch() {
-      clearTimeout(this.list.search_timer);
-      this.list.search_timer = setTimeout(() => {
-        this.list.page = 1;
-        this.readList();
-      }, 300);
-    },
-
-    /**
-     * Get the value of the given table column name when in table list mode.
-     *
-     * @param {string|object} column - The column name.
-     * @returns {string}
-     */
-    listTableColumnName(column) {
-      if (typeof column === 'object') {
-        return column.label;
-      } else {
-        return column;
-      }
-    },
-
-    /**
-     * Format the value of the column using the format callback (if present).
-     *
-     * @param {string} column - The column name.
-     * @param {string} value - The column value.
-     * @returns {string}
-     */
-    listTableColumnFormat(column, value) {
-      if (typeof this.list_table_columns[column] === 'string') {
-        return value;
-      } else {
-        return this.list_table_columns[column].format(value);
-      }
-    },
-
-    /**
-     * Classes for the columns when in the table view, specifically for hiding on different screen types.
-     *
-     * @param {string} column - The column name.
-     * @returns {
-     *     {hide_on_ipad: boolean},
-     *     {hide_on_mobile: boolean}
-     * }
-     */
-    listTableColumnClasses(column) {
-      return {
-        hide_on_ipad: (
-            typeof this.list_table_columns[column] === 'object' &&
-            this.list_table_columns[column].hide_on_ipad === true
-        ),
-        hide_on_mobile: (
-            typeof this.list_table_columns[column] === 'object' &&
-            this.list_table_columns[column].hide_on_mobile === true
-        )
-      };
-    },
-
-    /**
-     * Sort the list by the clicked on header.
-     *
-     * The column will first be sorted ascending, on second click, descending, and on third click, removed.
-     *
-     * @param {string} column - The column name.
-     * @returns {undefined}
-     */
-    sortList(column) {
-      if (typeof this.list.sort[column] === 'undefined') {
-        this.list.sort_order.push(column);
-        this.$set(this.list.sort, column, 'ASC');
-      } else if (this.list.sort[column] === 'ASC') {
-        this.$set(this.list.sort, column, 'DESC');
-      } else {
-        this.list.sort_order.splice(this.list.sort_order.indexOf(column), 1);
-        this.$delete(this.list.sort, column);
-      }
-      this.list.page = 1;
-      this.readList();
-    },
-
-    /**
-     * If the given column is in the sorted columns list as ascending.
-     *
-     * @param {string} column - The column name.
-     * @returns {boolean}
-     */
-    isSortedAsc(column) {
-      return typeof this.list.sort[column] !== 'undefined' && this.list.sort[column] === 'ASC';
-    },
-
-    /**
-     * If the given column is in the sorted columns list as descending.
-     *
-     * @param {string} column - The column name.
-     * @returns {boolean}
-     */
-    isSortedDesc(column) {
-      return typeof this.list.sort[column] !== 'undefined' && this.list.sort[column] === 'DESC';
-    },
-
-    /**
-     * Emit a list click event and associated row ID.
-     *
-     * @param {number} id - The row ID.
-     * @returns {undefined}
-     */
-    emitListClick(id) {
-      this.$emit('list-click', id);
-    },
-
-    /**
-     * Clear any secured fields from the model.
-     *
-     * Useful for things such as passwords.
-     *
-     * @returns {undefined}
-     */
-    secureFields() {
-      const form = this.form;
-      for (const field of this.secure_fields) {
-        form[field] = null;
-      }
-      this.$emit('update:form', form);
-    },
-
-    /**
-     * If the form(s) should be shown.
-     *
-     * If show is true, the form will be shown and the list will be hidden.
-     *
-     * @param {boolean} show - If the form should be shown.
-     * @param {number} tab - The tab to update.
-     * @returns {undefined}
-     */
-    showForm(show, tab = 0) {
-      this.tab = Object.keys(this.views)[tab];
-      if (!show) {
-        this.page_state.show_create = 0;
-        this.page_state.show_storable = 0;
-        this.page_state.tab_index = 0;
-        this.readList();
-      } else {
-        this.page_state.show_create = this.is_valid ? 0 : 1;
-        this.page_state.show_storable = this.is_valid ? this.form[this.form_storable_key] : 0;
-        this.page_state.tab_index = Object.keys(this.views).indexOf(this.tab);
-      }
-      this.$emit('page-state-change');
-      this.state.show_form = show;
-    },
-
-    /**
-     * Reset the form.
+     * Reset the form to NULL values.
      *
      * @returns {undefined}
      */
     resetForm() {
-      const form = this.form;
+      const form = JSON.parse(JSON.stringify(this.form));
       for (const key in form) {
         form[key] = null;
       }
@@ -1173,123 +907,153 @@ export default {
     },
 
     /**
-     * Merge the given data with the form.
-     *
-     * @param {object} data - The data to merge.
-     * @returns {undefined}
-     */
-    setForm(data) {
-      this.resetFormFeedback();
-      this.$emit('update:form', Object.assign(this.form, data));
-    },
-
-    /**
-     * Setup the form for create.
+     * Secure the form, clearing "secured" form fields such as passwords.
      *
      * @returns {undefined}
      */
-    setupCreate() {
-      this.resetForm();
-      this.resetFormFeedback();
-      if (this.form_api_create_setup) {
-        const data = Object.assign({}, this.form_api_create_setup_optional_data);
-        this.$emit('update:calling', true);
-        DynamicSuite.call(this.form_api_create_setup, data, response => {
-          switch (response.status) {
-            case 'OK':
-              this.setForm(response.data);
-              this.$emit('update:calling', false);
-              this.showForm(true);
-              break;
-            default:
-              this.error.server = true;
-          }
-        });
-      } else {
-        this.showForm(true);
+    secureForm() {
+      const form = JSON.parse(JSON.stringify(this.form));
+      for (const field of this.form_secure_fields) {
+        if (form.hasOwnProperty(field)) {
+          form[field] = null;
+        }
       }
+      this.$emit('update:form', form);
     },
 
     /**
-     * Check if the given tab is the active tab when using form views.
+     * Reset the feedback to NULL values.
      *
-     * @param {string} tab - The tab to compare the set against.
-     * @returns {boolean}
-     */
-    isActiveTab(tab) {
-      return tab === this.tab;
-    },
-
-    /**
-     * Read the storable for the given ID.
-     *
-     * Note: This will also set the view to the first view on the form.
-     *
-     * @param {number} id - The storable ID.
-     * @param {number} tab - Set to a specific tab.
      * @returns {undefined}
      */
-    readStorable(id, tab = 0) {
+    resetFeedback() {
+      const feedback = JSON.parse(JSON.stringify(this.feedback));
+      for (const key in feedback) {
+        feedback[key] = null;
+      }
+      this.show_success_tick = false;
+      this.show_failure_tick = false;
+      this.$emit('update:feedback', feedback);
+    },
+
+    /**
+     * Raw storable read.
+     *
+     * Does not check for duplicate calls, but updates previous calling states.
+     *
+     * @param {string|number} value - The value of the storable to read with.
+     * @returns {undefined}
+     */
+    readStorable(value) {
+      const data = Object.assign({
+        [this.storable_key]: value
+      }, this.form_read_api_data)
+      DynamicSuite.call(this.form_read_api, data, response => {
+        switch (response.status) {
+          case 'OK':
+            if (typeof response.data !== 'object') {
+              this.error = true;
+              break;
+            }
+            const form = JSON.parse(JSON.stringify(this.form));
+            for (const key in response.data) {
+              if (form.hasOwnProperty(key)) {
+                form[key] = response.data[key];
+              }
+            }
+            this.show_form = true;
+            this.form_loading = false;
+            DynamicSuite.setURLSavedData(this.get_key_id, value);
+            this.setup = false;
+            this.$emit('update:form', form);
+            this.$emit('update:calling', false);
+            break;
+          default:
+            this.error = true;
+        }
+      });
+    },
+
+    /**
+     * Handle fatal errors.
+     *
+     * @returns {undefined}
+     */
+    handleError() {
+      this.clearURLSavedData([this.get_key_id]);
+      this.error = true;
+    },
+
+    /**
+     * Handle setting up the form for creation.
+     *
+     * @returns {undefined}
+     */
+    handleFormCreate() {
+      DynamicSuite.setURLSavedData(this.get_key_id, 0);
+      this.runCreateSetup();
+    },
+
+    /**
+     * Handle setting up the form for updating.
+     *
+     * @returns {undefined}
+     */
+    handleFormUpdate(value) {
+      this.form_loading = true;
+      this.resetForm();
+      this.resetFeedback();
+      this.$emit('update:calling', true);
+      this.readStorable(value);
+    },
+
+    /**
+     * Run the back action to hide the form and show the list.
+     *
+     * @returns {undefined}
+     */
+    runBack() {
+      this.resetForm();
+      this.resetFeedback();
+      DynamicSuite.deleteURLSavedData(this.get_key_id);
+      this.show_form = false;
+    },
+
+    /**
+     * Run the create form setup.
+     *
+     * @returns {undefined}
+     */
+    runCreateSetup() {
       if (this.calling) {
         return;
       }
-      const data = Object.assign({[this.form_storable_key]: id}, this.form_api_read_optional_data);
-      this.$emit('update:calling', true);
-      if (this.form_api_read) {
-        DynamicSuite.call(this.form_api_read, data, response => {
+      this.form_loading = true;
+      this.resetForm();
+      this.resetFeedback();
+      if (this.form_api_create_setup) {
+        this.$emit('update:calling', true);
+        DynamicSuite.call(this.form_create_setup_api, this.form_create_setup_api_data, response => {
           switch (response.status) {
             case 'OK':
-              this.setForm(response.data);
-              this.showForm(true, tab);
-              this.$emit('update:calling', false);
-              break;
-            case 'NOT_FOUND':
-              this.showForm(false);
+              this.show_form = true;
+              this.form_loading = false;
+              this.setup = false;
               this.$emit('update:calling', false);
               break;
             default:
-              this.error.server = true;
+              this.error = true;
           }
         });
       } else {
-        this.setForm({[this.form_storable_key]: id});
-        this.showForm(true, tab);
-        this.$emit('update:calling', false);
+        this.show_form = true;
+        this.form_loading = false;
+        this.setup = false;
       }
     },
 
     /**
-     * Merge the given feedback with the current feedback.
-     *
-     * @param {object} data - The feedback object to merge.
-     * @returns {undefined}
-     */
-    setFeedback(data) {
-      const feedback = Object.assign({}, this.feedback);
-      for (const key in data) {
-        feedback[key] = data[key];
-      }
-      this.$emit('update:feedback', feedback);
-    },
-
-    /**
-     * Reset any feedback on the form
-     *
-     * @returns {undefined}
-     */
-    resetFormFeedback() {
-      this.state.show_failure_tick = false;
-      this.state.show_success_tick = false;
-      this.error.delete_protect = null;
-      const feedback = Object.assign({}, this.feedback);
-      for (const field in this.feedback) {
-        feedback[field] = null;
-      }
-      this.$emit('update:feedback', feedback);
-    },
-
-    /**
-     * Create the storable for the given form data.
+     * Run the create of the active storable.
      *
      * @returns {undefined}
      */
@@ -1297,37 +1061,41 @@ export default {
       if (this.calling) {
         return;
       }
-      this.resetFormFeedback();
-      const data = Object.assign({}, this.form, this.form_api_create_optional_data);
+      this.resetFeedback();
       this.$emit('update:calling', true);
-      DynamicSuite.call(this.form_api_create, data, response => {
+      const data = Object.assign({}, this.form, this.form_create_api_data)
+      DynamicSuite.call(this.form_create_api, data, response => {
         switch (response.status) {
           case 'OK':
-            this.state.show_created_confirmation = true;
-            this.setForm({
-              [this.form_storable_key]: parseInt(response.data)
-            });
-            this.$emit('update:calling', false);
-            this.secureFields();
-            this.readList();
-            this.showForm(true);
+            this.created = true;
+            this[this.storable_key] = response.data;
             setTimeout(() => {
-              this.state.show_created_confirmation = false;
-            }, 1000);
+              this.created = false;
+            }, 1000)
+            this.form_loading = true;
+            this.readStorable(response.data);
+            this.secureForm();
+            DynamicSuite.deleteURLSavedData(this.get_key_id);
+            this.$emit('update:calling', false);
             break;
           case 'INPUT_ERROR':
-            this.state.show_failure_tick = true;
-            this.setFeedback(response.data);
+            const feedback = JSON.parse(JSON.stringify(this.feedback));
+            for (const key in feedback) {
+              if (typeof response.data === 'object' && response.data.hasOwnProperty(key)) {
+                feedback[key] = response.data[key];
+              }
+            }
+            this.$emit('update:feedback', feedback);
             this.$emit('update:calling', false);
             break;
           default:
-            this.error.server = true;
+            this.error = true;
         }
       });
     },
 
     /**
-     * Update the storable for the given form data.
+     * Run the update of the active storable.
      *
      * @returns {undefined}
      */
@@ -1335,190 +1103,130 @@ export default {
       if (this.calling) {
         return;
       }
-      this.resetFormFeedback();
-      const data = Object.assign({}, this.form, this.form_api_update_optional_data);
+      this.resetFeedback();
       this.$emit('update:calling', true);
-      DynamicSuite.call(this.form_api_update, data, response => {
+      const data = Object.assign({}, this.form, this.form_update_api_data)
+      DynamicSuite.call(this.form_update_api, data, response => {
         switch (response.status) {
           case 'OK':
-            this.state.show_success_tick = true;
+            this.secureForm();
+            this.show_success_tick = true;
             this.$emit('update:calling', false);
-            this.secureFields();
             break;
           case 'INPUT_ERROR':
-            this.state.show_failure_tick = true;
-            this.setFeedback(response.data);
+            const feedback = JSON.parse(JSON.stringify(this.feedback));
+            for (const key in feedback) {
+              if (typeof response.data === 'object' && response.data.hasOwnProperty(key)) {
+                feedback[key] = response.data[key];
+              }
+            }
+            this.show_failure_tick = true;
+            this.$emit('update:feedback', feedback);
             this.$emit('update:calling', false);
             break;
           default:
-            this.error.server = true;
+            this.error = true;
         }
       });
     },
 
     /**
-     * Attempt to run the delete.
+     * Prompt the delete of the active storable.
      *
-     * If this is not confirmed, the modal will display to confirm deletion.
-     *
-     * @param {boolean} confirm - If the delete is confirmed.
      * @returns {undefined}
      */
-    runDelete(confirm = false) {
-      this.resetFormFeedback();
-      if (!confirm) {
-        this.delete_confirm = null;
-        this.state.show_delete_modal = true;
+    promptDelete() {
+      this.delete_confirm = null;
+      this.delete_protect = null;
+      this.show_delete_modal = true;
+    },
+
+    /**
+     * Cancel the delete, closing and clearing the confirmation modal.
+     *
+     * @returns {undefined}
+     */
+    runCancelDelete() {
+      this.show_delete_modal = false;
+    },
+
+    /**
+     * Run the delete of the active storable.
+     *
+     * @returns {undefined}
+     */
+    runDelete() {
+      if (this.calling) {
+        return;
+      }
+      this.delete_confirm = null;
+      this.delete_protect = null;
+      this.$emit('update:calling', true);
+      const data = Object.assign({
+        [this.storable_key]: this.form[this.storable_key]
+      }, this.form_delete_api_data)
+      DynamicSuite.call(this.form_delete_api, data, response => {
+        switch (response.status) {
+          case 'OK':
+            this.show_delete_modal = false;
+            this.show_form = false;
+            this.resetForm();
+            this.resetFeedback();
+            DynamicSuite.clearURLSavedData([this.get_key_id]);
+            window.history.back();
+            this.$emit('update:calling', false);
+            break;
+          case 'DELETE_PROTECT':
+            this.delete_protect = response.data;
+            this.$emit('update:calling', false);
+            break;
+          default:
+            this.show_delete_modal = false;
+            this.error = true;
+        }
+      });
+    },
+
+    /**
+     * Set any saved URL data.
+     *
+     * @returns {undefined}
+     */
+    setURLSavedData() {
+
+      // URL parameters
+      const url = new URLSearchParams(window.location.search);
+
+      // Parse CRUD value
+      const crud = parseInt(url.get(this.get_key_id));
+
+      // Route CRUD
+      if (!Number.isNaN(crud)) {
+        this.$emit('update:calling', false);
+        this.form_loading = true;
+        this.show_form = true;
+        if (crud === 0) {
+          this.runCreateSetup();
+        } else {
+          this.handleFormUpdate(crud);
+        }
       } else {
-        const data = Object.assign({}, this.form, this.form_api_delete_optional_data);
-        this.$emit('update:calling', true);
-        DynamicSuite.call(this.form_api_delete, data, response => {
-          switch (response.status) {
-            case 'OK':
-              this.$emit('update:calling', false);
-              this.$nextTick(() => {
-                this.closeModals();
-                this.showForm(false);
-                this.secureFields();
-              });
-              break;
-            case 'DELETE_PROTECT':
-              this.error.delete_protect = response.message;
-              this.$emit('update:calling', false);
-              break;
-            default:
-              this.error.server = true;
-          }
-        });
+        this.show_form = false;
+        this.setup = false;
       }
-    },
 
-    /**
-     * Close any open CRUD modal.
-     *
-     * @returns {undefined}
-     */
-    closeModals() {
-      if (!this.calling) {
-        this.state.show_delete_modal = false;
-      }
-    },
-
-    /**
-     * Handle tab changing on the form.
-     *
-     * @param {string} tab - the new tab.
-     * @returns {undefined}
-     */
-    handleTabChange(tab) {
-      this.page_state.tab_index = Object.keys(this.views).indexOf(tab);
-      this.$emit('page-state-change');
     }
 
   },
   mounted() {
 
-    // Set initial tab
-    this.tab = Object.keys(this.views)[0];
+    // Set saved data
+    this.setURLSavedData();
 
-    // Set the initial limit
-    this.list.limit = this.list_range_limit[0];
-
-    // Handle list interactions
-    this.$on('list-click', id => {
-      if (this.list_can_go_to_form) {
-        this.readStorable(id);
-      }
+    // Refresh on back
+    window.addEventListener('popstate', () => {
+      this.setURLSavedData();
     });
-
-    // Resolve the current state
-    const resolveState = () => {
-      if (this.page_state.show_create) {
-        this.setupCreate();
-      } else if (this.page_state.show_storable) {
-        this.readStorable(
-            this.page_state.show_storable,
-            this.page_state.tab_index
-        );
-      } else {
-        this.showForm(false);
-      }
-    }
-
-    // Set up from URL state
-    const params = new URLSearchParams(window.location.search), key = `_${this._uid}`;
-    if (params.get(key)) {
-      // noinspection JSUnresolvedVariable, JSPotentiallyInvalidConstructorUsage
-      const hashids = new Hashids.default();
-      const decoded = hashids.decode(params.get(key));
-      this.page_state.show_create = decoded[0];
-      this.page_state.show_storable = decoded[1];
-      this.page_state.tab_index = decoded[2];
-      resolveState();
-    } else {
-      this.readList();
-    }
-
-    // Listen for page state changes
-    this.$on('page-state-change', () => {
-
-      // The page state is saved in 3 different parts, each part is an integer. Booleans are stored as 1 or 0
-      // show_create    - If the create form should be shown
-      // show_storable  - If the update form should be shown. This saves the storable ID
-      // tab_index      - Get the tab index if editing a storable
-
-      // Initialize hashIDs
-      // noinspection JSUnresolvedVariable, JSPotentiallyInvalidConstructorUsage
-      const hashids = new Hashids.default();
-
-      // Set up the URL parameters
-      const params = new URLSearchParams(window.location.search);
-
-      // The UID will serve as the GET key
-      const key = `_${this._uid}`;
-
-      // The actual state is an array of integers for encoding, but they are saved on the instance in
-      // an object. Just the state must be extracted
-      const state = Object.values(this.page_state);
-
-      // Encode the state for use in the URL
-      const encoded = hashids.encode(state);
-
-      // Push the encoded state
-      const pushState = (params, state) => {
-        const url = params.toString().length ? `?${params.toString()}` : window.location.href.split('?')[0];
-        history.pushState(state, '', url);
-      }
-
-      // If the sum of the state is positive, it is assumed valid (create/update view)
-      // The comparison against the encoded is so that hard reloads do not duplicate state
-      if (!!state.reduce((a, b) => a + b) && params.get(key) !== encoded) {
-        params.set(key, encoded);
-        pushState(params, encoded);
-      }
-
-      // If the sum of the state is 0 (list view) but an old key exists, remove it
-      else if (!state.reduce((a, b) => a + b) && params.has(key)) {
-        params.delete(key);
-        pushState(params, null);
-      }
-
-    });
-
-    // Popstate listener for page state changes
-    window.onpopstate = event => {
-      if (event.state) {
-        // noinspection JSUnresolvedVariable, JSPotentiallyInvalidConstructorUsage
-        const hashids = new Hashids.default();
-        const decoded = hashids.decode(event.state);
-        this.page_state.show_create = decoded[0];
-        this.page_state.show_storable = decoded[1];
-        this.page_state.tab_index = decoded[2];
-        resolveState();
-      } else {
-        this.showForm(false);
-      }
-    }
 
   }
 }
@@ -1526,247 +1234,43 @@ export default {
 
 <style lang="sass">
 
-/* Import AUI Core */
 @import "../sass/aui"
 
 /* CRUD container */
 .aui.crud
-  display: flex
-  flex-direction: column
 
-  /* List view */
-  .list
-
-    /* List header */
-    & > .header
-      display: flex
-      align-items: center
-      padding-bottom: 0.5rem
-      border-bottom: 1px solid lighten($color-secondary, 40%)
-      margin-bottom: 0.5rem
-
-      @include on-mobile-view
-        flex-direction: column
-
-      /* List title */
-      .title
-        display: flex
-        align-items: center
-
-        @include on-mobile-view
-          margin-bottom: 0.75rem
-
-        /* Margin reset */
-        h2
-          margin: 0
-
-      /* List actions */
-      .action
-        display: flex
-        align-items: center
-        margin-left: auto
-
-        @include on-mobile-view
-          width: 100%
-
-          /* Fill space with input */
-          .aui.input
-            flex-grow: 1
-
-        /* Action buttons */
-        .btn
-          display: flex
-          justify-content: center
-          align-items: center
-          font-size: 0.9rem
-          margin-right: 0.5rem
-
-    /* Data container */
-    .data
-      position: relative
-      min-height: 5rem
-
-      /* The loading overlay */
-      .overlay
-        position: absolute
-        width: 100%
-        height: 100%
-        display: flex
-        justify-content: center
-        align-items: center
-
-        /* Non-empty backdrop */
-        &:not(.empty)
-          background: rgba(0 ,0, 0, 0.3)
-          border-radius: 0.25rem
-
-        /* Loading notice override */
-        .aui.notice
-          display: flex
-          justify-content: center
-          align-items: center
-
-          /* Loading icon */
-          i
-            margin-bottom: 0
-
-      /* Add margin to the notices */
-      & > .notice
-        margin: 1rem 0 1rem 0
-
-      /* Margin reset */
-      .aui.list-group
-        margin-top: 0
-
-      /* Table mode styling */
-      table
-        width: 100%
-        border-collapse: collapse
-        margin-bottom: 1rem
-
-        /* Interactive tables */
-        &.interactive
-          user-select: none
-
-          /* Interactive hover */
-          tbody tr:hover
-            cursor: pointer
-            background: darken($color-container, 10%)
-
-        /* Cell global styling */
-        th, td
-          text-align: left
-          padding: 0.75rem
-          color: #111
-          white-space: nowrap
-          text-overflow: ellipsis
-
-          /* Hidden columns */
-          &.hide_on_ipad
-            @include on-ipad-view
-              display: none
-
-          /* Hidden columns */
-          &.hide_on_mobile
-            @include on-mobile-view
-              display: none
-
-        /* Header styling */
-        th
-          user-select: none
-          border-bottom: 2px solid lighten($color-secondary, 40%)
-          position: relative
-          box-sizing: border-box
-
-          /* Grow last column */
-          &:last-of-type
-            width: 100%
-
-          /* Header hovering */
-          &:hover
-            cursor: pointer
-            background: darken($color-container, 5%)
-
-          /* Sort icon */
-          i
-            margin-left: 0.5rem
-
-          .resize-element
-            position: absolute
-            right: 0
-            top: 0
-            bottom: 0
-            cursor: col-resize
-            width: .325rem
-
-            &:hover
-              background: darken(whitesmoke, 15%)
-
-
-        /* Table body */
-        tbody
-
-          /* Special last column styling */
-          tr td:last-of-type
-            max-width: 0
-            overflow: hidden
-            text-overflow: ellipsis
-
-          /* Add border to all but last cells */
-          tr:not(:last-of-type) td
-            border-bottom: 1px solid lighten($color-secondary, 40%)
-
-          /* Zebra striping */
-          tr:nth-child(odd)
-            background: $color-text-inverted
-
-  /* Pad delete confirm input */
-  .modal .aui.input
-    margin-bottom: 1rem
-
-  /* Header override */
-  .modal .header h2
-    border-bottom: 0
-    padding: 0
-
-  /* Form view */
+  /* CRUD form */
   .form
 
-    /* Add tab padding */
-    & > .aui.tabs
+    /* Form elements */
+    & > *:not(:last-child)
       margin-bottom: 1rem
 
-    /* Form headers */
-    h2
-      padding-bottom: 0.25rem
-      border-bottom: 1px solid $color-border
-
-      /* Section separators */
-      &:not(:first-child)
-        margin-top: 1rem
-
-    /* Pad tabs */
-    .body > .aui
-      margin-bottom: 1rem
-
-    /* 2 Column grid */
-    .col-2
-      display: grid
-      grid-template-columns: 1fr 1fr
-      grid-gap: 1rem
-      margin-bottom: 1rem
-
-      @include on-mobile-view
-        grid-template-columns: 1fr
-
-    /* 3 Column grid */
-    .col-3
-      display: grid
-      grid-template-columns: 1fr 1fr 1fr
-      grid-gap: 1rem
-      margin-bottom: 1rem
-
-      @include on-mobile-view
-        grid-template-columns: 1fr
-
-    /* Action bar on the bottom, if visible */
-    & > .action
+    /* Form actions */
+    .actions
       display: flex
 
-      /* Primary action */
-      .primary
+      /* Button justification */
+      & > .btn-group, & > .btn.primary
         margin-left: auto
 
-        /* Feedback tic styling */
-        .tic
-          margin-right: 0.5rem
+        /* Default feedback ticks */
+        .feedback-tick
+          align-self: center
+          margin-right: 1rem
 
-          /* Failure */
+          &.fa-check
+            color: $color-success
+
           &.fa-times
             color: $color-failure
 
-          /* Success */
-          &.fa-check
-            color: $color-success
+  /* Delete confirmation input */
+  .delete-confirm-input
+    margin-top: 1rem
+
+    /* Space from alerts when present */
+    &:not(:last-of-type)
+      margin-bottom: 1rem
 
 </style>

@@ -5,14 +5,13 @@
   "description": "Additional components and styling for DynamicSuite",
   "license": "GPLv3",
   "autoload": [
-    "lib/"
+    "libraries/"
   ],
   "css": [
     "css/aui.min.css"
   ],
   "js": [
     "js/pell.min.js",
-    "js/hashids.min.js",
     "js/aui.min.js"
   ]
 }
