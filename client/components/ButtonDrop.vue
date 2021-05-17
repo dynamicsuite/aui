@@ -306,6 +306,7 @@ export default {
     border: 1px solid $color-border
     border-radius: 0.25rem
     list-style: none
+    user-select: none
     z-index: 1
 
     /* Disable browser outline */
