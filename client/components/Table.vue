@@ -408,7 +408,7 @@ export default {
       document.addEventListener('mousemove', event => {
         if (dragging) {
           const new_width = start_width + (event.pageX - start_x);
-          this.$refs['header'][index].style.width = `${new_width}px`;
+          this.$refs['header'][index].style.minWidth = `${new_width}px`;
         }
       });
       document.addEventListener('mouseup', () => {
@@ -556,21 +556,18 @@ export default {
 /* Table container */
 .aui.table
   position: relative
+  width: 100%
+  overflow-x: auto
 
   /* Table options */
   .options
     display: flex
     justify-content: center
     align-items: center
-    position: absolute
-    right: 0
-    width: 2rem
-    height: 2rem
-    z-index: 1
-    background: $color-container
 
     /* Options icon */
     i
+      margin-left: auto
       color: $color-secondary
       cursor: pointer
 
@@ -591,7 +588,10 @@ export default {
     /* Table cells */
     td, th
       position: relative
-      padding: 0.5rem
+      padding: 0.5rem 2rem 0.5rem 0.5rem
+
+      @include on-mobile-view
+        padding: 0.5rem
 
     /* Header border */
     thead
@@ -600,6 +600,9 @@ export default {
       /* Header cells */
       th
         white-space: nowrap
+
+        &:last-of-type
+          width: 100%
 
         /* Sortable icons */
         i
