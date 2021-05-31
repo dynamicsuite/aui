@@ -28,18 +28,18 @@ file that was distributed with this source code.
     </div>
 
     <!-- Pagination buttons  -->
-    <div v-if="pages > 1" class="aui btn-group">
+    <div v-if="pages > 1" class="aui paginate-group">
 
       <!-- Left Chevrons -->
       <aui-button
-        type="secondary"
+        type="none"
         class="chevron"
         text="«"
         :disabled="disabled"
         @click="paginate(1)"
       />
       <aui-button
-        type="secondary"
+        type="none"
         class="chevron"
         text="‹"
         :disabled="disabled"
@@ -51,7 +51,6 @@ file that was distributed with this source code.
         v-for="(page, key) in button_range"
         :key="'pagination-' + key"
         :type="paginateButtonType(page)"
-        :text="page"
         :disabled="disabled"
         class="page-button"
         @click="paginate(page)"
@@ -59,14 +58,14 @@ file that was distributed with this source code.
 
       <!-- Right Chevrons -->
       <aui-button
-        type="secondary"
+        type="none"
         class="chevron"
         text="›"
         :disabled="disabled"
         @click="paginate(page + 1)"
       />
       <aui-button
-        type="secondary"
+        type="none"
         class="chevron"
         text="»"
         :disabled="disabled"
@@ -264,7 +263,7 @@ export default {
      * @return {string}
      */
     paginateButtonType(page) {
-      return this.page === parseInt(page) ? 'primary' : 'secondary';
+      return this.page === parseInt(page) ? 'primary' : 'none';
     }
 
   }
@@ -284,7 +283,7 @@ export default {
   flex-wrap: wrap
 
   /* Split range and buttons on mobile view */
-  @include on-mobile-view
+  @include on-ipad-view
     flex-direction: column
 
   /* Range display */
@@ -296,7 +295,7 @@ export default {
       font-size: 0.9rem
 
     /* Separate from buttons on mobile view */
-    @include on-mobile-view
+    @include on-ipad-view
       display: flex
       flex-direction: column
       margin-bottom: 0.5rem
@@ -326,12 +325,12 @@ export default {
         outline: none
 
   /* Pagination buttons */
-  .btn-group
+  .paginate-group
     display: flex
     margin-left: auto
 
     /* Mobile buttons */
-    @include on-mobile-view
+    @include on-ipad-view
       margin-left: 0
 
       /* Buttons on mobile */
@@ -339,9 +338,21 @@ export default {
         display: none
 
     /* Pagination buttons */
-    .btn
-      height: 1rem
+    .aui.btn
       font-size: 0.8rem
+
+      &:not(.primary)
+        color: $color-secondary
+
+      &:not(.primary):hover
+        color: black
+
+      /* Custom styling to override the default aui primary class */
+      &.primary
+        border: 1px solid $color-secondary
+        background: none
+        color: black
+        font-weight: bold
 
       /* Chevron buttons */
       &.chevron

@@ -389,9 +389,11 @@ export default {
       background: $color-text-inverted
       text-overflow: ellipsis
       margin: 0 // Required for iOS
-      -moz-box-sizing: content-box
-      -webkit-box-sizing: content-box
-      box-sizing: content-box
+      -moz-box-sizing: border-box
+      -webkit-box-sizing: border-box
+      box-sizing: border-box
+      min-height: 2rem
+      //min-width: 2rem
 
       /* Clear chrome outline */
       &:focus

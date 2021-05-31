@@ -77,17 +77,12 @@ file that was distributed with this source code.
       :sort.sync="sort"
       :storage_key="table_storage_key"
       :calling="calling"
-      @row-interaction="$emit('list-interaction', $event)"
-    />
-
-    <!-- Pagination range and buttons -->
-    <aui-pagination
-      v-if="!show_no_data_notice && !initial_read"
-      :disabled="overlay"
       :page.sync="page"
       :total="total"
       :limit.sync="limit"
       :list_range_limit="range_limit"
+      :disabled="overlay"
+      @row-interaction="$emit('list-interaction', $event)"
       @paginate="handlePaginate"
     />
 
@@ -677,6 +672,10 @@ export default {
     padding-bottom: 0.5rem
     margin-bottom: 0.5rem
 
+    @include on-ipad-view
+      flex-direction: column
+      gap: 0.5rem
+
     /* Header HTML reset */
     & > h2:first-of-type
       display: inline-flex
@@ -694,12 +693,18 @@ export default {
       display: flex
       margin-left: auto
 
+      @include on-ipad-view
+        flex-direction: row-reverse
+        min-width: 100%
+
+        .input
+          width: 100%
+
       /* Space actions */
       & > *:not(:last-child)
         margin-right: 0.5rem
 
-  /* Space table */
-  & > .aui.table
-    margin-bottom: 1rem
+        @include on-ipad-view
+          margin: 0 0 0 0.5rem
 
 </style>

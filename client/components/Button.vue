@@ -152,15 +152,19 @@ export default {
   border: none
   text-align: center
   border-radius: 0.25rem
-  padding: 0.5rem 0.75rem
-  font-size: 1rem
+  padding: 0.25rem 0.5rem
+  font-size: 0.8rem
   user-select: none
   cursor: pointer
   position: relative
-  -moz-box-sizing: content-box
-  -webkit-box-sizing: content-box
-  box-sizing: content-box
-  min-height: 1.25rem
+  -moz-box-sizing: border-box
+  -webkit-box-sizing: border-box
+  box-sizing: border-box
+  min-width: 2rem
+  min-height: 2rem
+  display: flex
+  justify-content: center
+  align-items: center
 
   /* Remove browser focus */
   &:focus
@@ -168,6 +172,11 @@ export default {
 
   &:disabled
     cursor: not-allowed
+
+  i
+    display: flex
+    justify-content: center
+    align-items: center
 
   /* Space spinner */
   i.fa-spin
@@ -237,5 +246,10 @@ export default {
 
     &:disabled
       background: lighten($color-failure, 20%)
+
+  /* Buttons without a theme */
+  &:not(.primary):not(.secondary):not(.success):not(.warning):not(.failure)
+    background: none
+
 
 </style>

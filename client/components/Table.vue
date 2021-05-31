@@ -15,11 +15,23 @@ file that was distributed with this source code.
 
     <!-- Icon for showing the modal for selecting which columns to view -->
     <div v-if="interactive" class="options">
-      <i
-        class="fas fa-columns"
+      <aui-pagination
+        :disabled="disabled"
+        :page="page"
+        :total="total"
+        :limit="limit"
+        :list_range_limit="list_range_limit"
+        @update:page="$emit('update:page', $event)"
+        @update:limit="$emit('update:limit', $event)"
+        @paginate="$emit('paginate')"
+      />
+      <aui-button
+        type="none"
         title="Select Columns To View"
         @click="showColumnsModal"
-      />
+      >
+        <i class="fas fa-cog"></i>
+      </aui-button>
     </div>
 
     <!-- Modal for selecting which columns to view -->
@@ -61,8 +73,9 @@ file that was distributed with this source code.
     </aui-modal>
 
     <!-- The actual table -->
-    <table :class="table_classes">
-      <thead>
+    <div class="table-container">
+      <table :class="table_classes">
+        <thead>
         <tr>
           <th
             v-for="(column, id) in columns"
@@ -71,19 +84,25 @@ file that was distributed with this source code.
             @mousedown.self="runSort(column)"
           >
             {{columnName(column)}}
-            <i v-if="sortable" :class="sortIcon(column)" />
+            <i
+              v-if="sortable"
+              :class="sortIcon(column)"
+              @mousedown.self="runSort(column)"
+            />
             <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
           </th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
           <td v-for="(column_value, column) in row" :key="'column' + column + id">
             {{columnValue(column, column_value)}}
           </td>
         </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
+
 
   </div>
 </template>
@@ -134,6 +153,16 @@ export default {
     },
 
     /**
+     * If interactions are disabled
+     *
+     * @type {boolean}
+     */
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
      * Column name map.
      *
      * This is an object where each key is the true column name and the value is the displayed value.
@@ -165,6 +194,36 @@ export default {
     column_format: {
       type: Object,
       default: () => ({})
+    },
+
+    /**
+     * The record limit per page.
+     *
+     * @type {number | null}
+     */
+    limit: {
+      type: Number | null,
+      default: null
+    },
+
+    /**
+     * The possible limit options for the pagination dropdown.
+     *
+     * @type {number[]}
+     */
+    list_range_limit: {
+      type: Array | null,
+      default: null
+    },
+
+    /**
+     * Current page of pagination
+     *
+     * @type {Number | null}
+     */
+    page: {
+      type: Number | null,
+      default: null
     },
 
     /**
@@ -240,6 +299,16 @@ export default {
      */
     storage_key: {
       type: String | null,
+      default: null
+    },
+
+    /**
+     * The total number of potential records in the dataset.
+     *
+     * @type {number | null}
+     */
+    total: {
+      type: Number | null,
       default: null
     },
 
@@ -556,101 +625,124 @@ export default {
 /* Table container */
 .aui.table
   position: relative
-  width: 100%
-  overflow-x: auto
 
   /* Table options */
   .options
     display: flex
-    justify-content: center
+    justify-content: space-between
     align-items: center
 
     /* Options icon */
-    i
-      margin-left: auto
+    &>.btn
       color: $color-secondary
       cursor: pointer
+      margin-left: .5rem
+      background: none
+
+      @include on-ipad-view
+        display: none
 
       &:hover
-        color: $color-primary
+        color: black
+
+    .pagination
+      flex: 1
+      justify-content: space-between
+
+      @include on-ipad-view
+        justify-content: center
+
+      .paginate-group
+        margin: 0
+
+      .range
+        @include on-ipad-view
+          display: none
+
 
   /* Column filtering modal */
   .modal .aui.checkbox:not(:last-of-type)
     margin-bottom: 1rem
 
-  /* The actual table */
-  table
+
+  .table-container
     width: 100%
-    text-align: left
-    border-collapse: collapse
-    background: $color-container
+    overflow-x: auto
 
-    /* Table cells */
-    td, th
-      position: relative
-      padding: 0.5rem 2rem 0.5rem 0.5rem
+    /* The actual table */
+    table
+      width: 100%
+      text-align: left
+      border-collapse: collapse
+      background: $color-container
+      margin: .5rem 0
 
-      @include on-mobile-view
-        padding: 0.5rem
+      /* Table cells */
+      td, th
+        position: relative
+        padding: 0.5rem 2rem 0.5rem 0.5rem
 
-    /* Header border */
-    thead
-      border-bottom: 2px solid $color-border
+        @include on-mobile-view
+          padding: 0.5rem
 
-      /* Header cells */
-      th
+      /* Header border */
+      thead
+        border-bottom: 2px solid $color-border
+
+        /* Header cells */
+        th
+          white-space: nowrap
+
+          &:last-of-type
+            width: 100%
+
+          /* Sortable icons */
+          i
+            width: 1rem
+            margin-left: 0.25rem
+            color: $color-secondary
+
+          /* Resize anchor */
+          div
+            position: absolute
+            right: 0
+            top: 0
+            bottom: 0
+            cursor: col-resize
+            width: 0.35rem
+
+            &:hover
+              background: darken($color-border, 15%)
+
+      td
         white-space: nowrap
+        text-overflow: ellipsis
 
-        &:last-of-type
-          width: 100%
+      /* Zebra striping */
+      tbody tr:nth-of-type(odd)
+        background: $color-text-inverted
 
-        /* Sortable icons */
-        i
-          width: 1rem
-          margin-left: 0.25rem
-          color: $color-secondary
-
-        /* Resize anchor */
-        div
-          position: absolute
-          right: 0
-          top: 0
-          bottom: 0
-          cursor: col-resize
-          width: 0.35rem
-
-          &:hover
-            background: darken($color-border, 15%)
-
-    td
-      white-space: nowrap
-      text-overflow: ellipsis
-
-    /* Zebra striping */
-    tbody tr:nth-of-type(odd)
-      background: $color-text-inverted
-
-    /* Sortable tables */
-    &.sortable th
-      user-select: none
-      cursor: pointer
-
-      &:hover
-        background: darken($color-container, 5%)
-
-    /* Interactive tables */
-    &.interactive
-
-      /* Options offset */
-      th:last-of-type
-        padding-right: 2.5rem
-
-      /* No table selection */
-      tbody
+      /* Sortable tables */
+      &.sortable th
         user-select: none
+        cursor: pointer
 
-        tr:hover
-          cursor: pointer
-          background: lighten($color-warning, 35%)
+        &:hover
+          background: darken($color-container, 5%)
+
+      /* Interactive tables */
+      &.interactive
+
+        /* Options offset */
+        th:last-of-type
+          padding-right: 2.5rem
+
+        /* No table selection */
+        tbody
+          user-select: none
+
+          tr:hover
+            cursor: pointer
+            background: lighten($color-warning, 35%)
 
 </style>
