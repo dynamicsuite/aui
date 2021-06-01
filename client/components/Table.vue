@@ -82,6 +82,7 @@ file that was distributed with this source code.
             :key="'header' + id"
             ref="header"
             @mousedown.self="runSort(column)"
+            @dblclick="handleResetColumn($event, id)"
           >
             {{columnName(column)}}
             <i
@@ -483,6 +484,17 @@ export default {
       document.addEventListener('mouseup', () => {
         dragging = false;
       });
+    },
+
+    /**
+     * Event handler for when a user tries to resize a header column.
+     *
+     * @param {object} parent_event - The parent event handler.
+     * @param {number} index - The column index.
+     * @returns {undefined}
+     */
+    handleResetColumn(parent_event, index) {
+      this.$refs['header'][index].style.minWidth = '';
     },
 
     /**
