@@ -148,8 +148,8 @@ export default {
 
   /* Pseudo element */
   .pseudo
-    width: 56px !important
-    height: 28px !important
+    width: 46px !important
+    height: 24px !important
     cursor: pointer
     top: 0
     left: 0
@@ -164,8 +164,8 @@ export default {
     &:before
       position: absolute
       content: ""
-      height: 20px
-      width: 20px
+      height: 16px
+      width: 16px
       left: 4px
       bottom: 4px
       background: white
@@ -177,10 +177,10 @@ export default {
   input:checked ~ .pseudo:before
     -webkit-transform: translateX(28px)
     -ms-transform: translateX(28px)
-    transform: translateX(28px)
+    transform: translateX(22px)
 
   /* Offset subtext */
   .subtext
-    margin-left: calc(56px + 0.5rem)
+    margin-left: calc(46px + 0.5rem)
 
 </style>
