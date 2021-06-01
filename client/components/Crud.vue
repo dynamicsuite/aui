@@ -812,6 +812,16 @@ export default {
     form_feedback_failure_tick_icon: {
       type: String,
       default: 'fas fa-times'
+    },
+
+    /**
+     * If true, dumps users to list view after creating an element
+     *
+     * @type {boolean}
+     */
+    form_created_to_list: {
+      type: Boolean,
+      default: true
     }
 
   },
@@ -1071,6 +1081,10 @@ export default {
             this[this.storable_key] = response.data;
             setTimeout(() => {
               this.created = false;
+              if (this.form_created_to_list) {
+                this.setup = false;
+                this.show_form = false;
+              }
             }, 1000)
             this.form_loading = true;
             this.readStorable(response.data);

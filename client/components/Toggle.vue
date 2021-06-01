@@ -156,8 +156,8 @@ export default {
     right: 0
     bottom: 0
     background: #ccc
-    -webkit-transition: 0.4s
-    transition: 0.4s
+    -webkit-transition: 0.1s
+    transition: 0.1s
     border-radius: 34px
 
     /* Slider circle */
@@ -169,8 +169,8 @@ export default {
       left: 4px
       bottom: 4px
       background: white
-      -webkit-transition: 0.4s
-      transition: 0.4s
+      -webkit-transition: 0.1s
+      transition: 0.1s
       border-radius: 50%
 
   /* Slider transition */
