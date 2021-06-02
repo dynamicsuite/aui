@@ -187,7 +187,8 @@ export default {
   .aui.badge
     display: inline-block
     position: absolute
-    min-width: 0.5rem
+    font-size: 0.7rem
+    min-width: 0.4rem
     top: -0.6rem
     right: -0.68rem
     z-index: 1
@@ -250,6 +251,5 @@ export default {
   /* Buttons without a theme */
   &:not(.primary):not(.secondary):not(.success):not(.warning):not(.failure)
     background: none
-
 
 </style>
