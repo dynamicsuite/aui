@@ -162,7 +162,7 @@ export default {
   box-sizing: border-box
   min-width: 2rem
   min-height: 2rem
-  display: flex
+  display: inline-flex
   justify-content: center
   align-items: center
 
