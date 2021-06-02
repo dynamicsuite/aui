@@ -299,7 +299,7 @@ export default {
   /* Dropdown menu when the button is pressed */
   .dropdown
     position: absolute
-    top: 2.5rem
+    top: 2.2rem
     margin: 0
     padding: 0.5rem 1rem
     background: white
@@ -325,7 +325,7 @@ export default {
     &.top
       top: auto
       right: 0
-      bottom: 2.5rem
+      bottom: 2.2rem
 
     /* Dropdown entries */
     li
