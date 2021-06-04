@@ -283,7 +283,7 @@ export default {
   flex-wrap: wrap
 
   /* Split range and buttons on mobile view */
-  @include on-ipad-view
+  @media (max-width: 680px)
     flex-direction: column
 
   /* Range display */
@@ -291,11 +291,11 @@ export default {
     white-space: nowrap
 
     /* Lower font size for ipads and lower */
-    @include on-ipad-view
+    @media (max-width: 680px)
       font-size: 0.9rem
 
     /* Separate from buttons on mobile view */
-    @include on-ipad-view
+    @media (max-width: 680px)
       display: flex
       flex-direction: column
       margin-bottom: 0.5rem
@@ -330,7 +330,7 @@ export default {
     margin-left: auto
 
     /* Mobile buttons */
-    @include on-ipad-view
+    @media (max-width: 680px)
       margin-left: 0
 
       /* Buttons on mobile */
@@ -363,7 +363,7 @@ export default {
     display: flex
     margin-left: auto
 
-    @include on-mobile-view
+    @media (max-width: 680px)
       display: none
 
 </style>

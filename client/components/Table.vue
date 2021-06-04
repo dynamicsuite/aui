@@ -651,7 +651,7 @@ export default {
       margin-left: .5rem
       background: none
 
-      @include on-ipad-view
+      @media (max-width: 680px)
         display: none
 
       &:hover
@@ -661,14 +661,14 @@ export default {
       flex: 1
       justify-content: space-between
 
-      @include on-ipad-view
+      @media (max-width: 541px)
         justify-content: center
 
       .paginate-group
         margin: 0
 
       .range
-        @include on-ipad-view
+        @media (max-width: 680px)
           display: none
 
 
@@ -694,7 +694,7 @@ export default {
         position: relative
         padding: 0.5rem 2rem 0.5rem 0.5rem
 
-        @include on-mobile-view
+        @media (max-width: 541px)
           padding: 0.5rem
 
       /* Header border */

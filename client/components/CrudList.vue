@@ -672,7 +672,7 @@ export default {
     padding-bottom: 0.5rem
     margin-bottom: 0.5rem
 
-    @include on-ipad-view
+    @media (max-width: 810px)
       flex-direction: column
       gap: 0.5rem
 
@@ -693,7 +693,7 @@ export default {
       display: flex
       margin-left: auto
 
-      @include on-ipad-view
+      @media (max-width: 810px)
         flex-direction: row-reverse
         min-width: 100%
 
@@ -704,7 +704,7 @@ export default {
       & > *:not(:last-child)
         margin-right: 0.5rem
 
-        @include on-ipad-view
+        @media (max-width: 810px)
           margin: 0 0 0 0.5rem
 
 </style>

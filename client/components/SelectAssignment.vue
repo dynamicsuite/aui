@@ -174,7 +174,7 @@ export default {
     margin-top: 1rem
 
   /* Changes for mobile view */
-  @include on-mobile-view
+  @media (max-width: 541px)
     grid-template-columns: 1fr
 
 </style>
