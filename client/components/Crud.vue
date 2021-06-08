@@ -973,7 +973,9 @@ export default {
             }
             this.show_form = true;
             this.form_loading = false;
-            DynamicSuite.setURLSavedData(this.get_key_id, value);
+            if (!this.setup) {
+              DynamicSuite.setURLSavedData(this.get_key_id, value);
+            }
             this.setup = false;
             this.$emit('update:form', form);
             this.$emit('update:calling', false);
