@@ -82,7 +82,6 @@ file that was distributed with this source code.
             :key="'header' + id"
             ref="header"
             @mousedown.self="runSort(column)"
-            @dblclick="handleResetColumn($event, id)"
           >
             {{columnName(column)}}
             <i
@@ -90,7 +89,8 @@ file that was distributed with this source code.
               :class="sortIcon(column)"
               @mousedown.self="runSort(column)"
             />
-            <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
+            <div v-if="interactive" @mousedown="handleResizeColumn($event, id)"
+                 @dblclick.self="handleResetColumn($event, id)"/>
           </th>
         </tr>
         </thead>
