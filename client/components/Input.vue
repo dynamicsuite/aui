@@ -18,6 +18,7 @@ file that was distributed with this source code.
       :type="type"
       :list="unique_id"
       :autocomplete="autocomplete"
+      :autocapitalize="autocapitalize"
       :placeholder="placeholder"
       :tabindex="tabindex"
       :disabled="disabled"
@@ -125,6 +126,16 @@ export default {
     autocomplete: {
       type: String | null,
       default: null
+    },
+
+    /**
+     * Input autocapitalize value.
+     *
+     * @type {string}
+     */
+    autocapitalize: {
+      type: String,
+      default: ''
     },
 
     /**
