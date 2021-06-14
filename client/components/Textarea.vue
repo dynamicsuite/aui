@@ -13,6 +13,7 @@ file that was distributed with this source code.
 <template>
   <aui-form-control v-bind="properties">
     <textarea
+      ref="textarea"
       :value="value"
       :placeholder="placeholder"
       :autocomplete="autocomplete"
@@ -187,6 +188,27 @@ export default {
         failure: this.failure,
         subtext: this.subtext
       };
+    }
+
+  },
+  methods: {
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    focus() {
+      this.$refs['textarea'].focus();
+    },
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    select() {
+      this.$refs['textarea'].select();
     }
 
   }

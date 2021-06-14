@@ -314,6 +314,24 @@ export default {
   methods: {
 
     /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    focus() {
+      this.$refs['input'].focus();
+    },
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    select() {
+      this.$refs['input'].select();
+    },
+
+    /**
      * Handle input events to mask telephones.
      *
      * @param {string|number} value - The input value.
