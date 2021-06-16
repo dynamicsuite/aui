@@ -990,7 +990,7 @@ export default {
      * @returns {undefined}
      */
     handleError() {
-      this.clearURLSavedData([this.get_key_id]);
+      DynamicSuite.clearURLSavedData([this.get_key_id]);
       this.error = true;
     },
 
