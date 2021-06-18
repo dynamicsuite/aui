@@ -1046,6 +1046,7 @@ export default {
         DynamicSuite.call(this.form_create_setup_api, this.form_create_setup_api_data, response => {
           switch (response.status) {
             case 'OK':
+              this.$emit('update:form', JSON.parse(JSON.stringify(Object.assign(this.form, response.data))));
               this.show_form = true;
               this.form_loading = false;
               this.setup = false;
