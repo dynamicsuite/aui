@@ -827,6 +827,7 @@ export default {
   },
   data() {
     return {
+      default_form: {},
       setup: true,
       show_form: false,
       form_loading: false,
@@ -909,11 +910,7 @@ export default {
      * @returns {undefined}
      */
     resetForm() {
-      const form = JSON.parse(JSON.stringify(this.form));
-      for (const key in form) {
-        form[key] = null;
-      }
-      this.$emit('update:form', form);
+      this.$emit('update:form', this.default_form);
     },
 
     /**
@@ -1234,6 +1231,9 @@ export default {
 
   },
   mounted() {
+
+    // Set the default form for resets
+    this.default_form = JSON.parse(JSON.stringify(this.form));
 
     // Set saved data
     this.setURLSavedData();
