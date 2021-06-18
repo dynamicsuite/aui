@@ -1041,7 +1041,7 @@ export default {
       this.form_loading = true;
       this.resetForm();
       this.resetFeedback();
-      if (this.form_api_create_setup) {
+      if (this.form_create_setup_api) {
         this.$emit('update:calling', true);
         DynamicSuite.call(this.form_create_setup_api, this.form_create_setup_api_data, response => {
           switch (response.status) {
