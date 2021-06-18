@@ -66,7 +66,7 @@ file that was distributed with this source code.
           <aui-button-drop
             :dropdown="{reset: 'Reset to Default'}"
             relative_to=".modal"
-            @reset="resetColumns"
+            @reset="handleResetTable"
           />
         </div>
       </template>
@@ -492,6 +492,16 @@ export default {
      */
     handleResetColumn(parent_event, index) {
       this.$refs['header'][index].style.minWidth = '';
+    },
+
+    /**
+     * Handle the resetting of the table via the 'defaults' button.
+     *
+     * @returns {undefined}
+     */
+    handleResetTable() {
+      DynamicSuite.deleteURLSavedData('sort', false);
+      this.resetColumns();
     },
 
     /**
