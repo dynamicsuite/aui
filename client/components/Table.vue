@@ -500,7 +500,9 @@ export default {
      * @returns {undefined}
      */
     handleResetTable() {
-      DynamicSuite.deleteURLSavedData('sort', false);
+      if (DynamicSuite.readURLParam('sort')) {
+        DynamicSuite.deleteURLSavedData('sort');
+      }
       this.resetColumns();
     },
 
@@ -518,8 +520,8 @@ export default {
       this.show_columns_modal = false;
       if (this.storage_key) {
         localStorage.removeItem(this.storage_key);
-        this.$root.$emit('aui-table-reset');
       }
+      this.$root.$emit('aui-table-reset');
     },
 
     /**
