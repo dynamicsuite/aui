@@ -655,6 +655,27 @@ export default {
     },
 
     /**
+     * Columns to exclude from API calls.
+     */
+    form_exclude_columns: {
+      type: Array,
+      default: () => ([])
+    },
+
+    /**
+     * Format specific columns when sent to API calls.
+     *
+     * This is an object where the key is the column and the value is a function that returns
+     * a formatted value. This function takes 1 argument, the actual form value.
+     *
+     * @type {object}
+     */
+    form_format_columns: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
      * If the form actions should be shown.
      *
      * @type {boolean}
@@ -881,6 +902,25 @@ export default {
         [this.form_feedback_success_tick_icon]: this.show_success_tick,
         [this.form_feedback_failure_tick_icon]: this.show_failure_tick
       }
+    },
+
+    /**
+     * The form to send along with API calls.
+     *
+     * @returns {object}
+     */
+    api_form() {
+      const form = JSON.parse(JSON.stringify(this.form));
+      for (const key in form) {
+        if (this.form_exclude_columns.indexOf(key) !== -1) {
+          delete form[key];
+          continue;
+        }
+        if (this.form_format_columns.hasOwnProperty(key) && typeof this.form_format_columns[key] === 'function') {
+          form[key] = this.form_format_columns[key](form[key]);
+        }
+      }
+      return form;
     }
 
   },
@@ -1071,7 +1111,7 @@ export default {
       }
       this.resetFeedback();
       this.$emit('update:calling', true);
-      const data = Object.assign({}, this.form, this.form_create_api_data)
+      const data = Object.assign({}, this.api_form, this.form_create_api_data)
       DynamicSuite.call(this.form_create_api, data, response => {
         switch (response.status) {
           case 'OK':
@@ -1117,7 +1157,7 @@ export default {
       }
       this.resetFeedback();
       this.$emit('update:calling', true);
-      const data = Object.assign({}, this.form, this.form_update_api_data)
+      const data = Object.assign({}, this.api_form, this.form_update_api_data)
       DynamicSuite.call(this.form_update_api, data, response => {
         switch (response.status) {
           case 'OK':
