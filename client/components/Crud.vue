@@ -1015,6 +1015,10 @@ export default {
             this.$emit('update:form', form);
             this.$emit('update:calling', false);
             break;
+          case 'NOT_FOUND':
+            DynamicSuite.deleteURLSavedData(this.get_key_id, false);
+            location.reload();
+            break;
           default:
             this.error = true;
         }
