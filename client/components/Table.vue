@@ -76,30 +76,30 @@ file that was distributed with this source code.
     <div class="table-container">
       <table :class="table_classes">
         <thead>
-        <tr>
-          <th
-            v-for="(column, id) in columns"
-            :key="'header' + id"
-            ref="header"
-            @mousedown.self="runSort(column)"
-            @dblclick="handleResetColumn($event, id)"
-          >
-            {{columnName(column)}}
-            <i
-              v-if="sortable"
-              :class="sortIcon(column)"
+          <tr>
+            <th
+              v-for="(column, id) in columns"
+              :key="'header' + id"
+              ref="header"
               @mousedown.self="runSort(column)"
-            />
-            <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
-          </th>
-        </tr>
+              @dblclick="handleResetColumn($event, id)"
+            >
+              {{columnName(column)}}
+              <i
+                v-if="sortable"
+                :class="sortIcon(column)"
+                @mousedown.self="runSort(column)"
+              />
+              <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
+            </th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
-          <td v-for="(column_value, column) in row" :key="'column' + column + id">
-            {{columnValue(column, column_value)}}
-          </td>
-        </tr>
+          <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
+            <td v-for="(column_value, column) in row" :key="'column' + column + id">
+              {{columnValue(column, column_value)}}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -366,17 +366,14 @@ export default {
      * @returns {object[]}
      */
     filtered_table() {
-      const columns = [];
-      for (const row of this.table) {
-        columns.push(Object.keys(row)
-          .filter(key => this.columns.includes(key))
-          .reduce((obj, key) => {
-            obj[key] = row[key];
-            return obj;
-          }, {})
-        )
+      const table = [];
+      for (const key in this.table) {
+        table[key] = {};
+        for (const column of this.columns) {
+          table[key][column] = this.table[key][column];
+        }
       }
-      return columns;
+      return table;
     }
 
   },
@@ -645,10 +642,10 @@ export default {
     align-items: center
 
     /* Options icon */
-    &>.btn
+    & > .btn
       color: $color-secondary
       cursor: pointer
-      margin-left: .5rem
+      margin-left: 0.5rem
       background: none
 
       @include on-ipad-view
@@ -671,11 +668,9 @@ export default {
         @include on-ipad-view
           display: none
 
-
   /* Column filtering modal */
   .modal .aui.checkbox:not(:last-of-type)
     margin-bottom: 1rem
-
 
   .table-container
     width: 100%
@@ -687,7 +682,7 @@ export default {
       text-align: left
       border-collapse: collapse
       background: $color-container
-      margin: .5rem 0
+      margin: 0.5rem 0
 
       /* Table cells */
       td, th
