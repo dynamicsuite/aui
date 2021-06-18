@@ -456,8 +456,8 @@ export default {
       if (!this.interactive || this.calling || !this.interactive_column) {
         return;
       }
-      if (this.filtered_table[id].hasOwnProperty(this.interactive_column)) {
-        this.$emit('row-interaction', this.filtered_table[id][this.interactive_column]);
+      if (this.table[id].hasOwnProperty(this.interactive_column)) {
+        this.$emit('row-interaction', this.table[id][this.interactive_column]);
       }
     },
 
