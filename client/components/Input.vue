@@ -134,8 +134,8 @@ export default {
      * @type {string}
      */
     autocapitalize: {
-      type: String,
-      default: ''
+      type: String | null,
+      default: null
     },
 
     /**
