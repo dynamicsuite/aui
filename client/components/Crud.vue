@@ -40,6 +40,7 @@ file that was distributed with this source code.
     <!-- CRUD list -->
     <aui-crud-list
       v-else-if="!show_form && !setup"
+      ref="list"
       :title="list_title"
       :show_create="list_show_create"
       :create_icon="list_create_icon"
