@@ -43,6 +43,9 @@ file that was distributed with this source code.
 
     </div>
 
+    <!-- A slot for pre-data content -->
+    <slot name="pre-data" />
+
     <!-- No data in list -->
     <aui-notice
       v-if="show_no_data_notice"

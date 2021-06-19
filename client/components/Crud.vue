@@ -77,6 +77,9 @@ file that was distributed with this source code.
       <template #actions>
         <slot name="list-actions" :overlay="overlay" />
       </template>
+      <template #pre-data>
+        <slot name="list-pre-data" :overlay="overlay" />
+      </template>
     </aui-crud-list>
 
     <!-- CRUD form -->
