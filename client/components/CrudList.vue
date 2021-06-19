@@ -33,11 +33,11 @@ file that was distributed with this source code.
           <i :class="create_icon" />
         </aui-button>
         <aui-input
-          v-if="show_search"
-          :placeholder="search_placeholder"
+          v-if="show_filter"
+          :placeholder="filter_placeholder"
           :disabled="overlay"
-          v-model="search"
-          @input="runSearch"
+          v-model="filter"
+          @input="runFilter"
         />
       </div>
 
@@ -125,23 +125,23 @@ export default {
     },
 
     /**
-     * If the search should be shown.
+     * If the filter should be shown.
      *
      * @type {boolean}
      */
-    show_search: {
+    show_filter: {
       type: Boolean,
       default: true
     },
 
     /**
-     * Placeholder for the search input (if visible).
+     * Placeholder for the filter input (if visible).
      *
      * @type {string}
      */
-    search_placeholder: {
+    filter_placeholder: {
       type: String,
-      default: 'Search'
+      default: 'Filter'
     },
 
     /**
@@ -357,11 +357,11 @@ export default {
     },
 
     /**
-     * The delay from inactivity in the search box until the list refreshes (in milliseconds).
+     * The delay from inactivity in the filter box until the list refreshes (in milliseconds).
      *
      * @type {number}
      */
-    search_delay: {
+    filter_delay: {
       type: Number,
       default: 300
     },
@@ -399,13 +399,13 @@ export default {
     },
 
     /**
-     * URL GET key for list search.
+     * URL GET key for list filter.
      *
      * @type {string}
      */
-    get_key_search: {
+    get_key_filter: {
       type: String,
-      default: 'search'
+      default: 'filter'
     },
 
     /**
@@ -425,8 +425,8 @@ export default {
       limit: 0,
       total: 0,
       page: 1,
-      search: null,
-      search_timer: null,
+      filter: null,
+      filter_timer: null,
       sort: {},
       data: []
     };
@@ -550,7 +550,7 @@ export default {
       const data = Object.assign({
         page: this.page,
         limit: this.limit,
-        search: this.search,
+        filter: this.filter,
         sort: this.sort
       }, this.read_optional_data);
       this.$emit('update:calling', true);
@@ -566,7 +566,7 @@ export default {
             DynamicSuite.clearURLSavedData([
               this.get_key_limit,
               this.get_key_page,
-              this.get_key_search,
+              this.get_key_filter,
               this.get_key_sort
             ]);
             this.$emit('error');
@@ -575,21 +575,21 @@ export default {
     },
 
     /**
-     * Run the search for the list.
+     * Run the filter for the list.
      *
      * @returns {undefined}
      */
-    runSearch() {
-      clearTimeout(this.search_timer);
-      this.search_timer = setTimeout(() => {
+    runFilter() {
+      clearTimeout(this.filter_timer);
+      this.filter_timer = setTimeout(() => {
         this.page = 1;
-        if (this.search) {
-          DynamicSuite.setURLSavedData(this.get_key_search, this.search, false);
+        if (this.filter) {
+          DynamicSuite.setURLSavedData(this.get_key_filter, this.filter, false);
         } else {
-          DynamicSuite.deleteURLSavedData(this.get_key_search);
+          DynamicSuite.deleteURLSavedData(this.get_key_filter);
         }
         this.readList();
-      }, this.search_delay);
+      }, this.filter_delay);
     },
 
     /**
@@ -625,7 +625,7 @@ export default {
       // Set values
       this.limit = limit > 0 ? limit : this.range_limit[0];
       this.page = page > 0 ? page : 1;
-      this.search = url.get(this.get_key_search);
+      this.filter = url.get(this.get_key_filter);
       this.$set(this, 'sort', sort);
 
     }
@@ -688,7 +688,7 @@ export default {
         font-size: 1rem
         color: $color-secondary
 
-    /* Header actions (Search, etc) */
+    /* Header actions (Filter, etc) */
     .actions
       display: flex
       margin-left: auto

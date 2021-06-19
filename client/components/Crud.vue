@@ -43,8 +43,8 @@ file that was distributed with this source code.
       :title="list_title"
       :show_create="list_show_create"
       :create_icon="list_create_icon"
-      :show_search="list_show_search"
-      :search_placeholder="list_search_placeholder"
+      :show_filter="list_show_filter"
+      :filter_placeholder="list_filter_placeholder"
       :no_data_icon="list_no_data_icon"
       :no_data_text="list_no_data_text"
       :loading_icon="list_loading_icon"
@@ -63,11 +63,11 @@ file that was distributed with this source code.
       :read_api="list_read_api"
       :read_optional_data="list_read_optional_data"
       :range_limit="list_range_limit"
-      :search_delay="list_search_delay"
+      :filter_delay="list_filter_delay"
       :refresh_interval="list_refresh_interval"
       :get_key_limit="list_get_key_limit"
       :get_key_page="list_get_key_page"
-      :get_key_search="list_get_key_search"
+      :get_key_filter="list_get_key_filter"
       :get_key_sort="list_get_key_sort"
       @update:calling="$emit('update:calling', $event)"
       @error="handleError"
@@ -247,23 +247,23 @@ export default {
     },
 
     /**
-     * If the search should be shown on the list.
+     * If the filter should be shown on the list.
      *
      * @type {boolean}
      */
-    list_show_search: {
+    list_show_filter: {
       type: Boolean,
       default: true
     },
 
     /**
-     * Placeholder for the list search input (if visible).
+     * Placeholder for the list filter input (if visible).
      *
      * @type {string}
      */
-    list_search_placeholder: {
+    list_filter_placeholder: {
       type: String,
-      default: 'Search'
+      default: 'Filter'
     },
 
     /**
@@ -445,11 +445,11 @@ export default {
     },
 
     /**
-     * The delay from inactivity in the search box until the list refreshes (in milliseconds).
+     * The delay from inactivity in the filter box until the list refreshes (in milliseconds).
      *
      * @type {number}
      */
-    list_search_delay: {
+    list_filter_delay: {
       type: Number,
       default: 300
     },
@@ -485,13 +485,13 @@ export default {
     },
 
     /**
-     * URL GET key for list search.
+     * URL GET key for list filter.
      *
      * @type {string}
      */
-    list_get_key_search: {
+    list_get_key_filter: {
       type: String,
-      default: 'search'
+      default: 'filter'
     },
 
     /**

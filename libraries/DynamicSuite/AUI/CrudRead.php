@@ -23,12 +23,12 @@ use PDOException;
  * @property Query $query
  * @property int $page
  * @property int $limit
- * @property string|null $search
+ * @property string|null $filter
  * @property array $sort
  * @property string|null $table
  * @property string|null $index
  * @property array $filters
- * @property array $search_columns
+ * @property array $filter_columns
  */
 final class CrudRead
 {
@@ -55,11 +55,11 @@ final class CrudRead
     public int $limit = 10;
 
     /**
-     * Optional search parameters.
+     * Optional filter parameters.
      *
      * @var string|null
      */
-    public ?string $search = null;
+    public ?string $filter = null;
 
     /**
      * Array of columns and orders for sorting the dataset.
@@ -71,11 +71,11 @@ final class CrudRead
     public array $sort = [];
 
     /**
-     * Search columns for the given search (if any).
+     * Filter columns for the given filter (if any).
      *
      * @var array
      */
-    private array $search_columns = [];
+    private array $filter_columns = [];
 
     /**
      * CrudRead constructor.
@@ -87,26 +87,26 @@ final class CrudRead
     {
         $this->query = $query;
         foreach ($_POST as $key => $value) {
-            if (in_array($key, ['page', 'limit', 'search', 'sort'])) {
+            if (in_array($key, ['page', 'limit', 'filter', 'sort'])) {
                 $this->$key = $value;
             }
         }
     }
 
     /**
-     * Add search columns to the read.
+     * Add filter columns to the read.
      *
      * @param string[] $columns
      * @return CrudRead
      * @throws Exception
      */
-    public function searchColumns(array $columns): CrudRead
+    public function filterColumns(array $columns): CrudRead
     {
         foreach ($columns as $column) {
             if (!is_string($column)) {
-                throw new Exception('Search columns must be strings');
+                throw new Exception('Filter columns must be strings');
             }
-            $this->search_columns[] = $column;
+            $this->filter_columns[] = $column;
         }
         return $this;
     }
@@ -132,7 +132,7 @@ final class CrudRead
         }
 
         /**
-         * Add the search clause to the query
+         * Add the filter clause to the query
          */
         $query = clone $this->query;
         if ($this->sort) {
@@ -141,10 +141,10 @@ final class CrudRead
         foreach ($this->sort as $column => $direction) {
             $query->orderBy($column, $direction);
         }
-        if ($this->search && $this->search_columns) {
+        if ($this->filter && $this->filter_columns) {
             $query->where(function ($query) {
-                foreach ($this->search_columns as $column) {
-                    $query->orWhere($column, 'LIKE', "%$this->search%");
+                foreach ($this->filter_columns as $column) {
+                    $query->orWhere($column, 'LIKE', "%$this->filter%");
                 }
             });
         }
