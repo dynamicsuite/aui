@@ -163,6 +163,10 @@ export default {
   grid-template-columns: 1fr 1fr
   grid-gap: 1rem
 
+  /* Normalize heights */
+  select
+    min-height: 8rem !important
+
   /* Adjustments to selects */
   .select-assigned,
   .select-unassigned

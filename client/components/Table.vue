@@ -66,7 +66,7 @@ file that was distributed with this source code.
           <aui-button-drop
             :dropdown="{reset: 'Reset to Default'}"
             relative_to=".modal"
-            @reset="resetColumns"
+            @reset="handleResetTable"
           />
         </div>
       </template>
@@ -93,13 +93,30 @@ file that was distributed with this source code.
                  @dblclick.self="handleResetColumn($event, id)"/>
           </th>
         </tr>
+          <tr>
+            <th
+              v-for="(column, id) in columns"
+              :key="'header' + id"
+              ref="header"
+              @mousedown.self="runSort(column)"
+              @dblclick="handleResetColumn($event, id)"
+            >
+              {{columnName(column)}}
+              <i
+                v-if="sortable"
+                :class="sortIcon(column)"
+                @mousedown.self="runSort(column)"
+              />
+              <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
+            </th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
-          <td v-for="(column_value, column) in row" :key="'column' + column + id">
-            {{columnValue(column, column_value)}}
-          </td>
-        </tr>
+          <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
+            <td v-for="(column_value, column) in row" :key="'column' + column + id">
+              {{columnValue(column, column_value)}}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -366,17 +383,14 @@ export default {
      * @returns {object[]}
      */
     filtered_table() {
-      const columns = [];
-      for (const row of this.table) {
-        columns.push(Object.keys(row)
-          .filter(key => this.columns.includes(key))
-          .reduce((obj, key) => {
-            obj[key] = row[key];
-            return obj;
-          }, {})
-        )
+      const table = [];
+      for (const key in this.table) {
+        table[key] = {};
+        for (const column of this.columns) {
+          table[key][column] = this.table[key][column];
+        }
       }
-      return columns;
+      return table;
     }
 
   },
@@ -459,8 +473,8 @@ export default {
       if (!this.interactive || this.calling || !this.interactive_column) {
         return;
       }
-      if (this.filtered_table[id].hasOwnProperty(this.interactive_column)) {
-        this.$emit('row-interaction', this.filtered_table[id][this.interactive_column]);
+      if (this.table[id].hasOwnProperty(this.interactive_column)) {
+        this.$emit('row-interaction', this.table[id][this.interactive_column]);
       }
     },
 
@@ -498,6 +512,18 @@ export default {
     },
 
     /**
+     * Handle the resetting of the table via the 'defaults' button.
+     *
+     * @returns {undefined}
+     */
+    handleResetTable() {
+      if (DynamicSuite.readURLParam('sort')) {
+        DynamicSuite.deleteURLSavedData('sort');
+      }
+      this.resetColumns();
+    },
+
+    /**
      * Reset the visible columns to the default.
      *
      * @returns {undefined}
@@ -511,8 +537,8 @@ export default {
       this.show_columns_modal = false;
       if (this.storage_key) {
         localStorage.removeItem(this.storage_key);
-        this.$root.$emit('aui-table-reset');
       }
+      this.$root.$emit('aui-table-reset');
     },
 
     /**
@@ -645,10 +671,10 @@ export default {
     align-items: center
 
     /* Options icon */
-    &>.btn
+    & > .btn
       color: $color-secondary
       cursor: pointer
-      margin-left: .5rem
+      margin-left: 0.5rem
       background: none
 
       @media (max-width: 680px)
@@ -671,11 +697,9 @@ export default {
         @media (max-width: 680px)
           display: none
 
-
   /* Column filtering modal */
   .modal .aui.checkbox:not(:last-of-type)
     margin-bottom: 1rem
-
 
   .table-container
     width: 100%
@@ -687,7 +711,7 @@ export default {
       text-align: left
       border-collapse: collapse
       background: $color-container
-      margin: .5rem 0
+      margin: 0.5rem 0
 
       /* Table cells */
       td, th

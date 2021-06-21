@@ -53,6 +53,7 @@ file that was distributed with this source code.
         :type="paginateButtonType(page)"
         :disabled="disabled"
         class="page-button"
+        :text="page"
         @click="paginate(page)"
       />
 

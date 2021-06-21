@@ -13,6 +13,7 @@ file that was distributed with this source code.
 <template>
   <aui-form-control v-bind="properties">
     <select
+      ref="select"
       :value="value"
       :autocomplete="autocomplete"
       :disabled="disabled"
@@ -314,6 +315,27 @@ export default {
      */
     value() {
       this.selected = this.value;
+    }
+
+  },
+  methods: {
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    focus() {
+      this.$refs['select'].focus();
+    },
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    select() {
+      this.$refs['select'].select();
     }
 
   }

@@ -40,11 +40,12 @@ file that was distributed with this source code.
     <!-- CRUD list -->
     <aui-crud-list
       v-else-if="!show_form && !setup"
+      ref="list"
       :title="list_title"
       :show_create="list_show_create"
       :create_icon="list_create_icon"
-      :show_search="list_show_search"
-      :search_placeholder="list_search_placeholder"
+      :show_filter="list_show_filter"
+      :filter_placeholder="list_filter_placeholder"
       :no_data_icon="list_no_data_icon"
       :no_data_text="list_no_data_text"
       :loading_icon="list_loading_icon"
@@ -63,11 +64,11 @@ file that was distributed with this source code.
       :read_api="list_read_api"
       :read_optional_data="list_read_optional_data"
       :range_limit="list_range_limit"
-      :search_delay="list_search_delay"
+      :filter_delay="list_filter_delay"
       :refresh_interval="list_refresh_interval"
       :get_key_limit="list_get_key_limit"
       :get_key_page="list_get_key_page"
-      :get_key_search="list_get_key_search"
+      :get_key_filter="list_get_key_filter"
       :get_key_sort="list_get_key_sort"
       @update:calling="$emit('update:calling', $event)"
       @error="handleError"
@@ -76,6 +77,9 @@ file that was distributed with this source code.
     >
       <template #actions>
         <slot name="list-actions" :overlay="overlay" />
+      </template>
+      <template #pre-data>
+        <slot name="list-pre-data" :overlay="overlay" />
       </template>
     </aui-crud-list>
 
@@ -247,23 +251,23 @@ export default {
     },
 
     /**
-     * If the search should be shown on the list.
+     * If the filter should be shown on the list.
      *
      * @type {boolean}
      */
-    list_show_search: {
+    list_show_filter: {
       type: Boolean,
       default: true
     },
 
     /**
-     * Placeholder for the list search input (if visible).
+     * Placeholder for the list filter input (if visible).
      *
      * @type {string}
      */
-    list_search_placeholder: {
+    list_filter_placeholder: {
       type: String,
-      default: 'Search'
+      default: 'Filter'
     },
 
     /**
@@ -441,15 +445,15 @@ export default {
      */
     list_range_limit: {
       type: Array,
-      default: () => [15, 25, 50, 100]
+      default: () => [20, 50, 100]
     },
 
     /**
-     * The delay from inactivity in the search box until the list refreshes (in milliseconds).
+     * The delay from inactivity in the filter box until the list refreshes (in milliseconds).
      *
      * @type {number}
      */
-    list_search_delay: {
+    list_filter_delay: {
       type: Number,
       default: 300
     },
@@ -485,13 +489,13 @@ export default {
     },
 
     /**
-     * URL GET key for list search.
+     * URL GET key for list filter.
      *
      * @type {string}
      */
-    list_get_key_search: {
+    list_get_key_filter: {
       type: String,
-      default: 'search'
+      default: 'filter'
     },
 
     /**
@@ -650,6 +654,27 @@ export default {
      * @type {object}
      */
     form_delete_api_data: {
+      type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Columns to exclude from API calls.
+     */
+    form_exclude_columns: {
+      type: Array,
+      default: () => ([])
+    },
+
+    /**
+     * Format specific columns when sent to API calls.
+     *
+     * This is an object where the key is the column and the value is a function that returns
+     * a formatted value. This function takes 1 argument, the actual form value.
+     *
+     * @type {object}
+     */
+    form_format_columns: {
       type: Object,
       default: () => ({})
     },
@@ -827,6 +852,7 @@ export default {
   },
   data() {
     return {
+      default_form: {},
       setup: true,
       show_form: false,
       form_loading: false,
@@ -880,6 +906,25 @@ export default {
         [this.form_feedback_success_tick_icon]: this.show_success_tick,
         [this.form_feedback_failure_tick_icon]: this.show_failure_tick
       }
+    },
+
+    /**
+     * The form to send along with API calls.
+     *
+     * @returns {object}
+     */
+    api_form() {
+      const form = JSON.parse(JSON.stringify(this.form));
+      for (const key in form) {
+        if (this.form_exclude_columns.indexOf(key) !== -1) {
+          delete form[key];
+          continue;
+        }
+        if (this.form_format_columns.hasOwnProperty(key) && typeof this.form_format_columns[key] === 'function') {
+          form[key] = this.form_format_columns[key](form[key]);
+        }
+      }
+      return form;
     }
 
   },
@@ -909,11 +954,7 @@ export default {
      * @returns {undefined}
      */
     resetForm() {
-      const form = JSON.parse(JSON.stringify(this.form));
-      for (const key in form) {
-        form[key] = null;
-      }
-      this.$emit('update:form', form);
+      this.$emit('update:form', this.default_form);
     },
 
     /**
@@ -980,6 +1021,10 @@ export default {
             this.$emit('update:form', form);
             this.$emit('update:calling', false);
             break;
+          case 'NOT_FOUND':
+            DynamicSuite.deleteURLSavedData(this.get_key_id, false);
+            location.reload();
+            break;
           default:
             this.error = true;
         }
@@ -992,7 +1037,7 @@ export default {
      * @returns {undefined}
      */
     handleError() {
-      this.clearURLSavedData([this.get_key_id]);
+      DynamicSuite.clearURLSavedData([this.get_key_id]);
       this.error = true;
     },
 
@@ -1043,11 +1088,12 @@ export default {
       this.form_loading = true;
       this.resetForm();
       this.resetFeedback();
-      if (this.form_api_create_setup) {
+      if (this.form_create_setup_api) {
         this.$emit('update:calling', true);
         DynamicSuite.call(this.form_create_setup_api, this.form_create_setup_api_data, response => {
           switch (response.status) {
             case 'OK':
+              this.$emit('update:form', JSON.parse(JSON.stringify(Object.assign(this.form, response.data))));
               this.show_form = true;
               this.form_loading = false;
               this.setup = false;
@@ -1075,7 +1121,7 @@ export default {
       }
       this.resetFeedback();
       this.$emit('update:calling', true);
-      const data = Object.assign({}, this.form, this.form_create_api_data)
+      const data = Object.assign({}, this.api_form, this.form_create_api_data)
       DynamicSuite.call(this.form_create_api, data, response => {
         switch (response.status) {
           case 'OK':
@@ -1121,7 +1167,7 @@ export default {
       }
       this.resetFeedback();
       this.$emit('update:calling', true);
-      const data = Object.assign({}, this.form, this.form_update_api_data)
+      const data = Object.assign({}, this.api_form, this.form_update_api_data)
       DynamicSuite.call(this.form_update_api, data, response => {
         switch (response.status) {
           case 'OK':
@@ -1235,6 +1281,9 @@ export default {
 
   },
   mounted() {
+
+    // Set the default form for resets
+    this.default_form = JSON.parse(JSON.stringify(this.form));
 
     // Set saved data
     this.setURLSavedData();

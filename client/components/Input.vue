@@ -18,6 +18,7 @@ file that was distributed with this source code.
       :type="type"
       :list="unique_id"
       :autocomplete="autocomplete"
+      :autocapitalize="autocapitalize"
       :placeholder="placeholder"
       :tabindex="tabindex"
       :disabled="disabled"
@@ -123,6 +124,16 @@ export default {
      * @type {string | null}
      */
     autocomplete: {
+      type: String | null,
+      default: null
+    },
+
+    /**
+     * Input autocapitalize value.
+     *
+     * @type {string}
+     */
+    autocapitalize: {
       type: String | null,
       default: null
     },
@@ -301,6 +312,24 @@ export default {
 
   },
   methods: {
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    focus() {
+      this.$refs['input'].focus();
+    },
+
+    /**
+     * Focus wrapper.
+     *
+     * @returns {undefined}
+     */
+    select() {
+      this.$refs['input'].select();
+    },
 
     /**
      * Handle input events to mask telephones.
