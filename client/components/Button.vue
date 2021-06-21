@@ -165,6 +165,9 @@ export default {
   display: inline-flex
   justify-content: center
   align-items: center
+  align-self: flex-end
+  margin: 1px 0
+
 
   /* Remove browser focus */
   &:focus

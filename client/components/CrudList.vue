@@ -683,6 +683,7 @@ export default {
     & > h2:first-of-type
       display: inline-flex
       align-items: center
+      text-align: center
       margin: 0
 
       /* Loading icon */
