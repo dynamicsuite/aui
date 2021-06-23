@@ -76,23 +76,6 @@ file that was distributed with this source code.
     <div class="table-container">
       <table :class="table_classes">
         <thead>
-        <tr>
-          <th
-            v-for="(column, id) in columns"
-            :key="'header' + id"
-            ref="header"
-            @mousedown.self="runSort(column)"
-          >
-            {{columnName(column)}}
-            <i
-              v-if="sortable"
-              :class="sortIcon(column)"
-              @mousedown.self="runSort(column)"
-            />
-            <div v-if="interactive" @mousedown="handleResizeColumn($event, id)"
-                 @dblclick.self="handleResetColumn($event, id)"/>
-          </th>
-        </tr>
           <tr>
             <th
               v-for="(column, id) in columns"
@@ -107,7 +90,11 @@ file that was distributed with this source code.
                 :class="sortIcon(column)"
                 @mousedown.self="runSort(column)"
               />
-              <div v-if="interactive" @mousedown="handleResizeColumn($event, id)" />
+              <div
+                v-if="interactive"
+                @mousedown="handleResizeColumn($event, id)"
+                @dblclick.self="handleResetColumn($event, id)"
+              />
             </th>
           </tr>
         </thead>
@@ -120,7 +107,6 @@ file that was distributed with this source code.
         </tbody>
       </table>
     </div>
-
 
   </div>
 </template>
