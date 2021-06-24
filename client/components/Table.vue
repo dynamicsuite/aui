@@ -13,27 +13,6 @@ file that was distributed with this source code.
 <template>
   <div class="aui table">
 
-    <!-- Icon for showing the modal for selecting which columns to view -->
-    <div v-if="interactive" class="options">
-      <aui-pagination
-        :disabled="disabled"
-        :page="page"
-        :total="total"
-        :limit="limit"
-        :list_range_limit="list_range_limit"
-        @update:page="$emit('update:page', $event)"
-        @update:limit="$emit('update:limit', $event)"
-        @paginate="$emit('paginate')"
-      />
-      <aui-button
-        type="none"
-        title="Select Columns To View"
-        @click="showColumnsModal"
-      >
-        <i class="fas fa-cog"></i>
-      </aui-button>
-    </div>
-
     <!-- Modal for selecting which columns to view -->
     <aui-modal :show.sync="show_columns_modal" title="Select Columns To View">
       <template #content>
@@ -106,6 +85,27 @@ file that was distributed with this source code.
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Table pagination and column selection -->
+    <div v-if="interactive" class="options">
+      <aui-pagination
+        :disabled="disabled"
+        :page="page"
+        :total="total"
+        :limit="limit"
+        :list_range_limit="list_range_limit"
+        @update:page="$emit('update:page', $event)"
+        @update:limit="$emit('update:limit', $event)"
+        @paginate="$emit('paginate')"
+      />
+      <aui-button
+        type="none"
+        title="Select Columns To View"
+        @click="showColumnsModal"
+      >
+        <i class="fas fa-cog" />
+      </aui-button>
     </div>
 
   </div>
@@ -697,7 +697,7 @@ export default {
       text-align: left
       border-collapse: collapse
       background: $color-container
-      margin: 0.5rem 0
+      margin-bottom: 0.5rem
 
       /* Table cells */
       td, th
