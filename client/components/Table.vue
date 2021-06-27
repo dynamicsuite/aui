@@ -380,6 +380,18 @@ export default {
     }
 
   },
+  watch: {
+
+    /**
+     * Watcher for when default columns change
+     *
+     * @returns {undefined}
+     */
+    default_columns() {
+      this.resetColumns();
+    }
+
+  },
   methods: {
 
     /**
@@ -504,7 +516,7 @@ export default {
      */
     handleResetTable() {
       if (DynamicSuite.readURLParam('sort')) {
-        DynamicSuite.deleteURLSavedData('sort');
+        DynamicSuite.pushURLHistory('sort', null);
       }
       this.resetColumns();
     },
