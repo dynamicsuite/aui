@@ -495,9 +495,9 @@ export default {
         return;
       }
       if (url.has(this.get_key_sort) && !url_string) {
-        DynamicSuite.deleteURLSavedData(this.get_key_sort, false);
+        DynamicSuite.replaceURLHistory(this.get_key_sort, null);
       } else if (url_string) {
-        DynamicSuite.setURLSavedData(this.get_key_sort, url_string, false);
+        DynamicSuite.replaceURLHistory(this.get_key_sort, url_string);
       }
       this.readList();
     },
@@ -511,9 +511,9 @@ export default {
         return;
       }
       if (url.has(this.get_key_limit) && this.limit === this.range_limit[0]) {
-        DynamicSuite.deleteURLSavedData(this.get_key_limit, false);
+        DynamicSuite.replaceURLHistory(this.get_key_limit, null);
       } else if (this.limit !== this.range_limit[0]) {
-        DynamicSuite.setURLSavedData(this.get_key_limit, this.limit, false);
+        DynamicSuite.replaceURLHistory(this.get_key_limit, this.limit);
       }
     }
 
@@ -531,9 +531,9 @@ export default {
         return;
       }
       if (url.has(this.get_key_page) && this.page <= 1) {
-        DynamicSuite.deleteURLSavedData(this.get_key_page);
+        DynamicSuite.pushURLHistory(this.get_key_page, null);
       } else if (this.page > 1) {
-        DynamicSuite.setURLSavedData(this.get_key_page, this.page);
+        DynamicSuite.pushURLHistory(this.get_key_page, this.page);
       }
       this.readList();
     },
@@ -566,12 +566,10 @@ export default {
             this.$emit('update:calling', false);
             break;
           default:
-            DynamicSuite.clearURLSavedData([
-              this.get_key_limit,
-              this.get_key_page,
-              this.get_key_filter,
-              this.get_key_sort
-            ]);
+            DynamicSuite.replaceURLHistory(this.get_key_limit, null);
+            DynamicSuite.replaceURLHistory(this.get_key_page, null);
+            DynamicSuite.replaceURLHistory(this.get_key_filter, null);
+            DynamicSuite.replaceURLHistory(this.get_key_sort, null);
             this.$emit('error');
         }
       });
@@ -587,9 +585,9 @@ export default {
       this.filter_timer = setTimeout(() => {
         this.page = 1;
         if (this.filter) {
-          DynamicSuite.setURLSavedData(this.get_key_filter, this.filter, false);
+          DynamicSuite.replaceURLHistory(this.get_key_filter, this.filter);
         } else {
-          DynamicSuite.deleteURLSavedData(this.get_key_filter);
+          DynamicSuite.replaceURLHistory(this.get_key_filter, null);
         }
         this.readList();
       }, this.filter_delay);

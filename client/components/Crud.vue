@@ -73,7 +73,7 @@ file that was distributed with this source code.
       @update:calling="$emit('update:calling', $event)"
       @error="handleError"
       @show-create="handleFormCreate"
-      @list-interaction="handleFormUpdate"
+      @list-interaction="handleListInteraction"
     >
       <template #actions>
         <slot name="list-actions" :overlay="overlay" />
@@ -1014,15 +1014,12 @@ export default {
             }
             this.show_form = true;
             this.form_loading = false;
-            if (!this.setup) {
-              DynamicSuite.setURLSavedData(this.get_key_id, value);
-            }
             this.setup = false;
             this.$emit('update:form', form);
             this.$emit('update:calling', false);
             break;
           case 'NOT_FOUND':
-            DynamicSuite.deleteURLSavedData(this.get_key_id, false);
+            DynamicSuite.replaceURLHistory(this.get_key_id, null);
             location.reload();
             break;
           default:
@@ -1037,7 +1034,7 @@ export default {
      * @returns {undefined}
      */
     handleError() {
-      DynamicSuite.clearURLSavedData([this.get_key_id]);
+      DynamicSuite.replaceURLHistory(this.get_key_id, null);
       this.error = true;
     },
 
@@ -1047,13 +1044,27 @@ export default {
      * @returns {undefined}
      */
     handleFormCreate() {
-      DynamicSuite.setURLSavedData(this.get_key_id, 0);
+      DynamicSuite.pushURLHistory(this.get_key_id, 0);
       this.runCreateSetup();
+    },
+
+    /**
+     * Handle interactions with the CRUD list.
+     *
+     * @param {number} value - The interactive value.
+     * @returns {undefined}
+     */
+    handleListInteraction(value) {
+      if (!this.setup) {
+        DynamicSuite.pushURLHistory(this.get_key_id, value);
+      }
+      this.handleFormUpdate(value);
     },
 
     /**
      * Handle setting up the form for updating.
      *
+     * @param {number} value - The interactive value.
      * @returns {undefined}
      */
     handleFormUpdate(value) {
@@ -1072,7 +1083,7 @@ export default {
     runBack() {
       this.resetForm();
       this.resetFeedback();
-      DynamicSuite.deleteURLSavedData(this.get_key_id);
+      DynamicSuite.replaceURLHistory(this.get_key_id, null);
       this.show_form = false;
     },
 
@@ -1137,7 +1148,7 @@ export default {
             this.form_loading = true;
             this.readStorable(response.data);
             this.secureForm();
-            DynamicSuite.deleteURLSavedData(this.get_key_id);
+            DynamicSuite.pushURLHistory(this.get_key_id, null);
             this.$emit('update:calling', false);
             break;
           case 'INPUT_ERROR':
@@ -1234,7 +1245,7 @@ export default {
             this.show_form = false;
             this.resetForm();
             this.resetFeedback();
-            DynamicSuite.clearURLSavedData([this.get_key_id]);
+            DynamicSuite.replaceURLHistory(this.get_key_id, null);
             window.history.back();
             this.$emit('update:calling', false);
             break;
