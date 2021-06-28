@@ -1302,6 +1302,9 @@ export default {
     // Refresh on back
     window.addEventListener('popstate', () => {
       this.setURLSavedData();
+      if (this.error) {
+        location.reload();
+      }
     });
 
   }
