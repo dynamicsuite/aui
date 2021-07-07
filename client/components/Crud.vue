@@ -86,14 +86,16 @@ file that was distributed with this source code.
     <!-- CRUD form -->
     <div v-else-if="!setup" class="form">
       <slot name="form" :overlay="overlay" />
-      <div class="actions">
-        <aui-button
-          v-if="form_show_back_button"
-          type="secondary"
-          :disabled="overlay"
-          :text="form_action_back_text"
-          @click="runBack"
-        />
+      <div v-if="!form_loading" class="actions">
+        <slot name="form-back-button">
+          <aui-button
+            v-if="form_show_back_button"
+            type="secondary"
+            :disabled="overlay"
+            :text="form_action_back_text"
+            @click="runBack"
+          />
+        </slot>
         <div v-if="!form_for_create && form_update_api && !form_loading" class="btn-group">
           <i v-if="show_tick" :class="tick_classes" />
           <aui-button
@@ -996,6 +998,7 @@ export default {
      * @returns {undefined}
      */
     readStorable(value) {
+      this.$emit('form-pre-read', true);
       const data = Object.assign({
         [this.storable_key]: value
       }, this.form_read_api_data)
