@@ -87,7 +87,7 @@ file that was distributed with this source code.
     <div v-else-if="!setup" class="form">
       <slot name="form" :overlay="overlay" />
       <div v-if="!form_loading" class="actions">
-        <slot name="form-back-button">
+        <slot name="form-back-button" :overlay="overlay">
           <aui-button
             v-if="form_show_back_button"
             type="secondary"
