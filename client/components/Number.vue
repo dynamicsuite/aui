@@ -76,7 +76,7 @@ export default {
      */
     negative_class() {
       return {
-        negative: parseFloat(this.number.toString().replace(/[^0-9.-]/g, '')) < 0
+        negative: this.number !== null && parseFloat(this.number.toString().replace(/[^0-9.-]/g, '')) < 0
       }
     },
 
@@ -86,6 +86,11 @@ export default {
      * @returns {string}
      */
     pretty_value() {
+
+      // Null number check
+      if (this.number === null) {
+        return '';
+      }
 
       // Initialize values we're working with
       const input = this.number.toString().replace(/[^0-9.-]/g, '');
