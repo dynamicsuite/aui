@@ -364,8 +364,9 @@ export default {
           value = new_value;
         }
         this.$refs.input.value = value;
+        value = Number(value);
       }
-      this.$emit('input', Number(value));
+      this.$emit('input', value);
     }
 
   }
