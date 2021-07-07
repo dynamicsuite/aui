@@ -381,6 +381,7 @@ export default {
 
     /* The actual form control inputs */
     input, select, textarea
+      min-width: 0
       grid-column: 2
       font-size: 1rem
       padding: 0.5rem
