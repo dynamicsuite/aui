@@ -1329,7 +1329,7 @@ export default {
       margin-bottom: 1rem
 
     /* Form actions */
-    .actions
+    & > .actions
       display: flex
 
       /* Button justification */
