@@ -14,7 +14,7 @@ file that was distributed with this source code.
   <div class="aui notice">
     <i :class="icon_classes"></i>
     <h4><slot>{{text}}</slot></h4>
-    <span v-if="subtext" v-html="subtext"></span>
+    <span v-if="subtext || $slots['subtext']"><slot name="subtext">{{subtext}}</slot></span>
   </div>
 </template>
 
@@ -129,5 +129,14 @@ export default {
     margin-top: 0.25rem
     font-size: 0.9rem
     color: $color-text-softest
+
+  /* Notice links */
+  a
+    cursor: pointer
+    color: $color-primary
+    text-decoration: none
+
+    &:hover
+      text-decoration: underline
 
 </style>
