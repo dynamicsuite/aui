@@ -356,7 +356,7 @@ export default {
      */
     range_limit: {
       type: Array,
-      default: () => [20, 50, 100]
+      default: () => [15, 25, 100]
     },
 
     /**
