@@ -78,7 +78,12 @@ file that was distributed with this source code.
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, id) in filtered_table" :key="'row' + id" @click="rowInteraction(id)">
+          <tr
+            v-for="(row, id) in filtered_table"
+            :key="'row' + id"
+            :class="row_classes(table[id])"
+            @click="rowInteraction(id)"
+          >
             <td v-for="(column_value, column) in row" :key="'column' + column + id">
               {{columnValue(column, column_value)}}
             </td>
@@ -197,6 +202,18 @@ export default {
      */
     column_format: {
       type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Classes to apply to each row given an argument of the row data.
+     *
+     * Standard Vue classes object.
+     *
+     * @type {function}
+     */
+    row_classes: {
+      type: Function,
       default: () => ({})
     },
 
@@ -777,6 +794,6 @@ export default {
 
           tr:hover
             cursor: pointer
-            background: lighten($color-warning, 35%)
+            background: lighten($color-warning, 35%) !important
 
 </style>

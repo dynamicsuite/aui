@@ -77,6 +77,7 @@ file that was distributed with this source code.
       :default_columns="table_default_columns"
       :column_names="table_column_names"
       :column_format="table_column_format"
+      :row_classes="table_row_classes"
       :sort.sync="sort"
       :storage_key="table_storage_key"
       :calling="calling"
@@ -307,6 +308,18 @@ export default {
      */
     table_column_format: {
       type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Classes to apply to each row given an argument of the row data.
+     *
+     * Standard Vue classes object.
+     *
+     * @type {function}
+     */
+    table_row_classes: {
+      type: Function,
       default: () => ({})
     },
 

@@ -60,6 +60,7 @@ file that was distributed with this source code.
       :table_default_columns="list_table_default_columns"
       :table_column_names="list_table_column_names"
       :table_column_format="list_table_column_format"
+      :table_row_classes="list_table_row_classes"
       :table_storage_key="list_table_storage_key"
       :read_api="list_read_api"
       :read_optional_data="list_read_optional_data"
@@ -398,6 +399,18 @@ export default {
      */
     list_table_column_format: {
       type: Object,
+      default: () => ({})
+    },
+
+    /**
+     * Classes to apply to each row given an argument of the row data in table mode.
+     *
+     * Standard Vue classes object.
+     *
+     * @type {function}
+     */
+    list_table_row_classes: {
+      type: Function,
       default: () => ({})
     },
 
