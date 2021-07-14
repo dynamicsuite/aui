@@ -116,12 +116,14 @@ file that was distributed with this source code.
         </div>
         <div v-if="form_for_create && form_create_api && !form_loading" class="action">
           <slot name="form-action-context" />
-          <aui-button
+          <slot name="form-create-button" :overlay="overlay">
+            <aui-button
               :text="form_action_create_text"
               :loading="overlay"
               :loading_text="form_action_create_loading_text"
               @click="runCreate"
-          />
+            />
+          </slot>
         </div>
       </div>
     </div>
