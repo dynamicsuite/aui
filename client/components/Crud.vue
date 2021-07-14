@@ -1109,6 +1109,7 @@ export default {
      * @returns {undefined}
      */
     runCreateSetup() {
+      this.$emit('form-pre-create', true);
       if (this.calling) {
         return;
       }
