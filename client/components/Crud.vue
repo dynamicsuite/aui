@@ -97,7 +97,8 @@ file that was distributed with this source code.
             @click="runBack"
           />
         </slot>
-        <div v-if="!form_for_create && form_update_api && !form_loading" class="btn-group">
+        <div v-if="!form_for_create && form_update_api && !form_loading" class="btn-group action">
+          <slot name="form-action-context" />
           <i v-if="show_tick" :class="tick_classes" />
           <aui-button
             :text="form_action_update_text"
@@ -113,13 +114,15 @@ file that was distributed with this source code.
             @delete="promptDelete"
           />
         </div>
-        <aui-button
-          v-if="form_for_create && form_create_api && !form_loading"
-          :text="form_action_create_text"
-          :loading="overlay"
-          :loading_text="form_action_create_loading_text"
-          @click="runCreate"
-        />
+        <div v-if="form_for_create && form_create_api && !form_loading" class="action">
+          <slot name="form-action-context" />
+          <aui-button
+              :text="form_action_create_text"
+              :loading="overlay"
+              :loading_text="form_action_create_loading_text"
+              @click="runCreate"
+          />
+        </div>
       </div>
     </div>
 
@@ -1347,13 +1350,13 @@ export default {
       display: flex
 
       /* Button justification */
-      & > .btn-group, & > .btn.primary
+      & > .action
         margin-left: auto
 
         /* Default feedback ticks */
         .feedback-tick
           align-self: center
-          margin-right: 1rem
+          margin: 0 1rem
 
           &.fa-check
             color: $color-success
