@@ -26,10 +26,10 @@ file that was distributed with this source code.
       <span class="cap-container">
 
         <!-- Leading cap -->
-        <span v-if="leading_cap" class="leading-cap" v-html="leading_cap" />
+        <span v-if="leading_cap" class="leading-cap" v-html="leading_cap" @click="$emit('leading-cap-click')" />
 
         <!-- Trailing cap -->
-        <span v-if="trailing_cap" class="trailing-cap" v-html="trailing_cap" />
+        <span v-if="trailing_cap" class="trailing-cap" v-html="trailing_cap" @click="$emit('trailing-cap-click')" />
 
         <!-- Parent content -->
         <slot />
