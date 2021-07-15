@@ -1354,6 +1354,7 @@ export default {
       /* Button justification */
       & > .action
         margin-left: auto
+        align-items: center
 
         /* Default feedback ticks */
         .feedback-tick
