@@ -11,7 +11,11 @@ file that was distributed with this source code.
 -->
 
 <template>
-  <aui-form-control v-bind="properties">
+  <aui-form-control
+    v-bind="properties"
+    @leading-cap-click="$emit('leading-cap-click')"
+    @trailing-cap-click="$emit('trailing-cap-click')"
+  >
     <input
       ref="input"
       :value="value"
