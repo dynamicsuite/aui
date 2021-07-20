@@ -97,22 +97,26 @@ file that was distributed with this source code.
             @click="runBack"
           />
         </slot>
-        <div v-if="!form_for_create && form_update_api && !form_loading" class="btn-group action">
+        <div v-if="!form_for_create && form_update_api && !form_loading" class="action">
           <slot name="form-action-context" />
           <i v-if="show_tick" :class="tick_classes" />
-          <aui-button
-            :text="form_action_update_text"
-            :loading="overlay"
-            :loading_text="form_action_update_loading_text"
-            @click="runUpdate"
-          />
-          <aui-button-drop
-            v-if="form_delete_api"
-            relative_to=".form"
-            :disabled="overlay"
-            :dropdown="{delete: this.form_action_delete_text}"
-            @delete="promptDelete"
-          />
+          <slot name="form-update-button" :overlay="overlay">
+            <div class="btn-group">
+              <aui-button
+                :text="form_action_update_text"
+                :loading="overlay"
+                :loading_text="form_action_update_loading_text"
+                @click="runUpdate"
+              />
+              <aui-button-drop
+                v-if="form_delete_api"
+                relative_to=".form"
+                :disabled="overlay"
+                :dropdown="{delete: this.form_action_delete_text}"
+                @delete="promptDelete"
+              />
+            </div>
+          </slot>
         </div>
         <div v-if="form_for_create && form_create_api && !form_loading" class="action">
           <slot name="form-action-context" />
