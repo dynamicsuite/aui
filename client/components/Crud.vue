@@ -233,6 +233,16 @@ export default {
     },
 
     /**
+     * If list interaction events should be emitted instead of setting up the form.
+     *
+     * @type {boolean}
+     */
+    list_custom_interaction: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
      * Title of the list.
      *
      * @type {string}
@@ -1080,10 +1090,14 @@ export default {
      * @returns {undefined}
      */
     handleListInteraction(value) {
-      if (!this.setup) {
-        DynamicSuite.pushURLHistory(this.get_key_id, value);
+      if (this.list_custom_interaction) {
+        this.$emit('list-interaction', value);
+      } else {
+        if (!this.setup) {
+          DynamicSuite.pushURLHistory(this.get_key_id, value);
+        }
+        this.handleFormUpdate(value);
       }
-      this.handleFormUpdate(value);
     },
 
     /**
