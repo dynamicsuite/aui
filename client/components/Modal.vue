@@ -22,7 +22,7 @@ file that was distributed with this source code.
           <section class="content">
             <slot name="content" />
           </section>
-          <footer>
+          <footer v-if="$slots.left || $slots.right">
             <div v-if="$slots.left" class="left">
               <slot name="left" />
             </div>
