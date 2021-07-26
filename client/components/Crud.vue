@@ -635,11 +635,11 @@ export default {
     /**
      * API to call to read a storable to pre-fill the form when editing/viewing.
      *
-     * @type {string}
+     * @type {string|null}
      */
     form_read_api: {
-      type: String,
-      required: true
+      type: String | null,
+      default: null
     },
 
     /**

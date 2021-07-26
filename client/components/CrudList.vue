@@ -343,11 +343,11 @@ export default {
     /**
      * Read API for reading the list data.
      *
-     * @type {string}
+     * @type {string|null}
      */
     read_api: {
-      type: String,
-      required: true
+      type: String | null,
+      default: null
     },
 
     /**
