@@ -20,7 +20,7 @@ file that was distributed with this source code.
     </button>
 
     <!-- The dropdown list -->
-    <ul v-show="show_dropdown" class="dropdown" ref="menu" :class="list_classes">
+    <ul v-show="show_dropdown && Object.keys(dropdown).length" class="dropdown" ref="menu" :class="list_classes">
       <li v-for="(text, event) in dropdown" :key="'entry-' + event" @click="handleClick(event)">{{text}}</li>
     </ul>
 
@@ -202,6 +202,9 @@ export default {
      * @returns {undefined}
      */
     handleClick(key) {
+      if (!Object.keys(this.dropdown).length) {
+        return;
+      }
       this.$emit(key);
       this.$emit('menu-click', key);
       this.show_dropdown = false;
@@ -213,6 +216,10 @@ export default {
      * @returns {undefined}
      */
     toggle() {
+
+      if (!Object.keys(this.dropdown).length) {
+        return;
+      }
 
       this.show_dropdown = !this.show_dropdown;
       this.menu_align_master = null;
