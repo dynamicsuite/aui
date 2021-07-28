@@ -556,7 +556,7 @@ export default {
      *
      * @returns {undefined}
      */
-    readList() {
+    readList(sort = null) {
       if (this.calling) {
         return;
       }
@@ -567,7 +567,7 @@ export default {
         page: this.page,
         limit: this.limit,
         filter: this.filter,
-        sort: this.sort
+        sort: sort ?? this.sort
       }, this.read_optional_data);
       this.$emit('update:calling', true);
       DynamicSuite.call(this.read_api, data, response => {
@@ -663,6 +663,13 @@ export default {
     // List re-render
     window.addEventListener('popstate', () => {
       this.setURLSavedData();
+      this.readList();
+    });
+
+    // Clear sort
+    DynamicSuite.listen('aui-table-clear-sort', () => {
+      this.sort = {};
+      DynamicSuite.replaceURLHistory('sort', null);
       this.readList();
     });
 
