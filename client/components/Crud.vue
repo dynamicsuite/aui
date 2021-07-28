@@ -1224,6 +1224,13 @@ export default {
           case 'OK':
             this.secureForm();
             this.show_success_tick = true;
+            const form = JSON.parse(JSON.stringify(this.form));
+            for (const key in response.data) {
+              if (form.hasOwnProperty(key)) {
+                form[key] = response.data[key];
+              }
+            }
+            this.$emit('update:form', form);
             this.$emit('update:calling', false);
             break;
           case 'INPUT_ERROR':
