@@ -60,6 +60,7 @@ file that was distributed with this source code.
               v-for="(column, id) in columns"
               :key="'header' + id"
               ref="header"
+              :class="columnClass(column)"
               @mousedown.self="runSort(column)"
               @dblclick="handleResetColumn($event, id)"
             >
@@ -84,7 +85,7 @@ file that was distributed with this source code.
             :class="row_classes(table[id])"
             @click="rowInteraction(id)"
           >
-            <td v-for="(column_value, column) in row" :key="'column' + column + id">
+            <td v-for="(column_value, column) in row" :key="'column' + column + id" :class="columnClass(column)">
               {{columnValue(column, column_value)}}
             </td>
           </tr>
@@ -410,6 +411,13 @@ export default {
 
   },
   methods: {
+
+    /**
+     * Get the formatted column class.
+     */
+    columnClass(column) {
+      return 'aui-table-col-' + column.replace('_', '-');
+    },
 
     /**
      * Get the mapped column name.
