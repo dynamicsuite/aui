@@ -256,14 +256,10 @@ export default {
      */
     failure() {
       const scroll_callback = () => {
-        let view = document.getElementById('ds-view');
-        if (!view) {
-          view = document.body;
-        }
         const el = document.querySelectorAll('.aui.form-control.failure')[0]
         if (el) {
           const box = el.getBoundingClientRect();
-          view.scrollBy({
+          window.scrollBy({
             top: box.top - box.height - 100,
             behavior: 'smooth'
           });
