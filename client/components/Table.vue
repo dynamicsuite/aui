@@ -802,6 +802,6 @@ export default {
 
           tr:hover
             cursor: pointer
-            background: lighten($color-warning, 35%) !important
+            background: lighten($color-border, 5%) !important
 
 </style>
