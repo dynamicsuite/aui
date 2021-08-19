@@ -739,7 +739,6 @@ export default {
       /* Table cells */
       td, th
         position: relative
-        padding: 0.5rem 2rem 0.5rem 0.5rem
 
         @media (max-width: 541px)
           padding: 0.5rem
@@ -750,7 +749,8 @@ export default {
 
         /* Header cells */
         th
-          white-space: nowrap
+          white-space: normal
+          padding: 0.5rem 2rem 0.5rem 0.5rem
 
           &:last-of-type
             width: 100%
@@ -760,6 +760,14 @@ export default {
             width: 1rem
             margin-left: 0.25rem
             color: $color-secondary
+            position: absolute
+            display: flex
+            justify-content: center
+            align-items: center
+            top: 0
+            bottom: 0
+            right: 0.35rem
+            padding: 0.25rem
 
           /* Resize anchor */
           div
@@ -776,6 +784,7 @@ export default {
       td
         white-space: nowrap
         text-overflow: ellipsis
+        padding: 0.5rem 0.5rem 0.5rem 0.5rem
 
       /* Zebra striping */
       tbody tr:nth-of-type(odd)
